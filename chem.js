@@ -114,15 +114,18 @@ export class ChemEngine {
         if(Rx.needHeat && !env.heating) continue;
         if(Rx.requireConc){ let ok=true; for(const rg of Rx.requireConc){ if(!sol.concReagents.has(rg)) ok=false; } if(!ok) continue; }
         if(Rx.forbidConc){ let bad=false; for(const rg of Rx.forbidConc){ if(sol.concReagents.has(rg)) bad=true; } if(bad) continue; }
+        if(Rx.requireSolid){ let ok=true; for(const sid of Rx.requireSolid){ if((sol.solids[sid]||0)<1e-6) ok=false; } if(!ok) continue; }
         let avail = Infinity;
         if(Rx.reactants.water && sol.V < 0.02) avail = 0;
         if(Rx.reactants.solid){ for(const sid in Rx.reactants.solid){ avail = Math.min(avail, (sol.solids[sid]||0)/Rx.reactants.solid[sid]); } }
         if(Rx.reactants.species){ for(const sp in Rx.reactants.species){ const co=Rx.reactants.species[sp]; if(co>0) avail = Math.min(avail, (sol.n[sp]||0)/co); } }
+        if(Rx.reactants.headGas){ for(const gk in Rx.reactants.headGas){ const co=Rx.reactants.headGas[gk]; if(co>0) avail=Math.min(avail,(sol.gas[gk]||0)/co); } }
         if(!(avail > 1e-6)) continue;
         const dxi = Math.min(Rx.rate*dt, avail);
         if(dxi <= 0) continue;
         if(Rx.reactants.solid) for(const sid in Rx.reactants.solid) sol.solids[sid] = Math.max(0,(sol.solids[sid]||0) - Rx.reactants.solid[sid]*dxi);
         if(Rx.reactants.species) for(const sp in Rx.reactants.species){ const co=Rx.reactants.species[sp]; if(co>0) sol.n[sp]=Math.max(0,(sol.n[sp]||0) - co*dxi); }
+        if(Rx.reactants.headGas) for(const gk in Rx.reactants.headGas){ const co=Rx.reactants.headGas[gk]; if(co>0) sol.gas[gk]=Math.max(0,(sol.gas[gk]||0)-co*dxi); }
         if(Rx.products.species) for(const sp in Rx.products.species) sol.add(sp, Rx.products.species[sp]*dxi);
         if(Rx.products.gasMol) for(const gk in Rx.products.gasMol){ const dn=Rx.products.gasMol[gk]*dxi; sol.gas[gk]=(sol.gas[gk]||0)+dn; sol.produced[gk]=(sol.produced[gk]||0)+dn; }
         if(Rx.products.precip) for(const pk in Rx.products.precip){ sol.precip[pk]=(sol.precip[pk]||0)+Rx.products.precip[pk]*dxi; }
@@ -146,10 +149,12 @@ export class ChemEngine {
     for(const Rx of REACTIONS){
       if(Rx.requireConc){ let ok=true; for(const rg of Rx.requireConc){ if(!sol.concReagents.has(rg)) ok=false; } if(!ok) continue; }
       if(Rx.forbidConc){ let bad=false; for(const rg of Rx.forbidConc){ if(sol.concReagents.has(rg)) bad=true; } if(bad) continue; }
+      if(Rx.requireSolid){ let rso=true; for(const sid of Rx.requireSolid){ if((sol.solids[sid]||0)<1e-6) rso=false; } if(!rso) continue; }
       let ok=true;
       if(Rx.reactants.water && sol.V < 0.02) ok=false;
       if(Rx.reactants.solid){ for(const sid in Rx.reactants.solid){ if((sol.solids[sid]||0) <= 1e-6) ok=false; } }
       if(Rx.reactants.species){ for(const sp in Rx.reactants.species){ if(Rx.reactants.species[sp]>0 && (sol.n[sp]||0) <= 1e-6) ok=false; } }
+      if(Rx.reactants.headGas){ for(const gk in Rx.reactants.headGas){ if(Rx.reactants.headGas[gk]>0 && (sol.gas[gk]||0)<=1e-6) ok=false; } }
       if(ok) out.push(Rx);
     }
     return out;
