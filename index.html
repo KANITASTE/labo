@@ -80,13 +80,18 @@
           </sc-for>
         </div>
         <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.12em;margin:16px 2px 8px">MATERIALS / 実験材料</div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <sc-for list="{{ materials }}" as="mt" hint-placeholder-count="10">
-            <div draggable="true" data-id="{{ mt.id }}" onDragStart="{{ onDragStart }}" onClick="{{ onChipClick }}" title="{{ mt.en }}" style="display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.02);padding:7px 10px;cursor:grab;user-select:none;transition:border-color .15s" style-hover="border-color:var(--accent)">
-              <span style="width:11px;height:11px;border-radius:{{ mt.swatchR }};background:{{ mt.swatch }};box-shadow:0 0 0 1px rgba(255,255,255,.08) inset;flex:none"></span>
-              <span style="font-size:12px;font-weight:500">{{ mt.jp }}</span>
-              <span style="font-size:7.5px;color:{{ mt.stColor }};border:1px solid var(--line);border-radius:4px;padding:1px 4px">{{ mt.st }}</span>
-              <span style="font-size:10px;color:var(--muted);margin-left:auto;font-family:var(--mono)">{{ mt.en }}</span>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <sc-for list="{{ materialGroups }}" as="grp" hint-placeholder-count="3">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.1em;margin:10px 2px 5px;border-top:1px solid var(--line);padding-top:8px">{{ grp.label }}</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <sc-for list="{{ grp.items }}" as="mt" hint-placeholder-count="3">
+                <div draggable="true" data-id="{{ mt.id }}" onDragStart="{{ onDragStart }}" onClick="{{ onChipClick }}" title="{{ mt.en }}" style="display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.02);padding:6px 10px;cursor:grab;user-select:none;transition:border-color .15s" style-hover="border-color:var(--accent)">
+                  <span style="width:11px;height:11px;border-radius:{{ mt.swatchR }};background:{{ mt.swatch }};box-shadow:0 0 0 1px rgba(255,255,255,.08) inset;flex:none"></span>
+                  <span style="font-size:11.5px;font-weight:500">{{ mt.jp }}</span>
+                  <span style="font-size:7.5px;color:{{ mt.stColor }};border:1px solid var(--line);border-radius:4px;padding:1px 4px">{{ mt.st }}</span>
+                  <span style="font-size:9.5px;color:var(--muted);margin-left:auto;font-family:var(--mono)">{{ mt.en }}</span>
+                </div>
+              </sc-for>
             </div>
           </sc-for>
         </div>
@@ -217,6 +222,7 @@
           <div style="margin-top:11px;border:1px solid rgba(122,162,255,.3);border-radius:11px;background:rgba(122,162,255,.06);padding:12px 13px">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
               <span style="font-family:var(--mono);font-size:9.5px;color:var(--accent2);letter-spacing:.12em">反応解析 / REACTION</span>
+              <span style="font-size:10.5px;background:{{ learnPanel.dangerBg }};border:1px solid {{ learnPanel.dangerFg }};border-radius:6px;padding:2px 8px;color:{{ learnPanel.dangerFg }};font-weight:600">⚠ Lv.{{ learnPanel.dangerLevel }} {{ learnPanel.dangerLabel }}</span>
               <span style="font-size:10.5px;background:rgba(122,162,255,.14);border:1px solid rgba(122,162,255,.4);border-radius:6px;padding:2px 8px;color:var(--accent2);margin-left:auto">③ {{ learnPanel.rxClass }}</span>
             </div>
             <div style="font-size:12px;font-weight:500;margin-bottom:10px">{{ learnPanel.jp }}</div>
@@ -353,38 +359,52 @@ class Component extends DCLogic {
       {id:'Mn',jp:'マンガン',en:'Manganese',state:'metal',dot:'#b6b0ac',rcolor:[182,178,172]},
     ];
     this.materials=[
-      {id:'水',jp:'水',en:'Water',state:'liquid',rcolor:[150,185,205,.42]},
-      {id:'海水',jp:'海水',en:'Seawater',state:'liquid',rcolor:[120,170,180,.5]},
-      {id:'エタノール',jp:'エタノール（C₂H₅OH）',en:'Ethanol',state:'liquid',rcolor:[205,212,220,.32]},
-      {id:'硫酸希',jp:'希硫酸（H₂SO₄ 希）',en:'Dilute H₂SO₄',state:'liquid',rcolor:[208,220,212,.34]},
-      {id:'硫酸濃',jp:'濃硫酸（H₂SO₄ 濃）',en:'Conc. H₂SO₄',state:'liquid',rcolor:[232,212,140,.46]},
-      {id:'塩酸',jp:'塩酸（HCl）',en:'Hydrochloric',state:'liquid',rcolor:[210,222,212,.38]},
-      {id:'硝酸希',jp:'希硝酸（HNO₃ 希）',en:'Dilute HNO₃',state:'liquid',rcolor:[214,222,210,.36]},
-      {id:'硝酸濃',jp:'濃硝酸（HNO₃ 濃）',en:'Conc. HNO₃',state:'liquid',rcolor:[235,202,150,.46]},
-      {id:'水酸化ナトリウム',jp:'水酸化ナトリウム（NaOH）',en:'Sodium hydroxide',state:'solute',rcolor:[240,240,244]},
-      {id:'水酸化カリウム',jp:'水酸化カリウム（KOH）',en:'Potassium hydroxide',state:'solute',rcolor:[238,238,242]},
-      {id:'アンモニア水',jp:'アンモニア水（NH₃）',en:'Ammonia',state:'liquid',rcolor:[195,212,232,.38]},
-      {id:'漂白剤',jp:'次亜塩素酸ナトリウム（NaClO）',en:'Bleach',state:'liquid',rcolor:[205,228,185,.44]},
-      {id:'過酸化水素水',jp:'過酸化水素水（H₂O₂）',en:'Peroxide',state:'liquid',rcolor:[210,225,235,.4]},
-      {id:'炭酸ナトリウム',jp:'炭酸ナトリウム（Na₂CO₃）',en:'Sodium carbonate',state:'solute',rcolor:[244,244,246]},
-      {id:'炭酸カルシウム',jp:'炭酸カルシウム（CaCO₃）',en:'Calcium carbonate',state:'powder',rcolor:[235,235,236]},
-      {id:'炭酸水素ナトリウム',jp:'炭酸水素ナトリウム（NaHCO₃）',en:'Bicarbonate',state:'solute',rcolor:[240,240,242]},
-      {id:'塩化ナトリウム',jp:'塩化ナトリウム（NaCl）',en:'Sodium chloride',state:'solute',rcolor:[248,248,250]},
-      {id:'塩化バリウム',jp:'塩化バリウム（BaCl₂）',en:'Barium chloride',state:'solute',rcolor:[246,246,248]},
-      {id:'硝酸バリウム',jp:'硝酸バリウム（Ba(NO₃)₂）',en:'Barium nitrate',state:'solute',rcolor:[246,246,248]},
-      {id:'ヨウ化カリウム',jp:'ヨウ化カリウム（KI）',en:'Potassium iodide',state:'solute',rcolor:[240,238,232]},
-      {id:'硝酸鉉',jp:'硝酸鉉（Pb(NO₃)₂）',en:'Lead nitrate',state:'solute',rcolor:[244,244,246]},
-      {id:'硝酸銀',jp:'硝酸銀（AgNO₃）',en:'Silver nitrate',state:'solute',rcolor:[236,238,242]},
-      {id:'硫化鉄',jp:'硫化鉄（FeS）',en:'Iron sulfide',state:'powder',rcolor:[64,60,56]},
-      {id:'CuSO₄',jp:'硫酸銅（CuSO₄）',en:'Copper sulfate',state:'solute',rcolor:[30,110,200]},
-      {id:'KMnO₄',jp:'過マンガン酸カリウム（KMnO₄）',en:'Permanganate',state:'solute',rcolor:[120,30,140]},
-      {id:'ヨウ素',jp:'ヨウ素（I₂）',en:'Iodine',state:'solute',rcolor:[120,80,120]},
-      {id:'デンプン',jp:'デンプン',en:'Starch',state:'solute',rcolor:[244,242,236]},
-      {id:'砂糖',jp:'砂糖（スクロース）',en:'Sucrose',state:'solute',rcolor:[248,246,242]},
-      {id:'BTB溶液',jp:'BTB溶液',en:'Bromothymol blue',state:'indicator',rcolor:[104,186,92]},
-      {id:'フェノールフタレイン',jp:'フェノールフタレイン',en:'Phenolphthalein',state:'indicator',rcolor:[222,90,160]},
-      {id:'メチルオレンジ',jp:'メチルオレンジ',en:'Methyl orange',state:'indicator',rcolor:[236,150,58]},
-      {id:'リトマス',jp:'リトマス（液）',en:'Litmus',state:'indicator',rcolor:[150,112,172]},
+      // 溶媒
+      {id:'水',jp:'水',en:'Water',state:'liquid',group:'溶媒',rcolor:[150,185,205,.42]},
+      {id:'海水',jp:'海水',en:'Seawater',state:'liquid',group:'溶媒',rcolor:[120,170,180,.5]},
+      {id:'エタノール',jp:'エタノール（C₂H₅OH）',en:'Ethanol',state:'liquid',group:'溶媒',rcolor:[205,212,220,.32]},
+      // 酸
+      {id:'硫酸希',jp:'希硫酸（H₂SO₄ 希）',en:'Dilute H₂SO₄',state:'liquid',group:'酸',rcolor:[208,220,212,.34]},
+      {id:'硫酸濃',jp:'濃硫酸（H₂SO₄ 濃）',en:'Conc. H₂SO₄',state:'liquid',group:'酸',rcolor:[232,212,140,.46]},
+      {id:'塩酸',jp:'塩酸（HCl）',en:'Hydrochloric',state:'liquid',group:'酸',rcolor:[210,222,212,.38]},
+      {id:'硝酸希',jp:'希硝酸（HNO₃ 希）',en:'Dilute HNO₃',state:'liquid',group:'酸',rcolor:[214,222,210,.36]},
+      {id:'硝酸濃',jp:'濃硝酸（HNO₃ 濃）',en:'Conc. HNO₃',state:'liquid',group:'酸',rcolor:[235,202,150,.46]},
+      {id:'酢酸',jp:'酢酸（CH₃COOH）',en:'Acetic acid',state:'liquid',group:'酸',rcolor:[248,246,240,.36]},
+      // 塩基
+      {id:'水酸化ナトリウム',jp:'水酸化ナトリウム（NaOH）',en:'Sodium hydroxide',state:'solute',group:'塩基',rcolor:[240,240,244]},
+      {id:'水酸化カリウム',jp:'水酸化カリウム（KOH）',en:'Potassium hydroxide',state:'solute',group:'塩基',rcolor:[238,238,242]},
+      {id:'石灰水',jp:'石灰水（Ca(OH)₂）',en:'Limewater',state:'liquid',group:'塩基',rcolor:[240,242,245,.42]},
+      {id:'アンモニア水',jp:'アンモニア水（NH₃）',en:'Ammonia',state:'liquid',group:'塩基',rcolor:[195,212,232,.38]},
+      // 酸化剤
+      {id:'漂白剤',jp:'次亜塩素酸ナトリウム（NaClO）',en:'Bleach',state:'liquid',group:'酸化剤',rcolor:[205,228,185,.44]},
+      {id:'過酸化水素水',jp:'過酸化水素水（H₂O₂）',en:'Peroxide',state:'liquid',group:'酸化剤',rcolor:[210,225,235,.4]},
+      // 塩
+      {id:'炭酸ナトリウム',jp:'炭酸ナトリウム（Na₂CO₃）',en:'Sodium carbonate',state:'solute',group:'塩',rcolor:[244,244,246]},
+      {id:'炭酸水素ナトリウム',jp:'炭酸水素ナトリウム（NaHCO₃）',en:'Bicarbonate',state:'solute',group:'塩',rcolor:[240,240,242]},
+      {id:'塩化ナトリウム',jp:'塩化ナトリウム（NaCl）',en:'Sodium chloride',state:'solute',group:'塩',rcolor:[248,248,250]},
+      {id:'塩化バリウム',jp:'塩化バリウム（BaCl₂）',en:'Barium chloride',state:'solute',group:'塩',rcolor:[246,246,248]},
+      {id:'硝酸バリウム',jp:'硝酸バリウム（Ba(NO₃)₂）',en:'Barium nitrate',state:'solute',group:'塩',rcolor:[246,246,248]},
+      {id:'ヨウ化カリウム',jp:'ヨウ化カリウム（KI）',en:'Potassium iodide',state:'solute',group:'塩',rcolor:[240,238,232]},
+      {id:'塩化アンモニウム',jp:'塩化アンモニウム（NH₄Cl）',en:'Ammonium chloride',state:'solute',group:'塩',rcolor:[246,246,248]},
+      {id:'硝酸鉛',jp:'硝酸鉛（Pb(NO₃)₂）',en:'Lead nitrate',state:'solute',group:'塩',rcolor:[244,244,246]},
+      {id:'硝酸銀',jp:'硝酸銀（AgNO₃）',en:'Silver nitrate',state:'solute',group:'塩',rcolor:[236,238,242]},
+      // 粉末・固体
+      {id:'炭酸カルシウム',jp:'炭酸カルシウム（CaCO₃）',en:'Calcium carbonate',state:'powder',group:'粉末',rcolor:[235,235,236]},
+      {id:'硫化鉄',jp:'硫化鉄（FeS）',en:'Iron sulfide',state:'powder',group:'粉末',rcolor:[64,60,56]},
+      {id:'二酸化マンガン',jp:'二酸化マンガン（MnO₂）',en:'Manganese dioxide',state:'powder',group:'粉末',rcolor:[22,20,18]},
+      {id:'酸化銅',jp:'酸化銅(II)（CuO）',en:'Copper(II) oxide',state:'powder',group:'粉末',rcolor:[28,22,20]},
+      // 溶液試薬
+      {id:'CuSO₄',jp:'硫酸銅（CuSO₄）',en:'Copper sulfate',state:'solute',group:'溶液',rcolor:[30,110,200]},
+      {id:'KMnO₄',jp:'過マンガン酸カリウム（KMnO₄）',en:'Permanganate',state:'solute',group:'溶液',rcolor:[120,30,140]},
+      {id:'ヨウ素',jp:'ヨウ素（I₂）',en:'Iodine',state:'solute',group:'溶液',rcolor:[120,80,120]},
+      // 有機
+      {id:'デンプン',jp:'デンプン',en:'Starch',state:'solute',group:'有機',rcolor:[244,242,236]},
+      {id:'砂糖',jp:'砂糖（スクロース）',en:'Sucrose',state:'solute',group:'有機',rcolor:[248,246,242]},
+      // 指示薬
+      {id:'BTB溶液',jp:'BTB溶液',en:'Bromothymol blue',state:'indicator',group:'指示薬',rcolor:[104,186,92]},
+      {id:'フェノールフタレイン',jp:'フェノールフタレイン',en:'Phenolphthalein',state:'indicator',group:'指示薬',rcolor:[222,90,160]},
+      {id:'メチルオレンジ',jp:'メチルオレンジ',en:'Methyl orange',state:'indicator',group:'指示薬',rcolor:[236,150,58]},
+      {id:'リトマス',jp:'リトマス（液）',en:'Litmus',state:'indicator',group:'指示薬',rcolor:[150,112,172]},
     ];
     this.elements.forEach(e=>{e.st=stTag[e.state];e.stColor=stCol[e.state];e.swatch=e.dot;e.img='assets/el/'+e.id+'.png';});
     this.materials.forEach(m=>{m.st=stTag[m.state];m.stColor=stCol[m.state];m.swatch=this.rgbaStr(m.rcolor);m.swatchR=(m.state==='liquid')?'50%':'2px';});
@@ -609,9 +629,13 @@ class Component extends DCLogic {
     const heatOn=s.heating,stirOn=s.stirring,ventOn=s.venting; const running=this.state.running;
     let rname=activeR?(activeR.jp+' / '+activeR.en):'未選択 / no reaction'; if(activeR&&activeR.needHeat&&!running&&!s.heating)rname+='（要加熱）';
     const exo=activeR?((activeR.dHkJ||0)<0):true;
-    const learnPanel=activeR?{show:true,eq:activeR.eq,ionEq:activeR.ionEq||'—',rxClass:activeR.rxClass||'—',jp:activeR.jp+' / '+activeR.en,kind:exo?'発熱反応':'吸熱反応',kindColor:exo?'var(--warn)':'var(--accent2)',dH:String(activeR.dHkJ||0),note:activeR.log,detail:this.state.learning}:{show:false,eq:'',ionEq:'',rxClass:'',jp:'',kind:'',kindColor:'',dH:'',note:'',detail:false};
+    const learnPanel=activeR?{show:true,eq:activeR.eq,ionEq:activeR.ionEq||'—',rxClass:activeR.rxClass||'—',jp:activeR.jp+' / '+activeR.en,kind:exo?'発熱反応':'吸熱反応',kindColor:exo?'var(--warn)':'var(--accent2)',dH:String(activeR.dHkJ||0),note:activeR.log,detail:this.state.learning,dangerLevel:activeR.dangerLevel||1,dangerLabel:['安全','注意','危険','非常に危険','実験室以外禁止'][(activeR.dangerLevel||1)-1],dangerFg:['var(--ok)','var(--warn)','#ff8c00','var(--danger)','#ff1a1a'][(activeR.dangerLevel||1)-1],dangerBg:['rgba(95,211,139,.15)','rgba(255,184,77,.15)','rgba(255,140,60,.15)','rgba(255,91,82,.15)','rgba(200,0,0,.25)'][(activeR.dangerLevel||1)-1]}:{show:false,eq:'',ionEq:'',rxClass:'',jp:'',kind:'',kindColor:'',dH:'',note:'',detail:false,dangerLevel:1,dangerLabel:'',dangerFg:'',dangerBg:''};
     const repItems=[{label:'温度 / Temp',value:snap.T_C.toFixed(1)+' °C'},{label:'pH',value:snap.pH.toFixed(2)},{label:'圧力 / Pressure',value:snap.pressure.toFixed(1)+' kPa'},{label:'導電率 / Conductivity',value:snap.conductivity.toFixed(1)+' mS/cm'},{label:'体積 / Volume',value:snap.volumeMl.toFixed(0)+' mL'},{label:'ガス濃度 / Gas',value:gasPct+' %'}];
-    return { rootRef:this.rootRef,canvasRef:this.canvasRef,sparkRef:this.sparkRef, elements:this.elements,materials:this.materials,
+    const grpOrder=['溶媒','酸','塩基','酸化剤','塩','粉末','溶液','有機','指示薬'];
+    const grpLabels={'溶媒':'SOLVENTS / 溶媒','酸':'ACIDS / 酸','塩基':'BASES / 塩基','酸化剤':'OXIDIZERS / 酸化剤','塩':'SALTS / 塩','粉末':'POWDERS / 粉末・固体','溶液':'SOLUTIONS / 溶液試薬','有機':'ORGANIC / 有機','指示薬':'INDICATORS / 指示薬'};
+    const grpMap={}; this.materials.forEach(m=>{const g=m.group||'その他';if(!grpMap[g])grpMap[g]=[];grpMap[g].push(m);});
+    const materialGroups=grpOrder.filter(g=>grpMap[g]).map(g=>({label:grpLabels[g],items:grpMap[g]}));
+    return { rootRef:this.rootRef,canvasRef:this.canvasRef,sparkRef:this.sparkRef, elements:this.elements,materials:this.materials,materialGroups,
       beaker:this.state.beaker, beakerEmpty:this.state.beaker.length===0,
       metrics, solColor:this.rgba(s.liquid,Math.max(0.12,s.liquid[3])), runState:running?'反応中 RUNNING':'待機 IDLE',
       eq:activeR?activeR.eq:'—  reagents not combined', eqColor:activeR?(running?'var(--accent)':'var(--muted)'):'var(--muted)',
