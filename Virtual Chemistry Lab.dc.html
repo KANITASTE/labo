@@ -23,12 +23,33 @@
   @keyframes sirenBar{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
   @keyframes toastIn{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
   @keyframes flicker{0%,100%{opacity:.9}50%{opacity:.55}}
+  
+  /* ── Responsive layout ── */
+  @media (max-width:1100px){
+    #lab-main{grid-template-columns:240px 1fr 300px!important}
+  }
+  @media (max-width:860px){
+    #lab-main{grid-template-columns:220px 1fr!important;grid-template-rows:1fr auto}
+    #lab-observe{grid-column:1/span 2;border-left:none!important;border-top:1px solid var(--line);max-height:260px;overflow-y:auto}
+  }
+  @media (max-width:640px){
+    html,body{overflow:auto!important;height:auto!important}
+    #lab-main{display:flex!important;flex-direction:column!important;height:auto!important;overflow:visible!important}
+    #lab-header{height:auto!important;min-height:50px!important;flex-wrap:wrap!important;padding:8px 12px!important;gap:8px!important}
+    #lab-header>div:nth-child(2){display:none!important}
+    #lab-library{max-height:230px!important;border-right:none!important;border-bottom:1px solid rgba(255,255,255,.085)!important}
+    #lab-elgrid{grid-template-columns:repeat(3,1fr)!important;gap:5px!important}
+    #lab-bench{min-height:0!important;flex:none!important}
+    #lab-drop{min-height:60vw!important;flex:none!important;height:60vw!important}
+    #lab-observe{border-left:none!important;border-top:1px solid rgba(255,255,255,.085)!important;max-height:none!important;flex:none!important}
+    #lab-toolbar{flex-wrap:wrap!important;padding:9px 12px!important;gap:7px!important}
+  }
   @media print{ body{overflow:visible} body *{visibility:hidden!important} #lab-report,#lab-report *{visibility:visible!important} #lab-report{position:fixed!important;inset:0!important;overflow:visible!important} }
 </style>
 </helmet>
 <div ref="{{ rootRef }}" style="--accent:#3fd9c8;--accent2:#7aa2ff;--danger:#ff5b52;--warn:#ffb84d;--ok:#5fd38b;--bg:#0a0e13;--panel:rgba(255,255,255,.035);--panel2:rgba(255,255,255,.055);--line:rgba(255,255,255,.085);--text:#e8eef3;--muted:#8a98a6;--mono:'IBM Plex Mono',ui-monospace,monospace;font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--text);height:100vh;width:100vw;overflow:hidden;display:flex;flex-direction:column;background:radial-gradient(120% 80% at 50% -10%,#101822 0%,#0a0e13 45%,#06090d 100%)">
 
-  <header style="height: 62px; flex: none; display: flex; align-items: center; gap: 18px; padding: 0 22px; border-bottom: 1px solid var(--line); background: rgba(8,12,17,.6); backdrop-filter: blur(8px); position: relative">
+  <header id="lab-header" style="height: 62px; flex: none; display: flex; align-items: center; gap: 18px; padding: 0 22px; border-bottom: 1px solid var(--line); background: rgba(8,12,17,.6); backdrop-filter: blur(8px); position: relative">
     <div style="display:flex;align-items:center;gap:12px;min-width:240px">
       <div style="width:30px;height:30px;border-radius:9px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:radial-gradient(60% 60% at 40% 30%,rgba(63,217,200,.35),transparent),#0e151c;box-shadow:0 0 22px rgba(63,217,200,.18)">
         <div style="width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)"></div>
@@ -61,17 +82,17 @@
     </div>
   </header>
 
-  <main style="flex:1;display:grid;grid-template-columns:296px 1fr 356px;min-height:0">
+  <main id="lab-main" style="flex:1;display:grid;grid-template-columns:296px 1fr 356px;min-height:0">
 
     <!-- LEFT : reagent library -->
-    <aside style="border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:rgba(255,255,255,.012)">
+    <aside id="lab-library" style="border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:rgba(255,255,255,.012)">
       <div style="padding:14px 16px 10px;flex:none">
         <div style="font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--muted)">ELEMENT LIBRARY</div>
         <div style="font-size:10.5px;color:var(--muted);margin-top:2px">元素・材料 — ビーカーへドラッグ / drag in</div>
       </div>
       <div style="flex:1;overflow:auto;padding:0 14px 16px">
         <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.12em;margin:6px 2px 8px">ELEMENTS / 元素</div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+        <div id="lab-elgrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
           <sc-for list="{{ elements }}" as="el" hint-placeholder-count="0">
             <div draggable="true" data-id="{{ el.id }}" onDragStart="{{ onDragStart }}" onClick="{{ onChipClick }}" title="{{ el.en }}" style="position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:grab;user-select:none;aspect-ratio:79/112;transform-origin:center;transition:transform .16s ease,border-color .15s,box-shadow .16s;will-change:transform" style-hover="border-color:var(--accent);transform:scale(1.4);z-index:20;box-shadow:0 12px 28px rgba(0,0,0,.6)">
               <img data-elsrc="{{ el.img }}" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none">
@@ -99,14 +120,14 @@
     </aside>
 
     <!-- CENTER : bench -->
-    <section style="display:flex;flex-direction:column;min-height:0;position:relative">
+    <section id="lab-bench" style="display:flex;flex-direction:column;min-height:0;position:relative">
       <div style="flex:none;display:flex;align-items:center;gap:14px;padding:11px 18px;border-bottom:1px solid var(--line);background:rgba(8,12,17,.4)">
         <span style="font-family:var(--mono);font-size:9.5px;color:var(--accent);letter-spacing:.14em">REACTION</span>
         <span style="font-family:var(--mono);font-size:15px;font-weight:500;letter-spacing:.01em;color:{{ eqColor }}">{{ eq }}</span>
         <span style="font-size:11.5px;color:var(--muted);margin-left:auto">{{ reactionName }}</span>
       </div>
 
-      <div onDrop="{{ onDrop }}" onDragOver="{{ onDragOver }}" style="flex:1;position:relative;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center">
+      <div id="lab-drop" onDrop="{{ onDrop }}" onDragOver="{{ onDragOver }}" style="flex:1;position:relative;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center">
         <div style="position:relative;height:97%;aspect-ratio:1211/1299;max-width:94%">
           <img src="assets/beaker.png" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none">
           <canvas ref="{{ canvasRef }}" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
@@ -138,7 +159,7 @@
 
       <div style="flex:none;text-align:center;padding:7px 18px 0;color:#ff5b52;font-size:11px;line-height:1.45">【注意】実際の実験とは異なります。これらの反応はイメージです。安全のため、必ず指導者のもとで正しい器具・手順で実験を行ってください。</div>
 
-      <div style="flex:none;display:flex;align-items:center;gap:9px;padding:13px 18px;border-top:1px solid var(--line);background:rgba(8,12,17,.5)">
+      <div id="lab-toolbar" style="flex:none;display:flex;align-items:center;gap:9px;padding:13px 18px;border-top:1px solid var(--line);background:rgba(8,12,17,.5)">
         <button onClick="{{ onHeat }}" style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--text);background:{{ heatBg }};border:1px solid {{ heatBorder }};border-radius:10px;padding:9px 14px;cursor:pointer;transition:.15s" style-hover="border-color:var(--warn)"><span style="width:8px;height:8px;border-radius:50%;background:var(--warn);opacity:{{ heatDot }}"></span>加熱 Heat</button>
         <button onClick="{{ onStir }}" style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--text);background:{{ stirBg }};border:1px solid {{ stirBorder }};border-radius:10px;padding:9px 14px;cursor:pointer;transition:.15s" style-hover="border-color:var(--accent2)"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent2);opacity:{{ stirDot }}"></span>撹拌 Stir</button>
         <button onClick="{{ onVent }}" style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--text);background:{{ ventBg }};border:1px solid {{ ventBorder }};border-radius:10px;padding:9px 14px;cursor:pointer;transition:.15s" style-hover="border-color:var(--accent)"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:{{ ventDot }}"></span>換気 Vent</button>
@@ -150,7 +171,7 @@
     </section>
 
     <!-- RIGHT : observation -->
-    <aside style="border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:rgba(255,255,255,.012)">
+    <aside id="lab-observe" style="border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:rgba(255,255,255,.012)">
       <div style="flex:1;overflow:auto;padding:15px 15px 18px">
         <div style="display:flex;align-items:center;justify-content:space-between">
           <div>
