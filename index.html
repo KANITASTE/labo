@@ -25,54 +25,80 @@
   @keyframes flicker{0%,100%{opacity:.9}50%{opacity:.55}}
   
   /* ── Responsive layout ── */
-  @media (max-width:1100px){
-    #lab-main{grid-template-columns:240px 1fr 300px!important}
+  /* large desktop = inline 3-col grid (300 / 1fr / 360) */
+  @media (max-width:1180px){
+    #lab-main{grid-template-columns:264px 1fr 320px!important}
   }
-  @media (max-width:860px){
-    #lab-main{grid-template-columns:220px 1fr!important;grid-template-rows:1fr auto}
-    #lab-observe{grid-column:1/span 2;border-left:none!important;border-top:1px solid var(--line);max-height:260px;overflow-y:auto}
+  /* tablet landscape ~1024 */
+  @media (max-width:1080px){
+    #lab-main{grid-template-columns:240px 1fr 296px!important}
+    #lab-header{gap:10px!important;padding:0 14px!important}
   }
-  @media (max-width:640px){
+  /* tablet portrait 768–899 : 2 columns, observation drops to a capped bottom row */
+  @media (max-width:899px){
+    #lab-main{grid-template-columns:224px 1fr!important;grid-template-rows:minmax(0,1fr) auto!important}
+    #lab-observe{grid-column:1 / span 2!important;border-left:none!important;border-top:1px solid var(--line)!important;max-height:300px}
+    #lab-headctl{min-width:0!important}
+  }
+  /* phones (375 portrait & 667 landscape) : single-column flow, body scrolls */
+  @media (max-width:767px){
     html,body{overflow:auto!important;height:auto!important}
-    #lab-main{display:flex!important;flex-direction:column!important;height:auto!important;overflow:visible!important}
-    #lab-header{height:auto!important;min-height:50px!important;flex-wrap:wrap!important;padding:8px 12px!important;gap:8px!important}
-    #lab-header>div:nth-child(2){display:none!important}
-    #lab-library{max-height:230px!important;border-right:none!important;border-bottom:1px solid rgba(255,255,255,.085)!important}
-    #lab-elgrid{grid-template-columns:repeat(3,1fr)!important;gap:5px!important}
+    #app-root{height:auto!important;min-height:100vh!important;overflow:visible!important}
+    #lab-main{display:flex!important;flex-direction:column!important;min-height:0!important}
+    #lab-header{height:auto!important;flex-wrap:wrap!important;padding:8px 12px!important;gap:8px!important;position:sticky;top:0;z-index:25}
+    #lab-headmissionwrap{order:3;flex:1 0 100%!important;justify-content:flex-start!important}
+    #lab-headmission{max-width:none!important;width:100%}
+    #lab-headctl{min-width:0!important;flex:1;justify-content:flex-end!important;flex-wrap:wrap!important;row-gap:6px!important}
+    #lab-library{border-right:none!important;border-bottom:1px solid var(--line)!important;max-height:none!important}
+    #lab-libbody{max-height:300px!important}
     #lab-bench{min-height:0!important;flex:none!important}
-    #lab-drop{min-height:60vw!important;flex:none!important;height:60vw!important}
-    #lab-observe{border-left:none!important;border-top:1px solid rgba(255,255,255,.085)!important;max-height:none!important;flex:none!important}
-    #lab-toolbar{flex-wrap:wrap!important;padding:9px 12px!important;gap:7px!important}
+    #lab-drop{height:62vw!important;min-height:240px!important;max-height:62vh;flex:none!important}
+    #lab-observe{border-left:none!important;border-top:1px solid var(--line)!important;flex:none!important}
+    #lab-observe>div{overflow:visible!important}
+    #lab-toolbar{flex-wrap:wrap!important;padding:10px 12px!important;gap:7px!important}
+    #lab-toolbar button{flex:1 1 auto;min-height:44px}
+    #lab-toolbar>div{flex-basis:100%!important}
+  }
+  @media (max-width:430px){
+    #lab-elgrid{grid-template-columns:repeat(4,1fr)!important}
+    #lab-headbrand{min-width:0!important}
+    #lab-headbrand .brandsub{display:none}
   }
   @media print{ body{overflow:visible} body *{visibility:hidden!important} #lab-report,#lab-report *{visibility:visible!important} #lab-report{position:fixed!important;inset:0!important;overflow:visible!important} }
 </style>
 </helmet>
-<div ref="{{ rootRef }}" style="--accent:#3fd9c8;--accent2:#7aa2ff;--danger:#ff5b52;--warn:#ffb84d;--ok:#5fd38b;--bg:#0a0e13;--panel:rgba(255,255,255,.035);--panel2:rgba(255,255,255,.055);--line:rgba(255,255,255,.085);--text:#e8eef3;--muted:#8a98a6;--mono:'IBM Plex Mono',ui-monospace,monospace;font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--text);height:100vh;width:100vw;overflow:hidden;display:flex;flex-direction:column;background:radial-gradient(120% 80% at 50% -10%,#101822 0%,#0a0e13 45%,#06090d 100%)">
+<div ref="{{ rootRef }}" id="app-root" style="--accent:#3fd9c8;--accent2:#7aa2ff;--danger:#ff5b52;--warn:#ffb84d;--ok:#5fd38b;--bg:#0a0e13;--panel:rgba(255,255,255,.035);--panel2:rgba(255,255,255,.055);--line:rgba(255,255,255,.085);--text:#e8eef3;--muted:#8a98a6;--mono:'IBM Plex Mono',ui-monospace,monospace;font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--text);height:100vh;width:100vw;overflow:hidden;display:flex;flex-direction:column;background:radial-gradient(120% 80% at 50% -10%,#101822 0%,#0a0e13 45%,#06090d 100%)">
 
   <header id="lab-header" style="height: 62px; flex: none; display: flex; align-items: center; gap: 18px; padding: 0 22px; border-bottom: 1px solid var(--line); background: rgba(8,12,17,.6); backdrop-filter: blur(8px); position: relative">
-    <div style="display:flex;align-items:center;gap:12px;min-width:240px">
-      <div style="width:30px;height:30px;border-radius:9px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:radial-gradient(60% 60% at 40% 30%,rgba(63,217,200,.35),transparent),#0e151c;box-shadow:0 0 22px rgba(63,217,200,.18)">
+    <div id="lab-headbrand" style="display:flex;align-items:center;gap:12px;min-width:200px">
+      <div style="width:30px;height:30px;border-radius:9px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:radial-gradient(60% 60% at 40% 30%,rgba(63,217,200,.35),transparent),#0e151c;box-shadow:0 0 22px rgba(63,217,200,.18);flex:none">
         <div style="width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)"></div>
       </div>
       <div style="line-height:1.05">
         <div style="font-size:13.5px;font-weight:600;letter-spacing:.04em">VIRTUAL CHEMISTRY LAB</div>
-        <div style="font-size:11px;color:var(--muted);font-weight:400">バーチャル化学実験室 ・ 定量反応シミュレーター</div>
+        <div class="brandsub" style="font-size:11px;color:var(--muted);font-weight:400">バーチャル化学実験室 ・ 定量反応シミュレーター</div>
       </div>
     </div>
 
-    <div style="flex:1;display:flex;align-items:center;justify-content:center">
-      <div style="display:flex;align-items:center;gap:13px;padding:7px 16px;border:1px solid var(--line);border-radius:11px;background:var(--panel);max-width:540px">
-        <span style="font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:.14em">MISSION {{ mission.idxLabel }}/{{ mission.total }}</span>
+    <div id="lab-headmissionwrap" style="flex:1;display:flex;align-items:center;justify-content:center;min-width:0">
+      <div id="lab-headmission" style="display:flex;align-items:center;gap:11px;padding:6px 12px;border:1px solid var(--line);border-radius:11px;background:var(--panel);max-width:620px;flex-wrap:wrap">
+        <div style="display:flex;gap:3px">
+          <sc-for list="{{ diffBtns }}" as="d" hint-placeholder-count="3">
+            <button data-d="{{ d.d }}" onClick="{{ onDiff }}" style="font-size:10.5px;font-weight:600;color:{{ d.fg }};background:{{ d.bg }};border:1px solid {{ d.border }};border-radius:7px;padding:4px 9px;cursor:pointer">{{ d.d }}</button>
+          </sc-for>
+        </div>
         <span style="width:1px;height:18px;background:var(--line)"></span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:.12em">MISSION {{ mission.idxLabel }}/{{ mission.total }}</span>
         <span style="font-size:12.5px;font-weight:500">{{ mission.jp }}</span>
-        <span style="font-size:11px;color:var(--muted)">{{ mission.en }}</span>
+        <span style="font-size:10.5px;color:var(--muted)">{{ missionHint }}</span>
         <sc-if value="{{ missionDone }}" hint-placeholder-val="{{ false }}">
           <span style="font-family:var(--mono);font-size:10px;color:var(--ok);border:1px solid rgba(95,211,139,.4);padding:2px 7px;border-radius:6px">✓ CLEAR</span>
         </sc-if>
       </div>
     </div>
 
-    <div style="display:flex;align-items:center;gap:8px;min-width:240px;justify-content:flex-end">
+    <div id="lab-headctl" style="display:flex;align-items:center;gap:7px;min-width:200px;justify-content:flex-end">
+      <button onClick="{{ onOpenDict }}" style="font-family:var(--mono);font-size:10px;color:var(--accent2);background:rgba(122,162,255,.1);border:1px solid rgba(122,162,255,.4);border-radius:8px;padding:7px 10px;cursor:pointer" style-hover="background:rgba(122,162,255,.2)">⊕ 反応図鑑</button>
       <button onClick="{{ onToggleLearn }}" style="font-family:var(--mono);font-size:10px;color:{{ learnFg }};background:{{ learnBg }};border:1px solid {{ learnBorder }};border-radius:8px;padding:7px 10px;cursor:pointer">{{ learnLabel }}</button>
       <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;color:var(--muted)">
         <span style="width:7px;height:7px;border-radius:50%;background:{{ hazard.dot }};box-shadow:0 0 8px {{ hazard.dot }};animation:pulseDot 1.6s infinite"></span>
@@ -84,38 +110,106 @@
 
   <main id="lab-main" style="flex:1;display:grid;grid-template-columns:296px 1fr 356px;min-height:0">
 
-    <!-- LEFT : reagent library -->
+    <!-- LEFT : reagent library (tabbed + search) -->
     <aside id="lab-library" style="border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:rgba(255,255,255,.012)">
-      <div style="padding:14px 16px 10px;flex:none">
-        <div style="font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--muted)">ELEMENT LIBRARY</div>
-        <div style="font-size:10.5px;color:var(--muted);margin-top:2px">元素・材料 — ビーカーへドラッグ / drag in</div>
-      </div>
-      <div style="flex:1;overflow:auto;padding:0 14px 16px">
-        <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.12em;margin:6px 2px 8px">ELEMENTS / 元素</div>
-        <div id="lab-elgrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
-          <sc-for list="{{ elements }}" as="el" hint-placeholder-count="0">
-            <div draggable="true" data-id="{{ el.id }}" onDragStart="{{ onDragStart }}" onClick="{{ onChipClick }}" title="{{ el.en }}" style="position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:grab;user-select:none;aspect-ratio:79/112;transform-origin:center;transition:transform .16s ease,border-color .15s,box-shadow .16s;will-change:transform" style-hover="border-color:var(--accent);transform:scale(1.4);z-index:20;box-shadow:0 12px 28px rgba(0,0,0,.6)">
-              <img data-elsrc="{{ el.img }}" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none">
-              <span style="position:absolute;right:3px;bottom:3px;font-size:7.5px;color:{{ el.stColor }};background:rgba(6,9,13,.72);border:1px solid var(--line);border-radius:4px;padding:0 3px">{{ el.st }}</span>
-            </div>
-          </sc-for>
+      <!-- search -->
+      <div style="padding:12px 12px 0;flex:none">
+        <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:8px 11px">
+          <span style="font-size:12px;color:var(--muted)">🔍</span>
+          <input value="{{ q }}" onInput="{{ onSearch }}" placeholder="検索 (例: Ag / 銀 / 硝酸銀)" style="flex:1;min-width:0;border:none;background:transparent;outline:none;color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:12.5px">
+          <sc-if value="{{ searching }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ onClearSearch }}" style="border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:14px;line-height:1;padding:0">✕</button>
+          </sc-if>
         </div>
-        <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.12em;margin:16px 2px 8px">MATERIALS / 実験材料</div>
-        <div style="display:flex;flex-direction:column;gap:0">
-          <sc-for list="{{ materialGroups }}" as="grp" hint-placeholder-count="3">
-            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.1em;margin:10px 2px 5px;border-top:1px solid var(--line);padding-top:8px">{{ grp.label }}</div>
-            <div style="display:flex;flex-direction:column;gap:5px">
-              <sc-for list="{{ grp.items }}" as="mt" hint-placeholder-count="3">
-                <div draggable="true" data-id="{{ mt.id }}" onDragStart="{{ onDragStart }}" onClick="{{ onChipClick }}" title="{{ mt.en }}" style="display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.02);padding:6px 10px;cursor:grab;user-select:none;transition:border-color .15s" style-hover="border-color:var(--accent)">
-                  <span style="width:11px;height:11px;border-radius:{{ mt.swatchR }};background:{{ mt.swatch }};box-shadow:0 0 0 1px rgba(255,255,255,.08) inset;flex:none"></span>
-                  <span style="font-size:11.5px;font-weight:500">{{ mt.jp }}</span>
-                  <span style="font-size:7.5px;color:{{ mt.stColor }};border:1px solid var(--line);border-radius:4px;padding:1px 4px">{{ mt.st }}</span>
-                  <span style="font-size:9.5px;color:var(--muted);margin-left:auto;font-family:var(--mono)">{{ mt.en }}</span>
+      </div>
+      <!-- tabs -->
+      <div style="display:flex;gap:4px;padding:10px 12px 0;flex:none">
+        <button data-t="elements" onClick="{{ onTab }}" style="flex:1;font-size:11.5px;font-weight:600;color:{{ elTab.fg }};background:{{ elTab.bg }};border:1px solid var(--line);border-bottom:2px solid {{ elTab.border }};border-radius:8px 8px 0 0;padding:8px 4px;cursor:pointer">元素</button>
+        <button data-t="reagents" onClick="{{ onTab }}" style="flex:1;font-size:11.5px;font-weight:600;color:{{ reTab.fg }};background:{{ reTab.bg }};border:1px solid var(--line);border-bottom:2px solid {{ reTab.border }};border-radius:8px 8px 0 0;padding:8px 4px;cursor:pointer">試薬</button>
+        <button data-t="indicators" onClick="{{ onTab }}" style="flex:1;font-size:11.5px;font-weight:600;color:{{ inTab.fg }};background:{{ inTab.bg }};border:1px solid var(--line);border-bottom:2px solid {{ inTab.border }};border-radius:8px 8px 0 0;padding:8px 4px;cursor:pointer">指示薬</button>
+      </div>
+
+      <div id="lab-libbody" style="flex:1;overflow:auto;padding:12px 12px 16px">
+
+        <!-- SEARCH RESULTS -->
+        <sc-if value="{{ searching }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <sc-if value="{{ searchNone }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:11.5px;color:var(--muted);padding:14px 4px;text-align:center">該当する元素・試薬がありません</div>
+            </sc-if>
+            <div id="lab-elgrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">
+              <sc-for list="{{ searchEls }}" as="el" hint-placeholder-count="0">
+                <div draggable="true" data-id="{{ el.id }}" onDragStart="{{ onDragStart }}" onClick="{{ onChipClick }}" title="{{ el.en }}" style="position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:grab;user-select:none;aspect-ratio:79/112;transition:transform .16s ease,border-color .15s,box-shadow .16s" style-hover="border-color:var(--accent);transform:scale(1.4);z-index:20;box-shadow:0 12px 28px rgba(0,0,0,.6)">
+                  <img data-elsrc="{{ el.img }}" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none">
+                  <sc-if value="{{ el.hazShow }}" hint-placeholder-val="{{ false }}"><span title="危険度" style="position:absolute;left:3px;top:3px;font-size:8px;color:{{ el.hazColor }};background:rgba(6,9,13,.82);border-radius:4px;padding:0 2px;z-index:2">⚠</span></sc-if>
+                  <span style="position:absolute;right:3px;bottom:3px;font-size:7.5px;color:{{ el.stColor }};background:rgba(6,9,13,.72);border:1px solid var(--line);border-radius:4px;padding:0 3px">{{ el.st }}</span>
                 </div>
               </sc-for>
             </div>
-          </sc-for>
-        </div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <sc-for list="{{ searchMats }}" as="mt" hint-placeholder-count="0">
+                <div draggable="true" data-id="{{ mt.id }}" onDragStart="{{ onDragStart }}" onClick="{{ onChipClick }}" title="{{ mt.en }}" style="display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.02);padding:6px 10px;cursor:grab;user-select:none;transition:border-color .15s" style-hover="border-color:var(--accent)">
+                  <span style="width:11px;height:11px;border-radius:{{ mt.swatchR }};background:{{ mt.swatch }};box-shadow:0 0 0 1px rgba(255,255,255,.08) inset;flex:none"></span>
+                  <span style="font-size:11.5px;font-weight:500">{{ mt.jp }}</span>
+                  <sc-if value="{{ mt.hazShow }}" hint-placeholder-val="{{ false }}"><span style="font-size:8.5px;color:{{ mt.hazColor }};font-family:var(--mono);letter-spacing:-1.5px;flex:none">{{ mt.hazStars }}</span></sc-if>
+                  <span style="font-size:9px;color:var(--muted);margin-left:auto;font-family:var(--mono)">{{ mt.en }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ELEMENTS TAB -->
+        <sc-if value="{{ showEls }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.12em;margin:2px 2px 8px">ELEMENTS / 元素 — ビーカーへドラッグ</div>
+            <div id="lab-elgrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+              <sc-for list="{{ tabEls }}" as="el" hint-placeholder-count="0">
+                <div draggable="true" data-id="{{ el.id }}" onDragStart="{{ onDragStart }}" onClick="{{ onChipClick }}" title="{{ el.en }}" style="position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:grab;user-select:none;aspect-ratio:79/112;transition:transform .16s ease,border-color .15s,box-shadow .16s" style-hover="border-color:var(--accent);transform:scale(1.4);z-index:20;box-shadow:0 12px 28px rgba(0,0,0,.6)">
+                  <img data-elsrc="{{ el.img }}" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none">
+                  <sc-if value="{{ el.hazShow }}" hint-placeholder-val="{{ false }}"><span title="危険度" style="position:absolute;left:3px;top:3px;font-size:8px;color:{{ el.hazColor }};background:rgba(6,9,13,.82);border-radius:4px;padding:0 2px;z-index:2">⚠</span></sc-if>
+                  <span style="position:absolute;right:3px;bottom:3px;font-size:7.5px;color:{{ el.stColor }};background:rgba(6,9,13,.72);border:1px solid var(--line);border-radius:4px;padding:0 3px">{{ el.st }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- REAGENTS TAB -->
+        <sc-if value="{{ showReagents }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:0">
+            <sc-for list="{{ tabMatGroups }}" as="grp" hint-placeholder-count="6">
+              <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.1em;margin:10px 2px 5px;border-top:1px solid var(--line);padding-top:8px">{{ grp.label }}</div>
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <sc-for list="{{ grp.items }}" as="mt" hint-placeholder-count="3">
+                  <div draggable="true" data-id="{{ mt.id }}" onDragStart="{{ onDragStart }}" onClick="{{ onChipClick }}" title="{{ mt.en }}" style="display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.02);padding:6px 10px;cursor:grab;user-select:none;transition:border-color .15s" style-hover="border-color:var(--accent)">
+                    <span style="width:11px;height:11px;border-radius:{{ mt.swatchR }};background:{{ mt.swatch }};box-shadow:0 0 0 1px rgba(255,255,255,.08) inset;flex:none"></span>
+                    <span style="font-size:11.5px;font-weight:500">{{ mt.jp }}</span>
+                    <sc-if value="{{ mt.hazShow }}" hint-placeholder-val="{{ false }}"><span style="font-size:8.5px;color:{{ mt.hazColor }};font-family:var(--mono);letter-spacing:-1.5px;flex:none">{{ mt.hazStars }}</span></sc-if>
+                    <span style="font-size:9px;color:var(--muted);margin-left:auto;font-family:var(--mono)">{{ mt.en }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- INDICATORS TAB -->
+        <sc-if value="{{ showIndicators }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.12em;margin:2px 2px 8px">INDICATORS / pH指示薬</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <sc-for list="{{ tabIndicators }}" as="mt" hint-placeholder-count="4">
+                <div draggable="true" data-id="{{ mt.id }}" onDragStart="{{ onDragStart }}" onClick="{{ onChipClick }}" title="{{ mt.en }}" style="display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.02);padding:8px 11px;cursor:grab;user-select:none;transition:border-color .15s" style-hover="border-color:var(--accent)">
+                  <span style="width:13px;height:13px;border-radius:50%;background:{{ mt.swatch }};box-shadow:0 0 0 1px rgba(255,255,255,.08) inset;flex:none"></span>
+                  <span style="font-size:12px;font-weight:500">{{ mt.jp }}</span>
+                  <span style="font-size:9px;color:var(--muted);margin-left:auto;font-family:var(--mono)">{{ mt.en }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
       </div>
     </aside>
 
@@ -243,7 +337,7 @@
           <div style="margin-top:11px;border:1px solid rgba(122,162,255,.3);border-radius:11px;background:rgba(122,162,255,.06);padding:12px 13px">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
               <span style="font-family:var(--mono);font-size:9.5px;color:var(--accent2);letter-spacing:.12em">反応解析 / REACTION</span>
-              <span style="font-size:10.5px;background:{{ learnPanel.dangerBg }};border:1px solid {{ learnPanel.dangerFg }};border-radius:6px;padding:2px 8px;color:{{ learnPanel.dangerFg }};font-weight:600">⚠ Lv.{{ learnPanel.dangerLevel }} {{ learnPanel.dangerLabel }}</span>
+              <span style="font-size:10.5px;background:{{ learnPanel.dangerBg }};border:1px solid {{ learnPanel.dangerFg }};border-radius:6px;padding:2px 8px;color:{{ learnPanel.dangerFg }};font-weight:600">⚠ Lv.{{ learnPanel.dangerLevel }} {{ learnPanel.dangerLabel }} <span style="font-family:var(--mono);letter-spacing:-1px">{{ learnPanel.stars }}</span></span>
               <span style="font-size:10.5px;background:rgba(122,162,255,.14);border:1px solid rgba(122,162,255,.4);border-radius:6px;padding:2px 8px;color:var(--accent2);margin-left:auto">③ {{ learnPanel.rxClass }}</span>
             </div>
             <div style="font-size:12px;font-weight:500;margin-bottom:10px">{{ learnPanel.jp }}</div>
@@ -268,6 +362,31 @@
             </sc-if>
           </div>
         </sc-if>
+
+        <div style="margin-top:11px;border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:11px 12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <span style="font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.12em">実験履歴 / HISTORY</span>
+            <button onClick="{{ onClearHistory }}" style="font-family:var(--mono);font-size:9px;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:6px;padding:3px 8px;cursor:pointer" style-hover="color:var(--text)">クリア</button>
+          </div>
+          <sc-if value="{{ historyEmpty }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:11px;color:var(--muted);padding:6px 2px">まだ反応の記録がありません。試薬を反応させると時系列で記録されます。</div>
+          </sc-if>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <sc-for list="{{ history }}" as="h" hint-placeholder-count="0">
+              <div style="display:flex;gap:9px;padding:6px 0;border-bottom:1px solid var(--line)">
+                <span style="font-family:var(--mono);font-size:9px;color:var(--muted);flex:none;padding-top:2px;width:30px">{{ h.t }}</span>
+                <div style="min-width:0;flex:1">
+                  <div style="font-family:var(--mono);font-size:11px;color:var(--text);line-height:1.35;word-break:break-word">{{ h.title }}</div>
+                  <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
+                    <span style="color:var(--accent);font-size:11px">↓</span>
+                    <span style="font-size:11px;font-weight:500;color:var(--accent)">{{ h.result }}</span>
+                    <span style="font-family:var(--mono);font-size:9px;letter-spacing:-1px;color:{{ h.dColor }};margin-left:auto">{{ h.stars }}</span>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
 
         <div style="margin-top:11px">
           <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.12em;margin:2px 2px 7px">EVENT LOG / 実験ログ</div>
@@ -342,6 +461,44 @@
       <div style="margin-top:30px;display:flex;gap:10px" data-noprint="1">
         <button onClick="{{ onPrint }}" style="font-size:13px;font-weight:600;color:#fff;background:#10151b;border:none;border-radius:9px;padding:11px 22px;cursor:pointer">印刷 / PDF保存</button>
         <button onClick="{{ onCloseReport }}" style="font-size:13px;color:#10151b;background:#eef1f4;border:1px solid #d4d9de;border-radius:9px;padding:11px 18px;cursor:pointer">閉じる</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ dictOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:60;background:rgba(4,6,9,.72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px">
+      <div style="width:100%;max-width:740px;max-height:88vh;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;background:#0b1118;box-shadow:0 30px 80px rgba(0,0,0,.6);overflow:hidden">
+        <div style="flex:none;display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)">
+          <div style="line-height:1.1">
+            <div style="font-size:15px;font-weight:600">反応図鑑 / REACTION INDEX</div>
+            <div style="font-size:10.5px;color:var(--muted)">全 {{ dictCount }} 反応 ・ 危険度レベル付き</div>
+          </div>
+          <button onClick="{{ onCloseDict }}" style="margin-left:auto;font-size:13px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px 14px;cursor:pointer" style-hover="color:var(--text)">✕ 閉じる</button>
+        </div>
+        <div style="flex:none;padding:12px 18px 0">
+          <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:9px 12px">
+            <span style="font-size:12px;color:var(--muted)">🔍</span>
+            <input value="{{ dictQ }}" onInput="{{ onDictSearch }}" placeholder="検索 (例: CO₂ / 白色沈殿 / 酸化還元 / 水素)" style="flex:1;min-width:0;border:none;background:transparent;outline:none;color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:12.5px">
+          </div>
+        </div>
+        <div style="flex:1;overflow:auto;padding:14px 18px 18px;display:flex;flex-direction:column;gap:9px">
+          <sc-if value="{{ dictNone }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12px;color:var(--muted);padding:18px 4px;text-align:center">該当する反応が見つかりません。</div>
+          </sc-if>
+          <sc-for list="{{ dictList }}" as="r" hint-placeholder-count="8">
+            <div style="border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:12px 13px">
+              <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:8px">
+                <span style="font-size:12.5px;font-weight:600">{{ r.jp }}</span>
+                <span style="font-size:10px;color:var(--muted);font-family:var(--mono)">{{ r.en }}</span>
+                <span style="font-size:10px;background:rgba(122,162,255,.12);border:1px solid rgba(122,162,255,.35);border-radius:6px;padding:2px 7px;color:var(--accent2)">{{ r.rxClass }}</span>
+                <span style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:10px;color:{{ r.dlColor }}"><span style="font-family:var(--mono);letter-spacing:-1px">{{ r.stars }}</span>{{ r.dlLabel }}</span>
+              </div>
+              <div style="font-family:var(--mono);font-size:11.5px;line-height:1.45;color:var(--text);word-break:break-word">{{ r.eq }}</div>
+              <div style="font-family:var(--mono);font-size:11px;line-height:1.45;color:var(--accent);margin-top:3px;word-break:break-word">{{ r.ionEq }}</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-top:7px">{{ r.note }}</div>
+            </div>
+          </sc-for>
+        </div>
       </div>
     </div>
   </sc-if>
@@ -427,15 +584,24 @@ class Component extends DCLogic {
       {id:'メチルオレンジ',jp:'メチルオレンジ',en:'Methyl orange',state:'indicator',group:'指示薬',rcolor:[236,150,58]},
       {id:'リトマス',jp:'リトマス（液）',en:'Litmus',state:'indicator',group:'指示薬',rcolor:[150,112,172]},
     ];
-    this.elements.forEach(e=>{e.st=stTag[e.state];e.stColor=stCol[e.state];e.swatch=e.dot;e.img='assets/el/'+e.id+'.png';});
-    this.materials.forEach(m=>{m.st=stTag[m.state];m.stColor=stCol[m.state];m.swatch=this.rgbaStr(m.rcolor);m.swatchR=(m.state==='liquid')?'50%':'2px';});
+    const HAZ={Na:5,K:5,Hg:5,Cl:5,Ca:3,Au:3,Pb:3,Mg:2,Al:2,Zn:2,Fe:2,Ni:2,Sn:2,Cr:2,Co:2,Mn:2,S:2,
+      '硫酸濃':4,'硝酸濃':4,'硝酸希':3,'漂白剤':5,'硫化鉄':4,'過酸化水素水':2,'硫酸希':2,'塩酸':2,
+      '水酸化ナトリウム':3,'水酸化カリウム':3,'アンモニア水':3,'エタノール':3,'KMn₄₄':2,'KMn₄':2,'ヨウ素':2,
+      '硝酸鉛':3,'硝酸銀':2,'二酸化マンガン':2,'酸化銀':1,'砂糖':1};
+    this.HAZ=HAZ;
+    const dlC=['','#5fd38b','#ffb84d','#ff8c00','#ff5b52','#ff1a1a'];
+    const decorate=(o)=>{ o.haz=HAZ[o.id]||1; o.hazShow=o.haz>=3; o.hazColor=dlC[o.haz]; o.hazStars=this.stars(o.haz); };
+    this.elements.forEach(e=>{e.st=stTag[e.state];e.stColor=stCol[e.state];e.swatch=e.dot;e.img='assets/el/'+e.id+'.png';decorate(e);});
+    this.materials.forEach(m=>{m.st=stTag[m.state];m.stColor=stCol[m.state];m.swatch=this.rgbaStr(m.rcolor);m.swatchR=(m.state==='liquid')?'50%':'2px';decorate(m);});
     this.byId={}; [...this.elements,...this.materials].forEach(r=>this.byId[r.id]=r);
     this.swatchMap={}; this.elements.forEach(e=>this.swatchMap[e.id]=e.dot); this.materials.forEach(m=>this.swatchMap[m.id]=m.swatch);
     this.missions=[{goal:'Na_water',jp:'水素を生成せよ',en:'Generate hydrogen gas'},{goal:'Cu_HNO3',jp:'銅を溶かし青い溶液を作れ',en:'Dissolve copper into a blue solution'},{goal:'bleach_HCl',jp:'塩素を発生させ安全に換気せよ',en:'Generate & safely vent chlorine'}];
     this.sim=this.freshSim();
     this.hist=[]; this.samples=[];
-    this.state={tick:0,beaker:[],missionIdx:0,missionDone:false,blackout:false,failure:null,event:null,log:[],soundOn:true,learning:false,showReport:false,running:false};
+    this.state={tick:0,beaker:[],missionIdx:0,missionDone:false,blackout:false,failure:null,event:null,log:[],soundOn:true,learning:false,showReport:false,running:false,tab:'elements',q:'',dictOpen:false,dictQ:'',difficulty:'初級'};
     this.lastUi=0; this.audio=null; this.siren=null; this.ready=false; this.lastSample=0; this.lastActive=null;
+    this._seenRx=new Set(); this.expHistory=[];
+    try{ const h=JSON.parse(localStorage.getItem('vcl_history')||'[]'); if(Array.isArray(h)) this.expHistory=h.slice(0,40); }catch(e){}
   }
   freshSim(){ return {bubbles:[],gasP:[],sparks:[],pellets:[],solids:[],fumes:[],precip:[],spatter:[],deposits:[],whiskers:[],
     precipLevel:0,precipColor:[230,235,240],atmoColor:null,atmoLevel:0,solidInit:{},
@@ -450,7 +616,7 @@ class Component extends DCLogic {
     this.sctx=this.sparkRef.current.getContext('2d');
     this.sprites={}; ['Na','K','Fe','Cu','Au','Mg','Al','Ca','Zn','Ag','Pb','Ni','Hg','S','Sn','Cr','Co','Mn'].forEach(id=>{ const im=new Image(); im.src='assets/elp/'+id+'.png'; this.sprites[id]=im; });
     this._resize=()=>this.resize(); window.addEventListener('resize',this._resize); this.resize(); this.syncImgs();
-    try{ const ce=await import('./chem.js'); const cd=await import('./chemdata.js'); this.GASES=cd.GASES; this.REACTIONS=cd.REACTIONS; this.REAGENTS=cd.REAGENTS; this.engine=new ce.ChemEngine(); this.sol=new ce.Solution(); this.rxById={}; this.REACTIONS.forEach(r=>this.rxById[r.id]=r); this.ready=true; this.snap=this.sol.snapshot(); this.missions=cd.MISSIONS; this.missionMet=ce.missionMet; }
+    try{ const ce=await import('./chem.js'); const cd=await import('./chemdata.js'); this.GASES=cd.GASES; this.REACTIONS=cd.REACTIONS; this.REAGENTS=cd.REAGENTS; this.engine=new ce.ChemEngine(); this.sol=new ce.Solution(); this.rxById={}; this.REACTIONS.forEach(r=>this.rxById[r.id]=r); this.ready=true; this.snap=this.sol.snapshot(); this.missionMet=ce.missionMet; this.buildMissions(cd.MISSIONS); }
     catch(e){ console.error('engine load failed',e); }
     try{ const ct=await import('./chemtests.js'); const qa=ct.runMissionTests(); console.log('[QA] mission self-test', qa.results); this.pushLog('QA: ミッション自動検証 '+qa.results.filter(r=>r.ok).length+'/'+qa.results.length+(qa.allPass?' ✓ 全て達成可能':' ✗ 要確認'), qa.allPass?'var(--ok)':'var(--danger)'); }catch(e){ console.error('QA tests failed',e); }
     this.last=performance.now();
@@ -497,7 +663,7 @@ class Component extends DCLogic {
     else this.pushLog('反応を停止。','var(--muted)');
     this.setState({running:run}); }
   onEmergency=()=>{ this.sim.venting=true; this.sim.heating=false; this.startSiren(); setTimeout(()=>this.stopSiren(),900); this.beep(200,0.3,'square',0.14); this.pushLog('緊急停止 — 換気作動・加熱停止。','var(--warn)'); this.setState({running:false}); }
-  onReset=()=>{ this.stopSiren(); const adv=this.state.missionDone?(this.state.missionIdx+1)%this.missions.length:this.state.missionIdx; this.sim=this.freshSim(); this.hist=[]; this.samples=[]; this.lastActive=null; if(this.engine){ const ce=this.sol.constructor; this.sol=new ce(); this.snap=this.sol.snapshot(); } this.setState({beaker:[],blackout:false,failure:null,missionDone:false,missionIdx:adv,running:false,showReport:false}); }
+  onReset=()=>{ this.stopSiren(); const adv=this.state.missionDone?(this.state.missionIdx+1)%this.missions.length:this.state.missionIdx; this.sim=this.freshSim(); this.hist=[]; this.samples=[]; this.lastActive=null; this._seenRx=new Set(); if(this.engine){ const ce=this.sol.constructor; this.sol=new ce(); this.snap=this.sol.snapshot(); } this.setState({beaker:[],blackout:false,failure:null,missionDone:false,missionIdx:adv,running:false,showReport:false}); }
   onSound=()=>{ const on=!this.state.soundOn; if(!on)this.stopSiren(); this.setState({soundOn:on}); }
   onToggleLearn=()=>{ this.setState(s=>({learning:!s.learning})); }
   onCSV=()=>{ const rows=[['t_s','pH','T_C','cond_mS_cm','gas_pct','pressure_kPa','volume_mL']]; this.samples.forEach(x=>rows.push([x.t.toFixed(1),x.pH.toFixed(2),x.T.toFixed(1),x.cond.toFixed(1),x.gas.toFixed(0),x.press.toFixed(1),x.vol.toFixed(0)])); const csv=rows.map(r=>r.join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='experiment_'+Date.now()+'.csv'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); this.pushLog('CSVを書き出しました。','var(--ok)'); }
@@ -508,6 +674,50 @@ class Component extends DCLogic {
   onDragOver=(e)=>{ e.preventDefault(); e.dataTransfer.dropEffect='copy'; }
   onDrop=(e)=>{ e.preventDefault(); const id=e.dataTransfer.getData('text/plain'); if(id)this.addReagent(id); }
   onChipClick=(e)=>{ this.addReagent(e.currentTarget.dataset.id); }
+  onTab=(e)=>{ this.setState({tab:e.currentTarget.dataset.t}); }
+  onSearch=(e)=>{ this.setState({q:e.target.value}); }
+  onClearSearch=()=>{ this.setState({q:''}); }
+  onOpenDict=()=>{ this.setState({dictOpen:true}); }
+  onCloseDict=()=>{ this.setState({dictOpen:false}); }
+  onDictSearch=(e)=>{ this.setState({dictQ:e.target.value}); }
+  onClearHistory=()=>{ this.expHistory=[]; try{localStorage.removeItem('vcl_history');}catch(e){} this.setState(s=>({tick:s.tick+1})); }
+  onDiff=(e)=>{ const d=e.currentTarget.dataset.d; if(!this.missionPool)return; this.missions=this.missionPool[d]||this.missionPool['初級']; this.setState({difficulty:d,missionIdx:0,missionDone:false}); }
+
+  buildMissions(curated){
+    const G=this.GASES, R=this.REACTIONS;
+    const pool={'初級':[],'中級':[],'上級':[]};
+    const seen={'初級':new Set(),'中級':new Set(),'上級':new Set()};
+    const sig=t=> t.producedGas?('g:'+t.producedGas): (t.precip?('p:'+t.precip.id): (t.ion?('i:'+t.ion):''));
+    // curated missions first (verified by QA self-test)
+    (curated||[]).forEach(m=>{ const d= m.id==='cl2_safe'?'上級':(m.id==='gen_SO2'?'中級':'初級'); const mm=Object.assign({},m,{difficulty:d,danger:(m.id==='cl2_safe'?5:(m.id==='gen_SO2'?3:1)),source:'curated'}); const s=sig(m.target); if(!seen[d].has(s)){ seen[d].add(s); pool[d].push(mm); } });
+    // auto-generate the rest from the reaction database
+    (R||[]).forEach(Rx=>{
+      let target=null, goal='';
+      if(Rx.products&&Rx.products.gasMol){ const g=Object.keys(Rx.products.gasMol)[0]; const gi=G[g]; if(gi){ target={producedGas:g,min:0.004}; goal=gi.name.replace(/\s.*/,'')+'を発生させよ'; if(gi.lethal)target.notFailed=true; } }
+      else if(Rx.products&&Rx.products.precip){ const p=Object.keys(Rx.products.precip)[0]; target={precip:{id:p,min:0.004}}; goal=p+'の沈殿をつくれ'; }
+      if(!target) return;
+      const lvl=Rx.dangerLevel||1; const lethal=!!(Rx.products.gasMol&&Object.keys(Rx.products.gasMol).some(g=>G[g]&&G[g].lethal));
+      const d= lethal||lvl>=4 ? '上級' : ((lvl===3||Rx.needHeat) ? '中級' : '初級');
+      const s=sig(target); if(seen[d].has(s)||pool[d].length>=8) return; seen[d].add(s);
+      pool[d].push({id:'gen_'+Rx.id,jp:goal,en:Rx.en,hint:Rx.jp+(Rx.needHeat?'（要加熱）':''),target,difficulty:d,danger:lvl,source:'auto'});
+    });
+    this.missionPool=pool; this.missions=pool[this.state.difficulty]||pool['初級'];
+  }
+  rxResult(Rx){
+    if(Rx.products&&Rx.products.gasMol){ const g=Object.keys(Rx.products.gasMol)[0]; const gi=this.GASES&&this.GASES[g]; return (gi?gi.name.replace(/\s.*/,''):g)+' 発生'; }
+    if(Rx.products&&Rx.products.precip){ return Object.keys(Rx.products.precip)[0]+' 沈殿'; }
+    if(Rx.rxClass&&Rx.rxClass.indexOf('中和')>=0) return '中和';
+    if(Rx.rxClass&&(Rx.rxClass.indexOf('呈色')>=0||Rx.rxClass.indexOf('指示薬')>=0)) return '呈色';
+    if(Rx.rxClass&&Rx.rxClass.indexOf('置換')>=0) return '金属析出';
+    return Rx.rxClass||'反応';
+  }
+  recordHistory(Rx){
+    const d=new Date(); const t=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+    const title=(Rx.eq||'').split('→')[0].trim();
+    this.expHistory.unshift({t,title,result:this.rxResult(Rx),eq:Rx.eq,danger:Rx.dangerLevel||1});
+    if(this.expHistory.length>40) this.expHistory.pop();
+    try{ localStorage.setItem('vcl_history',JSON.stringify(this.expHistory.slice(0,40))); }catch(e){}
+  }
 
   beakerGeo(){ const W=this.W||600,H=this.H||650,sn=this.snap; const IL=W*0.268,IR=W*0.818,CX=(0.268+0.818)/2*W,top=H*0.205,cap=H*0.315,floorY=H*0.835,wall=Math.max(4,W*0.012); const vol=sn?sn.volumeMl:0; const fill=Math.max(0,Math.min(1,vol/520)); const surfaceY=floorY-fill*(floorY-cap); const ry=(IR-IL)*0.066; return {W,H,cx:CX,left:IL,right:IR,innerW:IR-IL,bw:IR-IL,top,bottom:floorY,wall,surfaceY,fillH:floorY-surfaceY,fill,ry}; }
 
@@ -530,7 +740,7 @@ class Component extends DCLogic {
     if(E.has('char')){ s.target=[28,22,20,0.92]; if(Math.random()<0.85)this.spawnFume(false); }
     if(E.has('amalgam')){ s.amalgam=Math.min(1,s.amalgam+dt*1.8); if(Math.random()<0.75) this.spawnAmalgam(); } else { s.amalgam=Math.max(0,s.amalgam-dt*0.5); }
     s.burning=E.has('ignite')||E.has('skitter'); if(res.flame) s.flameColor=res.flame;
-    if(res.active&&res.active.length){ this.lastActive=res.active[res.active.length-1]; }
+    if(res.active&&res.active.length){ this.lastActive=res.active[res.active.length-1]; res.active.forEach(Rx=>{ if(!this._seenRx.has(Rx.id)){ this._seenRx.add(Rx.id); this.recordHistory(Rx); } }); }
     { const ms=this.missions&&this.missions[this.state.missionIdx]; if(ms&&ms.target&&this.missionMet&&!this.state.missionDone&&!this.state.blackout&&this.missionMet(ms.target,this.sol,{failed:this.state.blackout})){ this.setState({missionDone:true}); this.pushLog('ミッション達成！ '+ms.jp,'var(--ok)'); if(Math.random()<0.5) this.fireEvent(); } }
     if(E.has('skitter')&&!this._skitting){ this._skitting=true; this.startSkitter(); } if(!E.has('skitter')) this._skitting=false;
     // precipitate (NaCl/Fe3O4 from some reactions — based on color darkening or salt) — simple: none auto here
@@ -650,12 +860,34 @@ class Component extends DCLogic {
     const heatOn=s.heating,stirOn=s.stirring,ventOn=s.venting; const running=this.state.running;
     let rname=activeR?(activeR.jp+' / '+activeR.en):'未選択 / no reaction'; if(activeR&&activeR.needHeat&&!running&&!s.heating)rname+='（要加熱）';
     const exo=activeR?((activeR.dHkJ||0)<0):true;
-    const learnPanel=activeR?{show:true,eq:activeR.eq,ionEq:activeR.ionEq||'—',rxClass:activeR.rxClass||'—',jp:activeR.jp+' / '+activeR.en,kind:exo?'発熱反応':'吸熱反応',kindColor:exo?'var(--warn)':'var(--accent2)',dH:String(activeR.dHkJ||0),note:activeR.log,detail:this.state.learning,dangerLevel:activeR.dangerLevel||1,dangerLabel:['安全','注意','危険','非常に危険','実験室以外禁止'][(activeR.dangerLevel||1)-1],dangerFg:['var(--ok)','var(--warn)','#ff8c00','var(--danger)','#ff1a1a'][(activeR.dangerLevel||1)-1],dangerBg:['rgba(95,211,139,.15)','rgba(255,184,77,.15)','rgba(255,140,60,.15)','rgba(255,91,82,.15)','rgba(200,0,0,.25)'][(activeR.dangerLevel||1)-1]}:{show:false,eq:'',ionEq:'',rxClass:'',jp:'',kind:'',kindColor:'',dH:'',note:'',detail:false,dangerLevel:1,dangerLabel:'',dangerFg:'',dangerBg:''};
+    const learnPanel=activeR?{show:true,eq:activeR.eq,ionEq:activeR.ionEq||'—',rxClass:activeR.rxClass||'—',jp:activeR.jp+' / '+activeR.en,kind:exo?'発熱反応':'吸熱反応',kindColor:exo?'var(--warn)':'var(--accent2)',dH:String(activeR.dHkJ||0),note:activeR.log,detail:this.state.learning,dangerLevel:activeR.dangerLevel||1,dangerLabel:['安全','注意','危険','非常に危険','実験室以外禁止'][(activeR.dangerLevel||1)-1],dangerFg:['var(--ok)','var(--warn)','#ff8c00','var(--danger)','#ff1a1a'][(activeR.dangerLevel||1)-1],dangerBg:['rgba(95,211,139,.15)','rgba(255,184,77,.15)','rgba(255,140,60,.15)','rgba(255,91,82,.15)','rgba(200,0,0,.25)'][(activeR.dangerLevel||1)-1],stars:this.stars(activeR.dangerLevel||1)}:{show:false,eq:'',ionEq:'',rxClass:'',jp:'',kind:'',kindColor:'',dH:'',note:'',detail:false,dangerLevel:1,dangerLabel:'',dangerFg:'',dangerBg:'',stars:''};
     const repItems=[{label:'温度 / Temp',value:snap.T_C.toFixed(1)+' °C'},{label:'pH',value:snap.pH.toFixed(2)},{label:'圧力 / Pressure',value:snap.pressure.toFixed(1)+' kPa'},{label:'導電率 / Conductivity',value:snap.conductivity.toFixed(1)+' mS/cm'},{label:'体積 / Volume',value:snap.volumeMl.toFixed(0)+' mL'},{label:'ガス濃度 / Gas',value:gasPct+' %'}];
     const grpOrder=['溶媒','酸','塩基','酸化剤','塩','粉末','溶液','有機','指示薬'];
     const grpLabels={'溶媒':'SOLVENTS / 溶媒','酸':'ACIDS / 酸','塩基':'BASES / 塩基','酸化剤':'OXIDIZERS / 酸化剤','塩':'SALTS / 塩','粉末':'POWDERS / 粉末・固体','溶液':'SOLUTIONS / 溶液試薬','有機':'ORGANIC / 有機','指示薬':'INDICATORS / 指示薬'};
     const grpMap={}; this.materials.forEach(m=>{const g=m.group||'その他';if(!grpMap[g])grpMap[g]=[];grpMap[g].push(m);});
     const materialGroups=grpOrder.filter(g=>grpMap[g]).map(g=>({label:grpLabels[g],items:grpMap[g]}));
+    // ── tabs + search ──
+    const qr=(this.state.q||'').trim(); const q=qr.toLowerCase(); const searching=q.length>0;
+    const matchO=(o)=>{ const idl=o.id.toLowerCase(); if(idl===q||idl.startsWith(q))return true; if(o.id.includes(qr))return true; if(o.jp.toLowerCase().includes(q))return true; return o.en.toLowerCase().split(/[^a-z0-9]+/).some(w=>w&&w.startsWith(q)); };
+    const tab=this.state.tab||'elements';
+    const indicators=this.materials.filter(x=>x.group==='指示薬');
+    const reagentMats=this.materials.filter(x=>x.group!=='指示薬');
+    const searchEls=searching?this.elements.filter(matchO):[];
+    const searchMats=searching?this.materials.filter(matchO):[];
+    const grpOrder2=['溶媒','酸','塩基','酸化剤','塩','粉末','溶液','有機'];
+    const grpMap2={}; reagentMats.forEach(mm=>{const g=mm.group||'その他';if(!grpMap2[g])grpMap2[g]=[];grpMap2[g].push(mm);});
+    const tabMatGroups=grpOrder2.filter(g=>grpMap2[g]).map(g=>({label:grpLabels[g],items:grpMap2[g]}));
+    const mkTab=(active)=>({fg:active?'var(--text)':'var(--muted)',bg:active?'var(--panel2)':'transparent',border:active?'var(--accent)':'transparent'});
+    const elTab=mkTab(tab==='elements'), reTab=mkTab(tab==='reagents'), inTab=mkTab(tab==='indicators');
+    // ── reaction dictionary ──
+    const dlColors=['','#5fd38b','#ffb84d','#ff8c00','#ff5b52','#ff1a1a']; const dlLabels=['','安全','注意','危険','非常に危険','実験室以外禁止'];
+    const dq=(this.state.dictQ||'').trim().toLowerCase();
+    const dictList=(this.ready?this.REACTIONS:[]).filter(Rx=>!dq||((Rx.eq+' '+(Rx.ionEq||'')+' '+Rx.jp+' '+Rx.en+' '+(Rx.rxClass||'')+' '+(Rx.log||'')).toLowerCase().includes(dq))).map(Rx=>({jp:Rx.jp,en:Rx.en,eq:Rx.eq,ionEq:Rx.ionEq||'—',rxClass:Rx.rxClass||'',note:Rx.log||'',stars:this.stars(Rx.dangerLevel||1),dlColor:dlColors[Rx.dangerLevel||1],dlLabel:'Lv.'+(Rx.dangerLevel||1)+' '+dlLabels[Rx.dangerLevel||1]}));
+    // ── experiment history ──
+    const history=this.expHistory.map(h=>({t:h.t,title:h.title,result:h.result,eq:h.eq,stars:this.stars(h.danger||1),dColor:dlColors[h.danger||1]}));
+    // ── mission difficulty ──
+    const diffBtns=['初級','中級','上級'].map(d=>({d,fg:this.state.difficulty===d?'#04110d':'var(--muted)',bg:this.state.difficulty===d?'var(--accent)':'var(--panel)',border:this.state.difficulty===d?'var(--accent)':'var(--line)'}));
+    const missionHint=(this.missions&&this.missions[this.state.missionIdx]&&this.missions[this.state.missionIdx].hint)||'';
     return { rootRef:this.rootRef,canvasRef:this.canvasRef,sparkRef:this.sparkRef, elements:this.elements,materials:this.materials,materialGroups,
       beaker:this.state.beaker, beakerEmpty:this.state.beaker.length===0,
       metrics, solColor:this.rgba(s.liquid,Math.max(0.12,s.liquid[3])), runState:running?'反応中 RUNNING':'待機 IDLE',
@@ -675,7 +907,13 @@ class Component extends DCLogic {
       reactFg:reactDisabled?'var(--muted)':(running?'var(--text)':'#04110d'), reactBg:reactDisabled?'var(--panel)':(running?'rgba(255,184,77,.16)':'var(--accent)'), reactBorder:reactDisabled?'var(--line)':(running?'var(--warn)':'var(--accent)'), reactCursor:reactDisabled?'not-allowed':'pointer',
       onDragStart:this.onDragStart,onDragOver:this.onDragOver,onDrop:this.onDrop,onChipClick:this.onChipClick,
       onHeat:this.onHeat,onStir:this.onStir,onVent:this.onVent,onReact:this.onReact,onEmergency:this.onEmergency,onReset:this.onReset,onSound:this.onSound,
-      onToggleLearn:this.onToggleLearn,onCSV:this.onCSV,onReport:this.onReport,onCloseReport:this.onCloseReport,onPrint:this.onPrint };
+      onToggleLearn:this.onToggleLearn,onCSV:this.onCSV,onReport:this.onReport,onCloseReport:this.onCloseReport,onPrint:this.onPrint,
+      q:this.state.q||'', searching, searchEls, searchMats, searchNone:searching&&searchEls.length===0&&searchMats.length===0,
+      showEls:!searching&&tab==='elements', showReagents:!searching&&tab==='reagents', showIndicators:!searching&&tab==='indicators',
+      tabEls:this.elements, tabMatGroups, tabIndicators:indicators, elTab, reTab, inTab,
+      dictOpen:this.state.dictOpen, dictList, dictQ:this.state.dictQ||'', dictCount:dictList.length, dictNone:dictList.length===0,
+      history, historyEmpty:history.length===0, difficulty:this.state.difficulty, diffBtns, missionHint,
+      onTab:this.onTab,onSearch:this.onSearch,onClearSearch:this.onClearSearch,onOpenDict:this.onOpenDict,onCloseDict:this.onCloseDict,onDictSearch:this.onDictSearch,onClearHistory:this.onClearHistory,onDiff:this.onDiff };
   }
 }
 </script>
