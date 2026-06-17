@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:#06090d;overflow:hidden}
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+  @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.25}}
+  @keyframes redFlash{0%,100%{background:rgba(255,40,30,0)}50%{background:rgba(255,40,30,.28)}}
+  @keyframes sirenBar{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+  @keyframes toastIn{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+  @keyframes flicker{0%,100%{opacity:.9}50%{opacity:.55}}
+  @media print{ body{overflow:visible} body *{visibility:hidden!important} #lab-report,#lab-report *{visibility:visible!important} #lab-report{position:fixed!important;inset:0!important;overflow:visible!important} }
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="--accent:#3fd9c8;--accent2:#7aa2ff;--danger:#ff5b52;--warn:#ffb84d;--ok:#5fd38b;--bg:#0a0e13;--panel:rgba(255,255,255,.035);--panel2:rgba(255,255,255,.055);--line:rgba(255,255,255,.085);--text:#e8eef3;--muted:#8a98a6;--mono:'IBM Plex Mono',ui-monospace,monospace;font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--text);height:100vh;width:100vw;overflow:hidden;display:flex;flex-direction:column;background:radial-gradient(120% 80% at 50% -10%,#101822 0%,#0a0e13 45%,#06090d 100%)">
+
+  <header style="height: 62px; flex: none; display: flex; align-items: center; gap: 18px; padding: 0 22px; border-bottom: 1px solid var(--line); background: rgba(8,12,17,.6); backdrop-filter: blur(8px); position: relative">
+    <div style="display:flex;align-items:center;gap:12px;min-width:240px">
+      <div style="width:30px;height:30px;border-radius:9px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:radial-gradient(60% 60% at 40% 30%,rgba(63,217,200,.35),transparent),#0e151c;box-shadow:0 0 22px rgba(63,217,200,.18)">
+        <div style="width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)"></div>
+      </div>
+      <div style="line-height:1.05">
+        <div style="font-size:13.5px;font-weight:600;letter-spacing:.04em">VIRTUAL CHEMISTRY LAB</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:400">バーチャル化学実験室 ・ 定量反応シミュレーター</div>
+      </div>
+    </div>
+
+    <div style="flex:1;display:flex;align-items:center;justify-content:center">
+      <div style="display:flex;align-items:center;gap:13px;padding:7px 16px;border:1px solid var(--line);border-radius:11px;background:var(--panel);max-width:540px">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:.14em">MISSION {{ mission.idxLabel }}/{{ mission.total }}</span>
+        <span style="width:1px;height:18px;background:var(--line)"></span>
+        <span style="font-size:12.5px;font-weight:500">{{ mission.jp }}</span>
+        <span style="font-size:11px;color:var(--muted)">{{ mission.en }}</span>
+        <sc-if value="{{ missionDone }}" hint-placeholder-val="{{ false }}">
+          <span style="font-family:var(--mono);font-size:10px;color:var(--ok);border:1px solid rgba(95,211,139,.4);padding:2px 7px;border-radius:6px">✓ CLEAR</span>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;min-width:240px;justify-content:flex-end">
+      <button onClick="{{ onToggleLearn }}" style="font-family:var(--mono);font-size:10px;color:{{ learnFg }};background:{{ learnBg }};border:1px solid {{ learnBorder }};border-radius:8px;padding:7px 10px;cursor:pointer">{{ learnLabel }}</button>
+      <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;color:var(--muted)">
+        <span style="width:7px;height:7px;border-radius:50%;background:{{ hazard.dot }};box-shadow:0 0 8px {{ hazard.dot }};animation:pulseDot 1.6s infinite"></span>
+        {{ hazard.statusEn }}
+      </div>
+      <button onClick="{{ onSound }}" style="font-family:var(--mono);font-size:10.5px;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 10px;cursor:pointer" style-hover="background:var(--panel2)">{{ soundLabel }}</button>
+    </div>
+  </header>
+
+  <main style="flex:1;display:grid;grid-template-columns:296px 1fr 356px;min-height:0">
+
+    <!-- LEFT : reagent library -->
+    <aside style="border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:rgba(255,255,255,.012)">
+      <div style="padding:14px 16px 10px;flex:none">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--muted)">ELEMENT LIBRARY</div>
+        <div style="font-size:10.5px;color:var(--muted);margin-top:2px">元素・材料 — ビーカーへドラッグ / drag in</div>
+      </div>
+      <div style="flex:1;overflow:auto;padding:0 14px 16px">
+        <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.12em;margin:6px 2px 8px">ELEMENTS / 元素</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+          <sc-for list="{{ elements }}" as="el" hint-placeholder-count="0">
+            <div draggable="true" data-id="{{ el.id }}" onDragStart="{{ onDragStart }}" onClick="{{ onChipClick }}" title="{{ el.en }}" style="position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:grab;user-select:none;aspect-ratio:79/112;transform-origin:center;transition:transform .16s ease,border-color .15s,box-shadow .16s;will-change:transform" style-hover="border-color:var(--accent);transform:scale(1.4);z-index:20;box-shadow:0 12px 28px rgba(0,0,0,.6)">
+              <img data-elsrc="{{ el.img }}" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none">
+              <span style="position:absolute;right:3px;bottom:3px;font-size:7.5px;color:{{ el.stColor }};background:rgba(6,9,13,.72);border:1px solid var(--line);border-radius:4px;padding:0 3px">{{ el.st }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.12em;margin:16px 2px 8px">MATERIALS / 実験材料</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <sc-for list="{{ materials }}" as="mt" hint-placeholder-count="10">
+            <div draggable="true" data-id="{{ mt.id }}" onDragStart="{{ onDragStart }}" onClick="{{ onChipClick }}" title="{{ mt.en }}" style="display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.02);padding:7px 10px;cursor:grab;user-select:none;transition:border-color .15s" style-hover="border-color:var(--accent)">
+              <span style="width:11px;height:11px;border-radius:{{ mt.swatchR }};background:{{ mt.swatch }};box-shadow:0 0 0 1px rgba(255,255,255,.08) inset;flex:none"></span>
+              <span style="font-size:12px;font-weight:500">{{ mt.jp }}</span>
+              <span style="font-size:7.5px;color:{{ mt.stColor }};border:1px solid var(--line);border-radius:4px;padding:1px 4px">{{ mt.st }}</span>
+              <span style="font-size:10px;color:var(--muted);margin-left:auto;font-family:var(--mono)">{{ mt.en }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER : bench -->
+    <section style="display:flex;flex-direction:column;min-height:0;position:relative">
+      <div style="flex:none;display:flex;align-items:center;gap:14px;padding:11px 18px;border-bottom:1px solid var(--line);background:rgba(8,12,17,.4)">
+        <span style="font-family:var(--mono);font-size:9.5px;color:var(--accent);letter-spacing:.14em">REACTION</span>
+        <span style="font-family:var(--mono);font-size:15px;font-weight:500;letter-spacing:.01em;color:{{ eqColor }}">{{ eq }}</span>
+        <span style="font-size:11.5px;color:var(--muted);margin-left:auto">{{ reactionName }}</span>
+      </div>
+
+      <div onDrop="{{ onDrop }}" onDragOver="{{ onDragOver }}" style="flex:1;position:relative;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center">
+        <div style="position:relative;height:97%;aspect-ratio:1211/1299;max-width:94%">
+          <img src="assets/beaker.png" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none">
+          <canvas ref="{{ canvasRef }}" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+          <img src="assets/beaker.png" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;mix-blend-mode:lighten">
+        </div>
+
+        <sc-if value="{{ hazard.show }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:11px;padding:9px 18px;border-radius:11px;border:1px solid {{ hazard.dot }};background:{{ hazard.bg }};backdrop-filter:blur(6px);box-shadow:0 8px 30px rgba(0,0,0,.4)">
+            <span style="width:9px;height:9px;border-radius:50%;background:{{ hazard.dot }};box-shadow:0 0 12px {{ hazard.dot }};animation:pulseDot 1s infinite"></span>
+            <span style="font-weight:600;font-size:13px;color:{{ hazard.dot }}">{{ hazard.label_jp }}</span>
+            <span style="font-size:11px;color:var(--text);opacity:.85">{{ hazard.label_en }}</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ beakerEmpty }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;pointer-events:none;z-index:4">
+            <div style="width:48px;height:48px;border:1.5px dashed var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:22px">＋</div>
+            <div style="font-size:13px;color:var(--muted)">元素・材料をビーカーへドラッグ</div>
+            <div style="font-family:var(--mono);font-size:10.5px;color:var(--muted);opacity:.7">DRAG REAGENTS INTO THE BEAKER</div>
+          </div>
+        </sc-if>
+
+        <div style="position:absolute;left:16px;bottom:14px;z-index:5;display:flex;flex-wrap:wrap;gap:6px;max-width:52%">
+          <sc-for list="{{ beaker }}" as="b" hint-placeholder-count="0">
+            <span style="display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;background:rgba(8,12,17,.7);border:1px solid var(--line);border-radius:7px;padding:4px 8px"><span style="width:7px;height:7px;border-radius:2px;background:{{ b.swatch }}"></span>{{ b.jp }}<span style="font-size:8px;color:var(--muted)">{{ b.st }}</span></span>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="flex:none;text-align:center;padding:7px 18px 0;color:#ff5b52;font-size:11px;line-height:1.45">【注意】実際の実験とは異なります。これらの反応はイメージです。安全のため、必ず指導者のもとで正しい器具・手順で実験を行ってください。</div>
+
+      <div style="flex:none;display:flex;align-items:center;gap:9px;padding:13px 18px;border-top:1px solid var(--line);background:rgba(8,12,17,.5)">
+        <button onClick="{{ onHeat }}" style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--text);background:{{ heatBg }};border:1px solid {{ heatBorder }};border-radius:10px;padding:9px 14px;cursor:pointer;transition:.15s" style-hover="border-color:var(--warn)"><span style="width:8px;height:8px;border-radius:50%;background:var(--warn);opacity:{{ heatDot }}"></span>加熱 Heat</button>
+        <button onClick="{{ onStir }}" style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--text);background:{{ stirBg }};border:1px solid {{ stirBorder }};border-radius:10px;padding:9px 14px;cursor:pointer;transition:.15s" style-hover="border-color:var(--accent2)"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent2);opacity:{{ stirDot }}"></span>撹拌 Stir</button>
+        <button onClick="{{ onVent }}" style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--text);background:{{ ventBg }};border:1px solid {{ ventBorder }};border-radius:10px;padding:9px 14px;cursor:pointer;transition:.15s" style-hover="border-color:var(--accent)"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:{{ ventDot }}"></span>換気 Vent</button>
+        <div style="flex:1"></div>
+        <button onClick="{{ onReact }}" disabled="{{ reactDisabled }}" style="font-size:12.5px;font-weight:600;color:{{ reactFg }};background:{{ reactBg }};border:1px solid {{ reactBorder }};border-radius:10px;padding:9px 18px;cursor:{{ reactCursor }};transition:.15s">{{ runLabel }}</button>
+        <button onClick="{{ onEmergency }}" style="font-size:12px;font-weight:600;color:var(--danger);background:rgba(255,91,82,.08);border:1px solid rgba(255,91,82,.5);border-radius:10px;padding:9px 14px;cursor:pointer" style-hover="background:rgba(255,91,82,.18)">緊急停止 STOP</button>
+        <button onClick="{{ onReset }}" style="font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 13px;cursor:pointer" style-hover="color:var(--text)">リセット ⟳</button>
+      </div>
+    </section>
+
+    <!-- RIGHT : observation -->
+    <aside style="border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:rgba(255,255,255,.012)">
+      <div style="flex:1;overflow:auto;padding:15px 15px 18px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--muted)">REAL-TIME OBSERVATION</div>
+            <div style="font-size:10.5px;color:var(--muted);margin-top:2px">リアルタイム観察パネル</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button onClick="{{ onCSV }}" style="font-family:var(--mono);font-size:10px;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:6px 9px;cursor:pointer" style-hover="border-color:var(--accent)">CSV</button>
+            <button onClick="{{ onReport }}" style="font-family:var(--mono);font-size:10px;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:6px 9px;cursor:pointer" style-hover="border-color:var(--accent)">PDF</button>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px;border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:9px 12px">
+          <span style="font-size:10.5px;color:var(--muted)">溶液色 / Colour</span>
+          <span style="flex:1;height:18px;border-radius:6px;border:1px solid var(--line);background:{{ solColor }}"></span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--muted)">{{ runState }}</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px">
+          <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="6">
+            <div style="border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:10px 11px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline">
+                <span style="font-size:10.5px;color:var(--muted)">{{ m.label }}</span>
+                <span style="font-family:var(--mono);font-size:9px;color:var(--muted)">{{ m.en }}</span>
+              </div>
+              <div style="display:flex;align-items:baseline;gap:3px;margin-top:5px">
+                <span style="font-family:var(--mono);font-size:20px;font-weight:600;color:{{ m.color }};letter-spacing:-.01em">{{ m.value }}</span>
+                <span style="font-family:var(--mono);font-size:10px;color:var(--muted)">{{ m.unit }}</span>
+              </div>
+              <div style="height:4px;border-radius:3px;background:rgba(255,255,255,.06);margin-top:7px;overflow:hidden">
+                <div style="height:100%;width:{{ m.pct }}%;background:{{ m.color }};border-radius:3px;transition:width .2s"></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="margin-top:11px;border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:11px 12px 8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:10.5px;color:var(--muted)">pH・温度 推移 / pH &amp; Temp</span>
+            <span style="display:flex;gap:9px;font-family:var(--mono);font-size:9px"><span style="color:var(--accent2)">● pH</span><span style="color:var(--warn)">● ℃</span></span>
+          </div>
+          <canvas ref="{{ sparkRef }}" style="width:100%;height:54px;display:block"></canvas>
+        </div>
+
+        <div style="margin-top:11px;border:1px solid {{ gasPanel.border }};border-radius:11px;background:{{ gasPanel.bg }};padding:12px 13px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span style="font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted)">におい・ガス情報</span>
+            <span style="font-family:var(--mono);font-size:9px;color:var(--muted)">SMELL / GAS</span>
+          </div>
+          <sc-if value="{{ gasPanel.has }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <span style="font-size:14px;font-weight:600;color:{{ gasPanel.fg }}">{{ gasPanel.name }}</span>
+                <span style="font-family:var(--mono);font-size:13px;letter-spacing:.06em;color:var(--warn)">{{ gasPanel.stars }}</span>
+              </div>
+              <div style="display:flex;gap:7px;margin-top:7px">
+                <span style="font-size:11px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:6px;padding:3px 8px">臭い：{{ gasPanel.odor }}</span>
+                <span style="font-size:11px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:6px;padding:3px 8px">濃度 {{ gasPanel.conc }}%</span>
+              </div>
+              <div style="font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.5">{{ gasPanel.desc }}</div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ gasPanel.none }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:11.5px;color:var(--muted)">検知ガスなし / No gas detected</div>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ learnPanel.show }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:11px;border:1px solid rgba(122,162,255,.3);border-radius:11px;background:rgba(122,162,255,.06);padding:12px 13px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <span style="font-family:var(--mono);font-size:9.5px;color:var(--accent2);letter-spacing:.12em">反応解析 / REACTION</span>
+              <span style="font-size:10.5px;background:rgba(122,162,255,.14);border:1px solid rgba(122,162,255,.4);border-radius:6px;padding:2px 8px;color:var(--accent2);margin-left:auto">③ {{ learnPanel.rxClass }}</span>
+            </div>
+            <div style="font-size:12px;font-weight:500;margin-bottom:10px">{{ learnPanel.jp }}</div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <div>
+                <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">① 化学反応式 / EQUATION</div>
+                <div style="font-family:var(--mono);font-size:12.5px;line-height:1.45">{{ learnPanel.eq }}</div>
+              </div>
+              <div>
+                <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">② イオン反応式 / IONIC EQUATION</div>
+                <div style="font-family:var(--mono);font-size:12.5px;line-height:1.45;color:var(--accent)">{{ learnPanel.ionEq }}</div>
+              </div>
+            </div>
+            <sc-if value="{{ learnPanel.detail }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:10px;padding-top:9px;border-top:1px solid var(--line)">
+                <div style="display:flex;gap:7px;margin-bottom:7px">
+                  <span style="font-size:11px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:{{ learnPanel.kindColor }}">{{ learnPanel.kind }}</span>
+                  <span style="font-size:11px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:6px;padding:3px 8px">ΔH = {{ learnPanel.dH }} kJ</span>
+                </div>
+                <div style="font-size:11.5px;color:var(--muted);line-height:1.5">{{ learnPanel.note }}</div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <div style="margin-top:11px">
+          <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.12em;margin:2px 2px 7px">EVENT LOG / 実験ログ</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <sc-for list="{{ log }}" as="L" hint-placeholder-count="0">
+              <div style="display:flex;gap:8px;font-size:11px;line-height:1.4">
+                <span style="font-family:var(--mono);font-size:10px;color:var(--muted);flex:none">{{ L.t }}</span>
+                <span style="color:{{ L.c }}">{{ L.msg }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <sc-if value="{{ eventOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:13px;padding:13px 20px;border-radius:14px;border:1px solid rgba(122,162,255,.4);background:linear-gradient(120deg,rgba(20,28,42,.95),rgba(14,20,30,.95));backdrop-filter:blur(10px);box-shadow:0 18px 50px rgba(0,0,0,.5);animation:toastIn .35s ease">
+      <span style="font-size:22px">{{ event.icon }}</span>
+      <div style="line-height:1.25">
+        <div style="font-size:13.5px;font-weight:600;color:var(--accent2)">{{ event.jp }}</div>
+        <div style="font-size:11px;color:var(--muted)">{{ event.en }}</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ blackout }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:50;background:#040506;display:flex;align-items:center;justify-content:center">
+      <div style="position:absolute;inset:0;animation:redFlash 1.1s infinite"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;overflow:hidden"><div style="width:40%;height:100%;background:linear-gradient(90deg,transparent,var(--danger),transparent);animation:sirenBar 1.4s linear infinite"></div></div>
+      <div style="position:relative;max-width:560px;width:90%;text-align:center;padding:34px 30px;border:1px solid rgba(255,91,82,.45);border-radius:18px;background:rgba(14,8,8,.85);box-shadow:0 0 60px rgba(255,40,30,.25)">
+        <div style="font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--danger);animation:flicker 1.2s infinite">⚠ SYSTEM ALERT ⚠</div>
+        <div style="font-size:34px;font-weight:600;margin-top:10px;color:#fff;letter-spacing:.02em">実験失敗</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:2px;letter-spacing:.05em">EXPERIMENT FAILED</div>
+        <div style="text-align:left;margin-top:22px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03);padding:15px 16px">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--danger);letter-spacing:.1em;margin-bottom:6px">事故原因 / CAUSE</div>
+          <div style="font-size:13px;line-height:1.6">{{ failure.cause_jp }}</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-top:4px">{{ failure.cause_en }}</div>
+        </div>
+        <div style="text-align:left;margin-top:11px;border:1px solid rgba(95,211,139,.3);border-radius:12px;background:rgba(95,211,139,.05);padding:15px 16px">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--ok);letter-spacing:.1em;margin-bottom:6px">正しい実験手順 / CORRECT PROCEDURE</div>
+          <div style="font-size:13px;line-height:1.6">{{ failure.fix_jp }}</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-top:4px">{{ failure.fix_en }}</div>
+        </div>
+        <button onClick="{{ onReset }}" style="margin-top:22px;font-size:13px;font-weight:600;color:#04110d;background:var(--ok);border:none;border-radius:11px;padding:12px 26px;cursor:pointer">実験を再起動 / Restart Lab</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showReport }}" hint-placeholder-val="{{ false }}">
+    <div id="lab-report" style="position:fixed;inset:0;z-index:60;background:#fff;color:#10151b;overflow:auto;padding:48px 56px;font-family:'IBM Plex Sans',sans-serif">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #10151b;padding-bottom:14px">
+        <div>
+          <div style="font-size:22px;font-weight:600">実験レポート / Experiment Report</div>
+          <div style="font-size:12px;color:#667">バーチャル化学実験室 ・ Virtual Chemistry Lab</div>
+        </div>
+        <div style="font-family:var(--mono);font-size:12px;color:#445;text-align:right">{{ report.time }}</div>
+      </div>
+      <div style="margin-top:18px;font-size:13px;color:#334">テーマ：{{ mission.jp }} / {{ mission.en }}</div>
+      <div style="margin-top:18px;font-size:13px;font-weight:600">最終測定値 / Final readings</div>
+      <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:13px">
+        <sc-for list="{{ report.items }}" as="r" hint-placeholder-count="0">
+          <tr style="border-bottom:1px solid #e2e6ea"><td style="padding:7px 4px;color:#556">{{ r.label }}</td><td style="padding:7px 4px;font-family:var(--mono);text-align:right">{{ r.value }}</td></tr>
+        </sc-for>
+      </table>
+      <div style="margin-top:20px;font-size:13px;font-weight:600">実験ログ / Log</div>
+      <div style="margin-top:8px">
+        <sc-for list="{{ report.logs }}" as="L" hint-placeholder-count="0">
+          <div style="display:flex;gap:10px;font-size:12px;padding:3px 0;border-bottom:1px solid #eef1f4"><span style="font-family:var(--mono);color:#778">{{ L.t }}</span><span>{{ L.msg }}</span></div>
+        </sc-for>
+      </div>
+      <div style="margin-top:30px;display:flex;gap:10px" data-noprint="1">
+        <button onClick="{{ onPrint }}" style="font-size:13px;font-weight:600;color:#fff;background:#10151b;border:none;border-radius:9px;padding:11px 22px;cursor:pointer">印刷 / PDF保存</button>
+        <button onClick="{{ onCloseReport }}" style="font-size:13px;color:#10151b;background:#eef1f4;border:1px solid #d4d9de;border-radius:9px;padding:11px 18px;cursor:pointer">閉じる</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3fd9c8&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;soundEnabled&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;hazardSensitivity&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:1,&quot;min&quot;:0.4,&quot;max&quot;:2.2,&quot;step&quot;:0.1,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.canvasRef=React.createRef(); this.sparkRef=React.createRef(); this.rootRef=React.createRef();
+    const stTag={metal:'金属',powder:'粉末',liquid:'液体',gas:'気体',solid:'固体',solute:'固体',indicator:'指示薬'};
+    const stCol={metal:'#cfd6dd',powder:'#b9a98f',liquid:'#7ec8d6',gas:'#9ad17a',solid:'#cfd6dd',solute:'#9ec6d0',indicator:'#cda6e6'};
+    this.elements=[
+      {id:'H',jp:'水素',en:'Hydrogen',state:'gas',dot:'#9fb6c4'},
+      {id:'He',jp:'ヘリウム',en:'Helium',state:'gas',dot:'#cdd6de'},
+      {id:'O',jp:'酸素',en:'Oxygen',state:'gas',dot:'#6fc1ff'},
+      {id:'N',jp:'窒素',en:'Nitrogen',state:'gas',dot:'#7aa2ff'},
+      {id:'Cl',jp:'塩素',en:'Chlorine',state:'gas',dot:'#c9e07a'},
+      {id:'S',jp:'硫黄',en:'Sulfur',state:'powder',dot:'#e6c63f',rcolor:[226,206,72]},
+      {id:'Na',jp:'ナトリウム',en:'Sodium',state:'metal',dot:'#ffb84d',rcolor:[228,230,233],float:true},
+      {id:'K',jp:'カリウム',en:'Potassium',state:'metal',dot:'#c08bff',rcolor:[214,208,202],float:true},
+      {id:'Fe',jp:'鉄',en:'Iron',state:'metal',dot:'#c98f6f',rcolor:[150,150,158]},
+      {id:'Cu',jp:'銅',en:'Copper',state:'metal',dot:'#e08a5a',rcolor:[206,118,68]},
+      {id:'Ni',jp:'ニッケル',en:'Nickel',state:'metal',dot:'#b6bcc2',rcolor:[182,186,192]},
+      {id:'Au',jp:'金',en:'Gold',state:'metal',dot:'#ffd86a',rcolor:[232,192,92]},
+      {id:'Mg',jp:'マグネシウム',en:'Magnesium',state:'metal',dot:'#d6d6da',rcolor:[210,210,214]},
+      {id:'Al',jp:'アルミニウム',en:'Aluminium',state:'metal',dot:'#cfd2d6',rcolor:[205,208,212]},
+      {id:'Ca',jp:'カルシウム',en:'Calcium',state:'metal',dot:'#d2cdbe',rcolor:[200,195,180]},
+      {id:'Zn',jp:'亜鉛',en:'Zinc',state:'metal',dot:'#aab0b8',rcolor:[170,175,182]},
+      {id:'Ag',jp:'銀',en:'Silver',state:'metal',dot:'#e2e2e6',rcolor:[225,225,228]},
+      {id:'Hg',jp:'水銀',en:'Mercury',state:'metal',dot:'#c6ccd4',rcolor:[198,202,210]},
+      {id:'Pb',jp:'鉛',en:'Lead',state:'metal',dot:'#8c8e96',rcolor:[120,122,128]},
+      {id:'Sn',jp:'スズ',en:'Tin',state:'metal',dot:'#c2c7cf',rcolor:[190,194,200]},
+      {id:'Cr',jp:'クロム',en:'Chromium',state:'metal',dot:'#b9c0c8',rcolor:[176,184,192]},
+      {id:'Co',jp:'コバルト',en:'Cobalt',state:'metal',dot:'#aeb6c0',rcolor:[180,186,196]},
+      {id:'Mn',jp:'マンガン',en:'Manganese',state:'metal',dot:'#b6b0ac',rcolor:[182,178,172]},
+    ];
+    this.materials=[
+      {id:'水',jp:'水',en:'Water',state:'liquid',rcolor:[150,185,205,.42]},
+      {id:'海水',jp:'海水',en:'Seawater',state:'liquid',rcolor:[120,170,180,.5]},
+      {id:'エタノール',jp:'エタノール（C₂H₅OH）',en:'Ethanol',state:'liquid',rcolor:[205,212,220,.32]},
+      {id:'硫酸希',jp:'希硫酸（H₂SO₄ 希）',en:'Dilute H₂SO₄',state:'liquid',rcolor:[208,220,212,.34]},
+      {id:'硫酸濃',jp:'濃硫酸（H₂SO₄ 濃）',en:'Conc. H₂SO₄',state:'liquid',rcolor:[232,212,140,.46]},
+      {id:'塩酸',jp:'塩酸（HCl）',en:'Hydrochloric',state:'liquid',rcolor:[210,222,212,.38]},
+      {id:'硝酸希',jp:'希硝酸（HNO₃ 希）',en:'Dilute HNO₃',state:'liquid',rcolor:[214,222,210,.36]},
+      {id:'硝酸濃',jp:'濃硝酸（HNO₃ 濃）',en:'Conc. HNO₃',state:'liquid',rcolor:[235,202,150,.46]},
+      {id:'水酸化ナトリウム',jp:'水酸化ナトリウム（NaOH）',en:'Sodium hydroxide',state:'solute',rcolor:[240,240,244]},
+      {id:'水酸化カリウム',jp:'水酸化カリウム（KOH）',en:'Potassium hydroxide',state:'solute',rcolor:[238,238,242]},
+      {id:'アンモニア水',jp:'アンモニア水（NH₃）',en:'Ammonia',state:'liquid',rcolor:[195,212,232,.38]},
+      {id:'漂白剤',jp:'次亜塩素酸ナトリウム（NaClO）',en:'Bleach',state:'liquid',rcolor:[205,228,185,.44]},
+      {id:'過酸化水素水',jp:'過酸化水素水（H₂O₂）',en:'Peroxide',state:'liquid',rcolor:[210,225,235,.4]},
+      {id:'炭酸ナトリウム',jp:'炭酸ナトリウム（Na₂CO₃）',en:'Sodium carbonate',state:'solute',rcolor:[244,244,246]},
+      {id:'炭酸カルシウム',jp:'炭酸カルシウム（CaCO₃）',en:'Calcium carbonate',state:'powder',rcolor:[235,235,236]},
+      {id:'炭酸水素ナトリウム',jp:'炭酸水素ナトリウム（NaHCO₃）',en:'Bicarbonate',state:'solute',rcolor:[240,240,242]},
+      {id:'塩化ナトリウム',jp:'塩化ナトリウム（NaCl）',en:'Sodium chloride',state:'solute',rcolor:[248,248,250]},
+      {id:'塩化バリウム',jp:'塩化バリウム（BaCl₂）',en:'Barium chloride',state:'solute',rcolor:[246,246,248]},
+      {id:'硝酸バリウム',jp:'硝酸バリウム（Ba(NO₃)₂）',en:'Barium nitrate',state:'solute',rcolor:[246,246,248]},
+      {id:'ヨウ化カリウム',jp:'ヨウ化カリウム（KI）',en:'Potassium iodide',state:'solute',rcolor:[240,238,232]},
+      {id:'硝酸鉉',jp:'硝酸鉉（Pb(NO₃)₂）',en:'Lead nitrate',state:'solute',rcolor:[244,244,246]},
+      {id:'硝酸銀',jp:'硝酸銀（AgNO₃）',en:'Silver nitrate',state:'solute',rcolor:[236,238,242]},
+      {id:'硫化鉄',jp:'硫化鉄（FeS）',en:'Iron sulfide',state:'powder',rcolor:[64,60,56]},
+      {id:'CuSO₄',jp:'硫酸銅（CuSO₄）',en:'Copper sulfate',state:'solute',rcolor:[30,110,200]},
+      {id:'KMnO₄',jp:'過マンガン酸カリウム（KMnO₄）',en:'Permanganate',state:'solute',rcolor:[120,30,140]},
+      {id:'ヨウ素',jp:'ヨウ素（I₂）',en:'Iodine',state:'solute',rcolor:[120,80,120]},
+      {id:'デンプン',jp:'デンプン',en:'Starch',state:'solute',rcolor:[244,242,236]},
+      {id:'砂糖',jp:'砂糖（スクロース）',en:'Sucrose',state:'solute',rcolor:[248,246,242]},
+      {id:'BTB溶液',jp:'BTB溶液',en:'Bromothymol blue',state:'indicator',rcolor:[104,186,92]},
+      {id:'フェノールフタレイン',jp:'フェノールフタレイン',en:'Phenolphthalein',state:'indicator',rcolor:[222,90,160]},
+      {id:'メチルオレンジ',jp:'メチルオレンジ',en:'Methyl orange',state:'indicator',rcolor:[236,150,58]},
+      {id:'リトマス',jp:'リトマス（液）',en:'Litmus',state:'indicator',rcolor:[150,112,172]},
+    ];
+    this.elements.forEach(e=>{e.st=stTag[e.state];e.stColor=stCol[e.state];e.swatch=e.dot;e.img='assets/el/'+e.id+'.png';});
+    this.materials.forEach(m=>{m.st=stTag[m.state];m.stColor=stCol[m.state];m.swatch=this.rgbaStr(m.rcolor);m.swatchR=(m.state==='liquid')?'50%':'2px';});
+    this.byId={}; [...this.elements,...this.materials].forEach(r=>this.byId[r.id]=r);
+    this.swatchMap={}; this.elements.forEach(e=>this.swatchMap[e.id]=e.dot); this.materials.forEach(m=>this.swatchMap[m.id]=m.swatch);
+    this.missions=[{goal:'Na_water',jp:'水素を生成せよ',en:'Generate hydrogen gas'},{goal:'Cu_HNO3',jp:'銅を溶かし青い溶液を作れ',en:'Dissolve copper into a blue solution'},{goal:'bleach_HCl',jp:'塩素を発生させ安全に換気せよ',en:'Generate & safely vent chlorine'}];
+    this.sim=this.freshSim();
+    this.hist=[]; this.samples=[];
+    this.state={tick:0,beaker:[],missionIdx:0,missionDone:false,blackout:false,failure:null,event:null,log:[],soundOn:true,learning:false,showReport:false,running:false};
+    this.lastUi=0; this.audio=null; this.siren=null; this.ready=false; this.lastSample=0; this.lastActive=null;
+  }
+  freshSim(){ return {bubbles:[],gasP:[],sparks:[],pellets:[],solids:[],fumes:[],precip:[],spatter:[],deposits:[],whiskers:[],
+    precipLevel:0,precipColor:[230,235,240],atmoColor:null,atmoLevel:0,solidInit:{},
+    liquid:[150,178,200,0],target:[150,178,200,0],heating:false,stirring:false,venting:false,flame:0,t:0,
+    flameColor:null,burning:false,flash:0,hazard:0,amalgam:0}; }
+
+  async componentDidMount(){
+    const root=this.rootRef.current;
+    if(root&&this.props.accentColor) root.style.setProperty('--accent',this.props.accentColor);
+    this.state.soundOn=this.props.soundEnabled!==false;
+    this.ctx=this.canvasRef.current.getContext('2d');
+    this.sctx=this.sparkRef.current.getContext('2d');
+    this.sprites={}; ['Na','K','Fe','Cu','Au','Mg','Al','Ca','Zn','Ag','Pb','Ni','Hg','S','Sn','Cr','Co','Mn'].forEach(id=>{ const im=new Image(); im.src='assets/elp/'+id+'.png'; this.sprites[id]=im; });
+    this._resize=()=>this.resize(); window.addEventListener('resize',this._resize); this.resize(); this.syncImgs();
+    try{ const ce=await import('./chem.js'); const cd=await import('./chemdata.js'); this.GASES=cd.GASES; this.REACTIONS=cd.REACTIONS; this.REAGENTS=cd.REAGENTS; this.engine=new ce.ChemEngine(); this.sol=new ce.Solution(); this.rxById={}; this.REACTIONS.forEach(r=>this.rxById[r.id]=r); this.ready=true; this.snap=this.sol.snapshot(); this.missions=cd.MISSIONS; this.missionMet=ce.missionMet; }
+    catch(e){ console.error('engine load failed',e); }
+    try{ const ct=await import('./chemtests.js'); const qa=ct.runMissionTests(); console.log('[QA] mission self-test', qa.results); this.pushLog('QA: ミッション自動検証 '+qa.results.filter(r=>r.ok).length+'/'+qa.results.length+(qa.allPass?' ✓ 全て達成可能':' ✗ 要確認'), qa.allPass?'var(--ok)':'var(--danger)'); }catch(e){ console.error('QA tests failed',e); }
+    this.last=performance.now();
+    this.loop=(now)=>{ const dt=Math.min(0.05,(now-this.last)/1000); this.last=now; this.step(dt); this.draw(); this.drawSpark(); if(now-this.lastUi>110){this.lastUi=now;this.setState(s=>({tick:s.tick+1}));} this.raf=requestAnimationFrame(this.loop); };
+    this.raf=requestAnimationFrame(this.loop);
+  }
+  componentWillUnmount(){ cancelAnimationFrame(this.raf); window.removeEventListener('resize',this._resize); this.stopSiren(); }
+  componentDidUpdate(){ this.syncImgs(); }
+  syncImgs(){ const root=this.rootRef.current; if(!root)return; root.querySelectorAll('img[data-elsrc]').forEach(im=>{ const v=im.getAttribute('data-elsrc'); if(v&&v.indexOf('{{')<0&&im.getAttribute('src')!==v) im.setAttribute('src',v); }); }
+  resize(){ const c=this.canvasRef.current,p=c.parentElement,dpr=Math.min(2,window.devicePixelRatio||1); this.W=p.clientWidth;this.H=p.clientHeight; c.width=this.W*dpr;c.height=this.H*dpr;this.ctx.setTransform(dpr,0,0,dpr,0,0); const s=this.sparkRef.current; this.sW=s.clientWidth;this.sH=s.clientHeight; s.width=this.sW*dpr;s.height=this.sH*dpr;this.sctx.setTransform(dpr,0,0,dpr,0,0); }
+
+  rgbaStr(a){ return 'rgba('+Math.round(a[0])+','+Math.round(a[1])+','+Math.round(a[2])+','+(a[3]!=null?a[3]:1)+')'; }
+  rgba(a,al){ return 'rgba('+Math.round(a[0])+','+Math.round(a[1])+','+Math.round(a[2])+','+(al!=null?al:a[3])+')'; }
+
+  ac(){ if(!this.state.soundOn)return null; if(!this.audio){try{this.audio=new(window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}} if(this.audio.state==='suspended')this.audio.resume(); return this.audio; }
+  beep(f,d,t,v){ const a=this.ac(); if(!a)return; const o=a.createOscillator(),g=a.createGain(); o.type=t||'sine'; o.frequency.value=f; g.gain.value=0; o.connect(g);g.connect(a.destination); const n=a.currentTime; g.gain.linearRampToValueAtTime(v||0.12,n+0.01); g.gain.exponentialRampToValueAtTime(0.0001,n+(d||0.15)); o.start(n);o.stop(n+(d||0.15)+0.02); }
+  startSiren(){ const a=this.ac(); if(!a||this.siren)return; const o=a.createOscillator(),g=a.createGain(),lfo=a.createOscillator(),lg=a.createGain(); o.type='sawtooth';o.frequency.value=620; lfo.frequency.value=2.2;lg.gain.value=180; lfo.connect(lg);lg.connect(o.frequency); g.gain.value=0.06;o.connect(g);g.connect(a.destination); o.start();lfo.start(); this.siren={o,lfo}; }
+  stopSiren(){ if(this.siren){try{this.siren.o.stop();this.siren.lfo.stop();}catch(e){} this.siren=null;} }
+  pushLog(msg,c){ const d=new Date(); const t=String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0'); this.setState(s=>({log:[{t,msg,c:c||'var(--text)'},...s.log].slice(0,8)})); }
+  fireEvent(){ const pool=[{icon:'🏅',jp:'ノーベル賞チャレンジ 達成！',en:'Nobel Prize Challenge complete'},{icon:'🔬',jp:'未知物質を発見！',en:'Unknown substance discovered'},{icon:'⚗️',jp:'歴史的実験を再現（ファラデー）',en:'Historic experiment recreated (Faraday)'}]; const ev=pool[Math.floor(Math.random()*pool.length)]; this.setState({event:ev}); clearTimeout(this._evT); this._evT=setTimeout(()=>this.setState({event:null}),4200); }
+
+  addReagent(id){ if(this.state.blackout||!this.ready)return; this.ac(); if(this.state.beaker.map(b=>b.id).includes(id))return;
+    const r=this.byId[id], s=this.sim; this.sol.addReagent(id);
+    if(r.state==='metal'||r.state==='powder'){ const solidId=this.REAGENTS[id].solid; s.solidInit[solidId]=Math.max(s.solidInit[solidId]||0,this.sol.solids[solidId]||0); this.spawnSolid(r); }
+    else if(r.state==='gas'){ const G=this.GASES[this.REAGENTS[id].gas]; if(G){ s.atmoColor=G.color.slice(); s.atmoLevel=Math.min(0.5,s.atmoLevel+0.28); } }
+    else if(r.state==='solute'){ this.spawnDeposit(r); }
+    if(this.sol.lastEvent==='water_into_acid'){ this.onWaterIntoAcid(); }
+    const beaker=[...this.state.beaker,{id,jp:r.jp,st:r.st,swatch:this.swatchMap[id]}];
+    this.setState({beaker}); this.beep(330,0.08,'sine',0.07);
+  }
+  onWaterIntoAcid(){ this.beep(120,0.4,'square',0.16); for(let i=0;i<28;i++) this.spawnSpatter(2); this.sim.flash=0.7; this.pushLog('⚠ 水を濃酸へ注いだ — 突沸・飛沫が発生！','var(--danger)'); }
+  spawnSolid(r){ const s=this.sim; const solidId=this.REAGENTS[r.id].solid; const kind=r.state; const stack=s.solids.length; const seed=Math.floor(Math.random()*1e6); s.solids.push({id:r.id,solidId,color:(r.rcolor||[160,160,165]).slice(),kind,float:!!r.float,ox:(Math.random()-0.5)*26,stack,seed,pts:kind==='powder'?this.pilePoints(seed,34):null}); }
+  rng(seed){ let t=(seed>>>0)||1; return ()=>{ t=(t+0x6D2B79F5)>>>0; let x=Math.imul(t^(t>>>15),1|t); x=(x+Math.imul(x^(x>>>7),61|x))^x; return ((x^(x>>>14))>>>0)/4294967296; }; }
+  pilePoints(seed,n){ const rr=this.rng(seed); const pts=[]; for(let i=0;i<n;i++){ const px=(rr()*2-1); const py=(1-Math.abs(px))*rr(); pts.push({px,py,j:rr()}); } return pts; }
+  spawnDeposit(r){ const s=this.sim; const seed=Math.floor(Math.random()*1e6); const crystal=['砂糖','KMnO₄','CuSO₄','AgNO₃','ヨウ素'].includes(r.id); s.deposits.push({color:(r.rcolor||[230,230,232]).slice(),crystal,dissolve:1,rate:1/(crystal?6:3.5),seed,ox:(s.deposits.length*16)-30+(Math.random()-0.5)*10,pts:this.pilePoints(seed,crystal?14:34)}); if(s.deposits.length>10)s.deposits.shift(); }
+  updateDeposits(dt){ /* 固体の実験材料（NaOH/NaCl等）はサイズを保持し縮小させない */ }
+  solFrac(solidId){ const init=this.sim.solidInit[solidId]||0; const cur=this.sol?(this.sol.solids[solidId]||0):init; return init>0?Math.max(0,Math.min(1,cur/init)):1; }
+
+  onHeat=()=>{ this.sim.heating=!this.sim.heating; this.ac(); this.beep(this.sim.heating?440:220,0.1); this.pushLog(this.sim.heating?'加熱開始。':'加熱停止。','var(--muted)'); this.setState(s=>({tick:s.tick+1})); }
+  onStir=()=>{ this.sim.stirring=!this.sim.stirring; this.beep(380,0.08); this.setState(s=>({tick:s.tick+1})); }
+  onVent=()=>{ this.sim.venting=!this.sim.venting; this.ac(); this.beep(this.sim.venting?520:300,0.1); this.pushLog(this.sim.venting?'換気装置（ドラフト）作動。':'換気停止。','var(--muted)'); this.setState(s=>({tick:s.tick+1})); }
+  onReact=()=>{ if(this.state.blackout||!this.ready)return; const run=!this.state.running;
+    if(run){ const cands=this.engine.candidates(this.sol,{}); const needH=cands.filter(c=>c.needHeat); const ready=cands.filter(c=>!c.needHeat||this.sim.heating); if(!cands.length){ this.pushLog('組合せに該当する反応なし。試薬を見直そう。','var(--muted)'); } else if(!ready.length&&needH.length){ this.pushLog('⚠ 加熱が必要 / requires heating','var(--warn)'); } else { this.pushLog('反応開始。','var(--accent)'); } this.beep(660,0.16,'triangle',0.12); }
+    else this.pushLog('反応を停止。','var(--muted)');
+    this.setState({running:run}); }
+  onEmergency=()=>{ this.sim.venting=true; this.sim.heating=false; this.startSiren(); setTimeout(()=>this.stopSiren(),900); this.beep(200,0.3,'square',0.14); this.pushLog('緊急停止 — 換気作動・加熱停止。','var(--warn)'); this.setState({running:false}); }
+  onReset=()=>{ this.stopSiren(); const adv=this.state.missionDone?(this.state.missionIdx+1)%this.missions.length:this.state.missionIdx; this.sim=this.freshSim(); this.hist=[]; this.samples=[]; this.lastActive=null; if(this.engine){ const ce=this.sol.constructor; this.sol=new ce(); this.snap=this.sol.snapshot(); } this.setState({beaker:[],blackout:false,failure:null,missionDone:false,missionIdx:adv,running:false,showReport:false}); }
+  onSound=()=>{ const on=!this.state.soundOn; if(!on)this.stopSiren(); this.setState({soundOn:on}); }
+  onToggleLearn=()=>{ this.setState(s=>({learning:!s.learning})); }
+  onCSV=()=>{ const rows=[['t_s','pH','T_C','cond_mS_cm','gas_pct','pressure_kPa','volume_mL']]; this.samples.forEach(x=>rows.push([x.t.toFixed(1),x.pH.toFixed(2),x.T.toFixed(1),x.cond.toFixed(1),x.gas.toFixed(0),x.press.toFixed(1),x.vol.toFixed(0)])); const csv=rows.map(r=>r.join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='experiment_'+Date.now()+'.csv'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); this.pushLog('CSVを書き出しました。','var(--ok)'); }
+  onReport=()=>{ this.setState({showReport:true}); }
+  onCloseReport=()=>{ this.setState({showReport:false}); }
+  onPrint=()=>{ window.print(); }
+  onDragStart=(e)=>{ e.dataTransfer.setData('text/plain',e.currentTarget.dataset.id); e.dataTransfer.effectAllowed='copy'; }
+  onDragOver=(e)=>{ e.preventDefault(); e.dataTransfer.dropEffect='copy'; }
+  onDrop=(e)=>{ e.preventDefault(); const id=e.dataTransfer.getData('text/plain'); if(id)this.addReagent(id); }
+  onChipClick=(e)=>{ this.addReagent(e.currentTarget.dataset.id); }
+
+  beakerGeo(){ const W=this.W||600,H=this.H||650,sn=this.snap; const IL=W*0.268,IR=W*0.818,CX=(0.268+0.818)/2*W,top=H*0.205,cap=H*0.315,floorY=H*0.835,wall=Math.max(4,W*0.012); const vol=sn?sn.volumeMl:0; const fill=Math.max(0,Math.min(1,vol/520)); const surfaceY=floorY-fill*(floorY-cap); const ry=(IR-IL)*0.066; return {W,H,cx:CX,left:IL,right:IR,innerW:IR-IL,bw:IR-IL,top,bottom:floorY,wall,surfaceY,fillH:floorY-surfaceY,fill,ry}; }
+
+  step(dt){ const s=this.sim; s.t+=dt; if(!this.ready){ return; }
+    const env={running:this.state.running,heating:s.heating,venting:s.venting,stirring:s.stirring};
+    const res=this.engine.tick(this.sol,dt,env); const snap=res.snap; this.snap=snap;
+    // colour
+    s.target=snap.color.slice();
+    // gas identity
+    if(snap.domGas&&snap.domMol>1e-4){ const G=this.GASES[snap.domGas]; if(G){ s.gasColor=G.color.slice(); } }
+    // effects
+    const E=res.effects;
+    if(E.has('gas')&&Math.random()<0.7) this.spawnGas();
+    const fizzy=E.has('fizz')||E.has('boil')?2:(E.has('gas')?1.2:0); if(fizzy&&Math.random()<0.5*fizzy) this.spawnBubble(E.has('boil')?1.6:1.1);
+    if(E.has('fumes')&&Math.random()<0.7) this.spawnFume(false);
+    if(E.has('boil')&&Math.random()<0.5) this.spawnFume(true);
+    if(E.has('spatter')) this.spawnSpatter(1);
+    if(E.has('bump')){ for(let i=0;i<10;i++) this.spawnBubble(2); for(let i=0;i<6;i++) this.spawnSpatter(1.6); }
+    if(E.has('precip')){ const pr=(res.events||[]).map(id=>this.rxById[id]).find(r=>r&&r.precipColor); if(pr) s.precipColor=pr.precipColor.slice(); s.precipLevel=Math.min(1,s.precipLevel+dt*0.05); if(Math.random()<0.5)this.spawnPrecip(); }
+    if(E.has('char')){ s.target=[28,22,20,0.92]; if(Math.random()<0.85)this.spawnFume(false); }
+    if(E.has('amalgam')){ s.amalgam=Math.min(1,s.amalgam+dt*1.8); if(Math.random()<0.75) this.spawnAmalgam(); } else { s.amalgam=Math.max(0,s.amalgam-dt*0.5); }
+    s.burning=E.has('ignite')||E.has('skitter'); if(res.flame) s.flameColor=res.flame;
+    if(res.active&&res.active.length){ this.lastActive=res.active[res.active.length-1]; }
+    { const ms=this.missions&&this.missions[this.state.missionIdx]; if(ms&&ms.target&&this.missionMet&&!this.state.missionDone&&!this.state.blackout&&this.missionMet(ms.target,this.sol,{failed:this.state.blackout})){ this.setState({missionDone:true}); this.pushLog('ミッション達成！ '+ms.jp,'var(--ok)'); if(Math.random()<0.5) this.fireEvent(); } }
+    if(E.has('skitter')&&!this._skitting){ this._skitting=true; this.startSkitter(); } if(!E.has('skitter')) this._skitting=false;
+    // precipitate (NaCl/Fe3O4 from some reactions — based on color darkening or salt) — simple: none auto here
+    // bubbles from heat
+    if(snap.T_C>92&&Math.random()<0.4) this.spawnBubble(1);
+    if(s.stirring&&Math.random()<0.3) this.spawnBubble(0.7);
+    // flame visual
+    s.flame += (((s.heating||s.burning)?1:0)-s.flame)*Math.min(1,dt*4);
+    if(s.flash>0) s.flash=Math.max(0,s.flash-dt*2.2);
+    if(s.atmoLevel>0) s.atmoLevel=Math.max(0,s.atmoLevel-dt*0.05);
+    // colour lerp
+    for(let i=0;i<4;i++) s.liquid[i]+=(s.target[i]-s.liquid[i])*Math.min(1,dt*0.7);
+    // particles
+    this.updateBubbles(dt); this.updateGas(dt); this.updatePellets(dt); this.updateSparks(dt); this.updateFumes(dt); this.updatePrecip(dt); this.updateSpatter(dt); this.updateDeposits(dt); this.updateWhiskers(dt);
+    this.sim.solids=this.sim.solids.filter(p=>this.solFrac(p.solidId)>0.04);
+    // hazard
+    this.computeHazard(snap.gasPct,snap.lethal,res.active);
+    // history + samples
+    s._h=(s._h||0)+dt; if(s._h>0.1){s._h=0; this.hist.push({ph:snap.pH,T:snap.T_C}); if(this.hist.length>120)this.hist.shift();}
+    this.lastSample+=dt; if(this.lastSample>0.5){ this.lastSample=0; this.samples.push({t:s.t,pH:snap.pH,T:snap.T_C,cond:snap.conductivity,gas:snap.gasPct,press:snap.pressure,vol:snap.volumeMl}); if(this.samples.length>600)this.samples.shift(); }
+  }
+
+  spawnBubble(sc){ const g=this.beakerGeo(); if(g.fillH<8)return; const s=this.sim; s.bubbles.push({x:g.cx+(Math.random()-0.5)*g.innerW*0.82,y:g.bottom-g.wall-Math.random()*4,r:(1.5+Math.random()*3)*sc,v:18+Math.random()*30,wob:Math.random()*6}); if(s.bubbles.length>150)s.bubbles.shift(); }
+  updateBubbles(dt){ const g=this.beakerGeo(),s=this.sim; for(const b of s.bubbles){b.y-=b.v*dt;b.x+=Math.sin(s.t*4+b.wob)*0.4;} s.bubbles=s.bubbles.filter(b=>b.y>g.surfaceY+2); }
+  spawnGas(){ const g=this.beakerGeo(),s=this.sim; s.gasP.push({x:g.cx+(Math.random()-0.5)*g.innerW,y:g.surfaceY-4,vx:(Math.random()-0.5)*14,vy:-(14+Math.random()*22),life:1,size:14+Math.random()*22}); if(s.gasP.length>160)s.gasP.shift(); }
+  updateGas(dt){ const s=this.sim,vf=s.venting?2.4:1; for(const p of s.gasP){p.x+=p.vx*dt;p.y+=p.vy*dt*vf;p.vy-=4*dt;p.size+=10*dt;p.life-=dt*(s.venting?0.9:0.32);} s.gasP=s.gasP.filter(p=>p.life>0&&p.y>-20); }
+  spawnFume(light){ const g=this.beakerGeo(),s=this.sim; s.fumes.push({x:g.cx+(Math.random()-0.5)*g.innerW*0.7,y:g.surfaceY-2,vx:(Math.random()-0.5)*10,vy:-(12+Math.random()*16),life:1,size:10+Math.random()*16,light:!!light}); if(s.fumes.length>120)s.fumes.shift(); }
+  updateFumes(dt){ const s=this.sim,vf=s.venting?2.2:1; for(const p of s.fumes){p.x+=p.vx*dt;p.y+=p.vy*dt*vf;p.size+=12*dt;p.life-=dt*0.4;} s.fumes=s.fumes.filter(p=>p.life>0&&p.y>-10); }
+  spawnSpatter(sc){ const g=this.beakerGeo(),s=this.sim; const c=s.liquid[3]>0.1?s.liquid:[200,210,220,1]; s.spatter.push({x:g.cx+(Math.random()-0.5)*g.innerW*0.5,y:g.surfaceY-2,vx:(Math.random()-0.5)*220*sc,vy:-(140+Math.random()*180)*sc,r:(2+Math.random()*2.5)*sc,life:1.2,col:[c[0],c[1],c[2]]}); if(s.spatter.length>90)s.spatter.shift(); }
+  updateSpatter(dt){ const s=this.sim; for(const p of s.spatter){ p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=520*dt; p.life-=dt; } s.spatter=s.spatter.filter(p=>p.life>0); }
+  spawnPrecip(){ const g=this.beakerGeo(),s=this.sim; s.precip.push({x:g.cx+(Math.random()-0.5)*g.innerW*0.8,y:g.surfaceY+4,vy:14+Math.random()*16,r:1+Math.random()*1.6}); if(s.precip.length>90)s.precip.shift(); }
+  updatePrecip(dt){ const g=this.beakerGeo(),s=this.sim; const floor=g.bottom-g.wall-2; for(const p of s.precip){ p.y+=p.vy*dt; if(p.y>floor){p.y=floor;p.vy=0;} } }
+  startSkitter(){ const s=this.sim; const g=this.beakerGeo(); s.solids.filter(p=>p.float).forEach(p=>{ for(let i=0;i<2;i++) s.pellets.push({x:g.cx+p.ox+(Math.random()-0.5)*20,y:g.surfaceY,vx:(Math.random()-0.5)*130,r:4+Math.random()*3,life:4}); }); }
+  updatePellets(dt){ const g=this.beakerGeo(),s=this.sim; for(const p of s.pellets){ p.x+=p.vx*dt; p.life-=dt; if(p.x<g.cx-g.innerW*0.4){p.x=g.cx-g.innerW*0.4;p.vx*=-1;} if(p.x>g.cx+g.innerW*0.4){p.x=g.cx+g.innerW*0.4;p.vx*=-1;} p.y=g.surfaceY-2+Math.sin(s.t*10+p.x)*1.5; if(Math.random()<0.5)s.sparks.push({x:p.x,y:p.y,vx:(Math.random()-0.5)*60,vy:-40-Math.random()*60,life:0.5+Math.random()*0.4,r:1+Math.random()*1.5,col:s.flameColor}); p.r-=dt*1.1; } s.pellets=s.pellets.filter(p=>p.life>0&&p.r>1); }
+  updateSparks(dt){ const s=this.sim; for(const k of s.sparks){k.x+=k.vx*dt;k.y+=k.vy*dt;k.vy+=120*dt;k.life-=dt;} s.sparks=s.sparks.filter(k=>k.life>0); }
+  spawnAmalgam(){ const s=this.sim,g=this.beakerGeo(); const als=s.solids.filter(p=>p.id==='Al'); if(!als.length||s.whiskers.length>170) return; const sc=g.innerW/180; const p=als[Math.floor(Math.random()*als.length)]; const frac=this.solFrac(p.solidId); const bx=g.cx+p.ox*sc+(Math.random()-0.5)*g.innerW*0.16; const by=(g.bottom-g.wall)-g.innerW*0.05*Math.max(0.4,frac); const ang=-Math.PI/2+(Math.random()-0.5)*1.7; s.whiskers.push({x:bx,y:by,ang,len:g.innerW*(0.16+Math.random()*0.40),segs:6+Math.floor(Math.random()*5),seed:(Math.random()*1e6)|0,grow:0,rate:0.55+Math.random()*0.8,sway:Math.random()*6,w:0.9+Math.random()*1.6,branch:Math.random()<0.55}); }
+  updateWhiskers(dt){ const s=this.sim; for(const w of s.whiskers){ if(w.grow<1) w.grow=Math.min(1,w.grow+w.rate*dt); w.sway+=dt; } }
+
+  computeHazard(gasPct,lethal,active){ const s=this.sim; const sens=(this.props.hazardSensitivity||1); const gp=gasPct*sens; let lvl=0;
+    if(gp>18)lvl=1; if(gp>38)lvl=2; if(gp>58)lvl=3; if(gp>82)lvl=lethal?4:3;
+    if(lvl!==s.hazard){ if(lvl>s.hazard){ if(lvl>=3)this.startSiren(); this.beep(lvl>=3?880:560,0.12,'square',0.1); if(lvl===2)this.pushLog('警告：ガス濃度上昇。','var(--warn)'); if(lvl===3)this.pushLog('重度警告：直ちに換気せよ。','var(--danger)'); } else if(lvl<3)this.stopSiren(); s.hazard=lvl; }
+    if(lvl>=4&&!this.state.blackout){ const r=(active&&active.find&&active.find(a=>a.fail))||null; this.triggerFailure(r); }
+  }
+  triggerFailure(r){ this.startSiren(); this.beep(140,0.6,'square',0.16); this.pushLog('実験失敗：致死濃度に到達。','var(--danger)'); this.setState({blackout:true,running:false,failure:(r&&r.fail)||{cause_jp:'危険ガスが致死濃度に到達した。',cause_en:'A hazardous gas reached a lethal concentration.',fix_jp:'換気装置内で実験し、ガス発生時は直ちに換気すること。',fix_en:'Work inside a fume hood and ventilate immediately when gas evolves.'}}); }
+
+  // ---------- drawing ----------
+  draw(){ const ctx=this.ctx; if(!ctx)return; const g=this.beakerGeo(),s=this.sim,W=g.W,H=g.H; ctx.clearRect(0,0,W,H);
+    this.drawBurner(ctx,g,s); this.drawStage(ctx,g,s); this.drawAtmoGas(ctx,g,s); this.drawSurfaceBurn(ctx,g,s);
+    for(const p of s.spatter){ ctx.save(); ctx.globalAlpha=Math.max(0,Math.min(1,p.life)); ctx.fillStyle=this.rgba(p.col,0.9); ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.283); ctx.fill(); ctx.restore(); }
+    if(s.flash>0.01){ ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.fillStyle='rgba(255,240,210,'+(s.flash*0.5)+')'; ctx.fillRect(0,0,W,H); ctx.restore(); } }
+  drawBurner(ctx,g,s){ const baseY=g.bottom+g.H*0.052,cx=g.cx,fl=s.flame,iw=g.innerW; if(fl<=0.02)return; ctx.save(); const ci=[120,170,255],cm=s.flameColor||[255,200,90],co=s.flameColor?[Math.min(255,s.flameColor[0]),Math.min(255,s.flameColor[1]*0.8),Math.min(255,s.flameColor[2]*0.7)]:[255,110,40]; const n=6; for(let i=0;i<n;i++){ const fx=cx+(i-(n-1)/2)*(iw*0.09); const h=(iw*0.16+Math.sin(s.t*9+i*1.7)*iw*0.04+Math.random()*iw*0.02)*fl; this.flameTongue(ctx,fx,baseY,h,iw*0.062,s.t,i*2.1,ci,cm,co); } ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=0.3*fl; const c=s.flameColor||[255,180,80]; const gl=ctx.createRadialGradient(cx,baseY-iw*0.08,2,cx,baseY-iw*0.08,iw*0.32); gl.addColorStop(0,this.rgba(c,0.5)); gl.addColorStop(1,this.rgba(c,0)); ctx.fillStyle=gl; ctx.fillRect(cx-iw*0.32,baseY-iw*0.38,iw*0.64,iw*0.38); ctx.restore(); ctx.restore(); }
+  flameTongue(ctx,x,baseY,h,w,t,seed,ci,cm,co){ const sway=Math.sin(t*6+seed)*w*0.3; const tongue=(sc,c)=>{ const ww=w*sc,hh=h*sc,tx=x+sway*sc,ty=baseY-hh; const gr=ctx.createLinearGradient(x,baseY,tx,ty); gr.addColorStop(0,this.rgba(c,0.85)); gr.addColorStop(0.55,this.rgba(c,0.6)); gr.addColorStop(1,this.rgba(c,0)); ctx.fillStyle=gr; ctx.beginPath(); ctx.moveTo(x-ww/2,baseY); ctx.quadraticCurveTo(x-ww/2,baseY-hh*0.5,tx,ty); ctx.quadraticCurveTo(x+ww/2,baseY-hh*0.5,x+ww/2,baseY); ctx.closePath(); ctx.fill(); }; ctx.save(); ctx.globalCompositeOperation='lighter'; tongue(1,co); tongue(0.64,cm); tongue(0.32,ci); ctx.restore(); }
+  drawStage(ctx,g,s){ const IL=g.left,IR=g.right,ib=g.bottom,it=g.top,surf=g.surfaceY,ry=g.ry,WD=IR-IL; const il=IL,ir=IR;
+    const hasLiq=s.liquid[3]>0.05&&g.fillH>6;
+    ctx.save(); ctx.beginPath(); ctx.rect(IL,it,WD,ib-it+ry+10); ctx.clip();
+    if(hasLiq){ const grad=ctx.createLinearGradient(0,surf,0,ib); grad.addColorStop(0,this.rgba(s.liquid,Math.min(0.92,s.liquid[3]+0.06))); grad.addColorStop(1,this.rgba(s.liquid,Math.max(0.3,s.liquid[3]-0.12))); ctx.fillStyle=grad; ctx.fillRect(IL,surf,WD,ib-surf); ctx.beginPath(); ctx.ellipse(g.cx,ib,WD/2,ry,0,0,Math.PI*2); ctx.fill(); }
+    this.drawSolids(ctx,g,s,false,hasLiq);
+    this.drawDeposits(ctx,g,s);
+    if(s.precipLevel>0.01){ const ph=Math.min((ib-it)*0.4,s.precipLevel*80); ctx.fillStyle=this.rgba(s.precipColor,0.9); ctx.fillRect(il,ib-ph,ir-il,ph+ry); ctx.beginPath(); ctx.ellipse(g.cx,ib-ph,WD/2,ry,0,0,Math.PI*2); ctx.fill(); }
+    for(const p of s.precip){ ctx.fillStyle=this.rgba(s.precipColor,0.85); ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.283); ctx.fill(); }
+    if(hasLiq){ for(const b of s.bubbles){ ctx.fillStyle='rgba(255,255,255,0.45)'; ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,6.283); ctx.fill(); ctx.strokeStyle='rgba(255,255,255,0.22)'; ctx.lineWidth=0.6; ctx.stroke(); } }
+    if(hasLiq){ ctx.fillStyle=this.rgba(s.liquid,Math.min(0.95,s.liquid[3]+0.14)); ctx.beginPath(); ctx.ellipse(g.cx,surf,WD/2,ry,0,0,Math.PI*2); ctx.fill(); ctx.strokeStyle='rgba(255,255,255,0.28)'; ctx.lineWidth=1.6; ctx.beginPath(); ctx.ellipse(g.cx,surf,WD/2,ry,0,0,Math.PI*2); ctx.stroke(); }
+    for(const p of s.pellets){ const pg=ctx.createRadialGradient(p.x-1,p.y-1,0,p.x,p.y,p.r+5); pg.addColorStop(0,'rgba(255,240,210,0.95)'); pg.addColorStop(0.4,'rgba(225,228,232,0.95)'); pg.addColorStop(1,'rgba(255,160,60,0)'); ctx.fillStyle=pg; ctx.beginPath(); ctx.arc(p.x,p.y,p.r+4,0,6.283); ctx.fill(); ctx.fillStyle='#eef2f5'; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*0.6,0,6.283); ctx.fill(); }
+    ctx.restore();
+    for(const k of s.sparks){ ctx.save(); ctx.globalAlpha=Math.max(0,k.life*2); ctx.fillStyle=k.col?this.rgba(k.col,1):'rgba(255,210,120,1)'; ctx.beginPath(); ctx.arc(k.x,k.y,k.r,0,6.283); ctx.fill(); ctx.restore(); }
+    this.drawSolids(ctx,g,s,true,hasLiq);
+    this.drawWhiskers(ctx,g,s);
+    this._drawDepositsTop=1;
+    if(hasLiq){ ctx.save(); ctx.globalCompositeOperation='lighter'; const rg=ctx.createLinearGradient(il,0,ir,0); rg.addColorStop(0.05,'rgba(255,255,255,0)'); rg.addColorStop(0.12,'rgba(255,255,255,0.10)'); rg.addColorStop(0.2,'rgba(255,255,255,0)'); rg.addColorStop(0.5,'rgba(255,255,255,0)'); rg.addColorStop(0.64,'rgba(255,255,255,0.05)'); rg.addColorStop(0.72,'rgba(255,255,255,0)'); ctx.fillStyle=rg; ctx.fillRect(il,surf-ry,ir-il,ib-surf+ry*2); ctx.restore(); } }
+  drawSolids(ctx,g,s,floatPass,hasLiq){ const ib=g.bottom+g.H*0.036, sc=g.innerW/180, lift=g.innerW*0.06; for(const p of s.solids){ const isFloat=p.float&&hasLiq; if(floatPass&&!isFloat)continue; if(!floatPass&&isFloat)continue; const x=g.cx+p.ox*sc; const frac=this.solFrac(p.solidId); const spr=this.sprites&&this.sprites[p.id]; const hasSpr=!!(spr&&spr.complete&&spr.naturalWidth); const stackN=p.stack||0;
+      if(p.kind==='powder' && !hasSpr){ if(floatPass)continue; const baseY=ib-2-stackN*lift; const half=g.innerW*0.22*Math.max(0.3,frac); const stir=s.stirring?g.innerW*0.012:0; const pts=p.pts||[]; for(let i=0;i<pts.length;i++){ const q=pts[i]; const jit=stir?Math.sin(s.t*6+q.j*30)*stir:0; const px=x+q.px*half+jit; const py=baseY-q.py*g.innerW*0.05*Math.max(0.3,frac); ctx.fillStyle=this.rgba([p.color[0]+q.j*16,p.color[1]+q.j*16,p.color[2]+q.j*16],0.96); ctx.beginPath(); ctx.arc(px,py,Math.max(1.4,g.innerW*0.006),0,6.283); ctx.fill(); } continue; }
+      if(hasSpr){
+        const iw=spr.naturalWidth, ih=spr.naturalHeight;
+        const targetW=g.innerW*0.44*Math.max(0.34,frac);
+        const scl=targetW/iw, w=iw*scl, h=ih*scl;
+        const by=(isFloat?(g.surfaceY - h*0.42):(ib - h))-stackN*lift;
+        ctx.save(); ctx.globalAlpha=Math.max(0.3,Math.min(1,frac+0.22)); ctx.drawImage(spr, x - w/2, by, w, h); ctx.restore();
+      }
+      else { const rr=(g.innerW*0.10)*Math.max(0.34,frac); const y=(isFloat?(g.surfaceY-rr*0.25):(ib-rr*0.9))-stackN*lift; ctx.save(); const grad=ctx.createRadialGradient(x-rr*0.4,y-rr*0.4,1,x,y,rr*1.4); grad.addColorStop(0,this.rgba([Math.min(255,p.color[0]+70),Math.min(255,p.color[1]+70),Math.min(255,p.color[2]+70)],1)); grad.addColorStop(0.5,this.rgba(p.color,1)); grad.addColorStop(1,this.rgba([p.color[0]*0.5,p.color[1]*0.5,p.color[2]*0.5],1)); ctx.fillStyle=grad; ctx.beginPath(); ctx.arc(x,y,rr,0,6.283); ctx.fill(); ctx.restore(); } } }
+  drawDeposits(ctx,g,s){ const ib=g.bottom-g.wall-1; for(const d of s.deposits){ const x=g.cx+d.ox*(g.innerW/180); const frac=Math.max(0.35,d.dissolve); const half=g.innerW*0.16*frac; const stir=s.stirring?g.innerW*0.012:0; const pts=d.pts||[];
+      if(d.crystal){ for(let i=0;i<pts.length;i++){ const q=pts[i]; const jit=stir?Math.sin(s.t*6+q.j*30)*stir:0; const cx2=x+q.px*half+jit; const cy=ib-q.py*g.innerW*0.05*frac; const sz=g.innerW*0.013*(0.7+q.j*0.8)*frac; ctx.save(); ctx.translate(cx2,cy); ctx.rotate(q.j*3); const grd=ctx.createLinearGradient(-sz,-sz,sz,sz); grd.addColorStop(0,this.rgba([Math.min(255,d.color[0]+60),Math.min(255,d.color[1]+60),Math.min(255,d.color[2]+60)],0.96)); grd.addColorStop(1,this.rgba([d.color[0]*0.55,d.color[1]*0.55,d.color[2]*0.55],0.96)); ctx.fillStyle=grd; ctx.fillRect(-sz,-sz,sz*2,sz*2); ctx.restore(); } }
+      else { for(let i=0;i<pts.length;i++){ const q=pts[i]; const jit=stir?Math.sin(s.t*6+q.j*30)*stir:0; const px=x+q.px*half+jit; const py=ib-q.py*g.innerW*0.045*frac; ctx.fillStyle=this.rgba([d.color[0]+q.j*10,d.color[1]+q.j*10,d.color[2]+q.j*10],0.96); ctx.beginPath(); ctx.arc(px,py,Math.max(1.3,g.innerW*0.006),0,6.283); ctx.fill(); } } } }
+  drawAtmoGas(ctx,g,s){ ctx.save(); if(s.atmoColor&&s.atmoLevel>0.01){ const top=g.top+6,h=(g.surfaceY-top); const grad=ctx.createLinearGradient(0,top,0,g.surfaceY); grad.addColorStop(0,this.rgba(s.atmoColor,0.04*s.atmoLevel*4)); grad.addColorStop(1,this.rgba(s.atmoColor,0.12*s.atmoLevel*2)); ctx.fillStyle=grad; ctx.fillRect(g.left+g.wall,top,g.innerW,Math.max(0,h)); } for(const p of s.fumes){ const a=Math.max(0,p.life)*(p.light?0.1:0.16); const grad=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size); grad.addColorStop(0,'rgba(235,238,242,'+a+')'); grad.addColorStop(1,'rgba(235,238,242,0)'); ctx.fillStyle=grad; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,6.283); ctx.fill(); } for(const p of s.gasP){ const gpct=this.snap?this.snap.gasPct:0; const a=Math.max(0,p.life)*0.16*Math.min(1,gpct/30+0.1); const grad=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size); grad.addColorStop(0,this.rgba(s.gasColor,a)); grad.addColorStop(1,this.rgba(s.gasColor,0)); ctx.fillStyle=grad; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,6.283); ctx.fill(); } ctx.restore(); }
+  drawSurfaceBurn(ctx,g,s){ if(!s.burning)return; const surf=g.surfaceY,iw=g.innerW; const inten=0.8; const c=s.flameColor||[255,190,90]; const n=7; for(let i=0;i<n;i++){ const fx=g.cx+(i-(n-1)/2)*(iw*0.12); const h=(iw*0.12+Math.sin(s.t*11+i*1.5)*iw*0.04)*inten; this.flameTongue(ctx,fx,surf,h,iw*0.05,s.t,i*1.6,[160,190,255],c,[Math.min(255,c[0]),c[1]*0.7,c[2]*0.6]); } }
+  drawWhiskers(ctx,g,s){ if(!s.whiskers.length&&s.amalgam<=0.02)return;
+    if(s.amalgam>0.02){ const als=s.solids.filter(p=>p.id==='Al'); const sc=g.innerW/180; ctx.save(); ctx.globalCompositeOperation='lighter'; for(const p of als){ const x=g.cx+p.ox*sc, y=(g.bottom-g.wall)-g.innerW*0.04; const gl=ctx.createRadialGradient(x,y,2,x,y,g.innerW*0.24); gl.addColorStop(0,'rgba(255,176,108,'+(0.24*s.amalgam)+')'); gl.addColorStop(0.5,'rgba(255,150,90,'+(0.10*s.amalgam)+')'); gl.addColorStop(1,'rgba(255,150,90,0)'); ctx.fillStyle=gl; ctx.beginPath(); ctx.arc(x,y,g.innerW*0.24,0,6.283); ctx.fill(); } ctx.restore(); }
+    ctx.save(); ctx.lineCap='round'; ctx.lineJoin='round';
+    for(const w of s.whiskers){ const steps=w.segs, L=w.len*w.grow; const rr=this.rng((w.seed*131+7)|0); let x=w.x,y=w.y,ang=w.ang; const pts=[{x,y}];
+      for(let i=1;i<=steps;i++){ ang += (rr()-0.5)*0.55 + Math.sin(w.sway*1.5+i*0.8+w.seed)*0.045; const d=L/steps; x+=Math.cos(ang)*d; y+=Math.sin(ang)*d; pts.push({x,y}); }
+      const tip=pts[pts.length-1];
+      ctx.globalCompositeOperation='lighter'; ctx.strokeStyle='rgba(230,236,243,0.09)'; ctx.lineWidth=w.w*3.4; ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)); ctx.stroke();
+      ctx.globalCompositeOperation='source-over'; const grd=ctx.createLinearGradient(w.x,w.y,tip.x,tip.y); grd.addColorStop(0,'rgba(210,217,226,0.95)'); grd.addColorStop(1,'rgba(248,250,252,0.72)'); ctx.strokeStyle=grd; ctx.lineWidth=w.w; ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)); ctx.stroke();
+      if(w.branch&&w.grow>0.5){ const bi=Math.floor(steps*0.55); const bp=pts[bi]; if(bp){ const ba=w.ang+(rr()-0.5)*1.5; const bl=L*0.34*w.grow; ctx.lineWidth=w.w*0.7; ctx.beginPath(); ctx.moveTo(bp.x,bp.y); ctx.lineTo(bp.x+Math.cos(ba)*bl,bp.y+Math.sin(ba)*bl); ctx.stroke(); } }
+      ctx.fillStyle='rgba(250,252,254,0.55)'; ctx.beginPath(); ctx.arc(tip.x,tip.y,w.w*1.25,0,6.283); ctx.fill();
+    }
+    ctx.restore(); }
+  drawSpark(){ const ctx=this.sctx; if(!ctx)return; const W=this.sW,H=this.sH; ctx.clearRect(0,0,W,H); const h=this.hist; if(h.length<2)return; const line=(key,mn,mx,col)=>{ ctx.strokeStyle=col; ctx.lineWidth=1.6; ctx.beginPath(); for(let i=0;i<h.length;i++){ const x=i/(h.length-1)*W, y=H-((h[i][key]-mn)/(mx-mn))*(H-6)-3; if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);} ctx.stroke(); }; line('ph',0,14,'rgba(122,162,255,0.95)'); line('T',0,130,'rgba(255,184,77,0.95)'); }
+
+  hazardInfo(lvl){ const m=[{dot:'#5fd38b',statusEn:'SYSTEM NOMINAL',show:false},{dot:'#ffb84d',label_jp:'軽度危険',label_en:'CAUTION — gas rising',statusEn:'CAUTION',bg:'rgba(255,184,77,.14)',show:true},{dot:'#ff9f45',label_jp:'中度危険',label_en:'WARNING — ventilate now',statusEn:'WARNING',bg:'rgba(255,140,60,.16)',show:true},{dot:'#ff5b52',label_jp:'重度危険',label_en:'DANGER — lethal threshold near',statusEn:'DANGER',bg:'rgba(255,60,50,.2)',show:true},{dot:'#ff3b30',label_jp:'致死レベル',label_en:'LETHAL',statusEn:'LETHAL',bg:'rgba(255,40,30,.3)',show:true}]; return m[lvl]||m[0]; }
+  stars(n){ return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n); }
+
+  renderVals(){ const s=this.sim; const snap=this.snap||{pH:7,T_C:25,pressure:101.3,conductivity:0,volumeMl:0,gasPct:0,color:[150,178,200,0],domGas:null,domMol:0,lethal:false};
+    const m=this.missions[this.state.missionIdx]; const hz=this.hazardInfo(s.hazard);
+    const cands=(this.ready&&this.engine)?this.engine.candidates(this.sol,{}):[]; const runnable=cands.filter(c=>!c.needHeat||this.sim.heating); const activeR=runnable[0]||this.lastActive||cands[0]||null;
+    const metric=(label,en,value,unit,pct,color)=>({label,en,value,unit,pct:Math.max(0,Math.min(100,pct)),color}); const gasPct=Math.round(snap.gasPct);
+    const metrics=[
+      metric('温度','TEMP',snap.T_C.toFixed(1),'°C',snap.T_C/120*100,snap.T_C>80?'var(--warn)':'var(--accent)'),
+      metric('pH','pH',snap.pH.toFixed(2),'',snap.pH/14*100,snap.pH>11||snap.pH<3?'var(--warn)':'var(--accent)'),
+      metric('圧力','PRESS',snap.pressure.toFixed(1),'kPa',(snap.pressure-90)/80*100,snap.pressure>140?'var(--warn)':'var(--accent)'),
+      metric('導電率','COND',snap.conductivity.toFixed(1),'mS/cm',snap.conductivity/300*100,'var(--accent)'),
+      metric('体積','VOL',snap.volumeMl.toFixed(0),'mL',snap.volumeMl/420*100,'var(--accent)'),
+      metric('ガス濃度','GAS',gasPct.toFixed(0),'%',gasPct,gasPct>40?'var(--danger)':(gasPct>18?'var(--warn)':'var(--accent)')),
+    ];
+    const dom=snap.domGas&&snap.domMol>1e-4?this.GASES[snap.domGas]:null;
+    const gasPanel=dom?{has:true,none:false,name:dom.name,fg:this.rgba(dom.color,1),stars:this.stars(dom.danger),odor:dom.odor,conc:gasPct,desc:dom.desc,border:dom.danger>=3?'rgba(255,91,82,.3)':'var(--line)',bg:dom.danger>=3?'rgba(255,91,82,.05)':'var(--panel)'}:{has:false,none:true,name:'',fg:'#fff',stars:'',odor:'',conc:0,desc:'',border:'var(--line)',bg:'var(--panel)'};
+    const reactDisabled=this.state.blackout||this.state.beaker.length===0;
+    const heatOn=s.heating,stirOn=s.stirring,ventOn=s.venting; const running=this.state.running;
+    let rname=activeR?(activeR.jp+' / '+activeR.en):'未選択 / no reaction'; if(activeR&&activeR.needHeat&&!running&&!s.heating)rname+='（要加熱）';
+    const exo=activeR?((activeR.dHkJ||0)<0):true;
+    const learnPanel=activeR?{show:true,eq:activeR.eq,ionEq:activeR.ionEq||'—',rxClass:activeR.rxClass||'—',jp:activeR.jp+' / '+activeR.en,kind:exo?'発熱反応':'吸熱反応',kindColor:exo?'var(--warn)':'var(--accent2)',dH:String(activeR.dHkJ||0),note:activeR.log,detail:this.state.learning}:{show:false,eq:'',ionEq:'',rxClass:'',jp:'',kind:'',kindColor:'',dH:'',note:'',detail:false};
+    const repItems=[{label:'温度 / Temp',value:snap.T_C.toFixed(1)+' °C'},{label:'pH',value:snap.pH.toFixed(2)},{label:'圧力 / Pressure',value:snap.pressure.toFixed(1)+' kPa'},{label:'導電率 / Conductivity',value:snap.conductivity.toFixed(1)+' mS/cm'},{label:'体積 / Volume',value:snap.volumeMl.toFixed(0)+' mL'},{label:'ガス濃度 / Gas',value:gasPct+' %'}];
+    return { rootRef:this.rootRef,canvasRef:this.canvasRef,sparkRef:this.sparkRef, elements:this.elements,materials:this.materials,
+      beaker:this.state.beaker, beakerEmpty:this.state.beaker.length===0,
+      metrics, solColor:this.rgba(s.liquid,Math.max(0.12,s.liquid[3])), runState:running?'反応中 RUNNING':'待機 IDLE',
+      eq:activeR?activeR.eq:'—  reagents not combined', eqColor:activeR?(running?'var(--accent)':'var(--muted)'):'var(--muted)',
+      reactionName:rname, gasPanel,
+      mission:{jp:m.jp,en:m.en,idxLabel:String(this.state.missionIdx+1),total:String(this.missions.length)}, missionDone:this.state.missionDone,
+      hazard:{statusEn:hz.statusEn,show:hz.show,label_jp:hz.label_jp||'',label_en:hz.label_en||'',bg:hz.bg||'rgba(0,0,0,0)',dot:hz.dot},
+      log:this.state.log, event:this.state.event, eventOn:!!this.state.event,
+      blackout:this.state.blackout, failure:this.state.failure||{cause_jp:'',cause_en:'',fix_jp:'',fix_en:''},
+      soundLabel:this.state.soundOn?'♪ SOUND ON':'♪ SOUND OFF',
+      learning:this.state.learning, learnLabel:this.state.learning?'◉ 学習モード':'○ 自由モード', learnFg:this.state.learning?'var(--accent2)':'var(--muted)', learnBg:this.state.learning?'rgba(122,162,255,.14)':'var(--panel)', learnBorder:this.state.learning?'var(--accent2)':'var(--line)', learnPanel,
+      showReport:this.state.showReport, report:{time:new Date().toLocaleString('ja-JP'),items:repItems,logs:[...this.state.log].reverse()},
+      heatBg:heatOn?'rgba(255,184,77,.16)':'var(--panel)',heatBorder:heatOn?'var(--warn)':'var(--line)',heatDot:heatOn?1:0.3,
+      stirBg:stirOn?'rgba(122,162,255,.16)':'var(--panel)',stirBorder:stirOn?'var(--accent2)':'var(--line)',stirDot:stirOn?1:0.3,
+      ventBg:ventOn?'rgba(63,217,200,.16)':'var(--panel)',ventBorder:ventOn?'var(--accent)':'var(--line)',ventDot:ventOn?1:0.3,
+      reactDisabled, runLabel:running?'停止 ■ Stop':'反応開始 ▶ React',
+      reactFg:reactDisabled?'var(--muted)':(running?'var(--text)':'#04110d'), reactBg:reactDisabled?'var(--panel)':(running?'rgba(255,184,77,.16)':'var(--accent)'), reactBorder:reactDisabled?'var(--line)':(running?'var(--warn)':'var(--accent)'), reactCursor:reactDisabled?'not-allowed':'pointer',
+      onDragStart:this.onDragStart,onDragOver:this.onDragOver,onDrop:this.onDrop,onChipClick:this.onChipClick,
+      onHeat:this.onHeat,onStir:this.onStir,onVent:this.onVent,onReact:this.onReact,onEmergency:this.onEmergency,onReset:this.onReset,onSound:this.onSound,
+      onToggleLearn:this.onToggleLearn,onCSV:this.onCSV,onReport:this.onReport,onCloseReport:this.onCloseReport,onPrint:this.onPrint };
+  }
+}
+</script>
+</body>
+</html>
