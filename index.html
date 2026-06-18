@@ -25,13 +25,22 @@
   @keyframes flicker{0%,100%{opacity:.9}50%{opacity:.55}}
   
   /* ── Responsive layout ── */
-  /* large desktop = inline 3-col grid */
-  @media (max-width:1180px){ #lab-main{grid-template-columns:248px 1fr 312px!important} }
-  @media (max-width:1080px){ #lab-main{grid-template-columns:228px 1fr 288px!important} #lab-header{gap:10px!important;padding:0 14px!important} }
-  /* tablet 768–899 : 2 columns, observation as a capped bottom row */
-  @media (max-width:899px){
-    #lab-main{grid-template-columns:216px 1fr!important;grid-template-rows:minmax(0,1fr) auto!important}
-    #lab-observe{grid-column:1 / span 2!important;border-left:none!important;border-top:1px solid var(--line)!important;max-height:280px}
+  /* desktop ≥1280 = inline 3-col grid (full height, columns scroll internally) */
+  /* tablet landscape 900–1279 (incl. 11" ≈1194 / 1024) : scrollable beaker & observation, toolbar pinned */
+  @media (min-width:900px) and (max-width:1279px){
+    #lab-main{grid-template-columns:236px 1fr 300px!important}
+    #lab-header{gap:10px!important;padding:0 14px!important}
+    #lab-bench{overflow-y:auto!important;min-height:0!important}
+    #lab-drop{flex:none!important;height:46vh!important;min-height:300px!important;max-height:none!important}
+    #lab-toolbar{position:sticky!important;bottom:0!important;z-index:12;background:rgba(9,13,18,.96)!important;backdrop-filter:blur(6px)}
+  }
+  /* tablet portrait 768–899 : 2 columns, observation = scrollable bottom row, toolbar pinned */
+  @media (min-width:768px) and (max-width:899px){
+    #lab-main{grid-template-columns:212px 1fr!important;grid-template-rows:minmax(0,1fr) minmax(220px,42vh)!important}
+    #lab-observe{grid-column:1 / span 2!important;border-left:none!important;border-top:1px solid var(--line)!important;min-height:0!important}
+    #lab-bench{overflow-y:auto!important;min-height:0!important}
+    #lab-drop{flex:none!important;height:44vh!important;min-height:280px!important;max-height:none!important}
+    #lab-toolbar{position:sticky!important;bottom:0!important;z-index:12;background:rgba(9,13,18,.96)!important;backdrop-filter:blur(6px)}
     #lab-headctl{min-width:0!important}
   }
   /* phones : DEDICATED single-column order — buttons → beaker → tabs → tiles (display:contents flattens the columns) */
@@ -101,6 +110,7 @@
     </div>
 
     <div id="lab-headctl" style="display:flex;align-items:center;gap:7px;min-width:200px;justify-content:flex-end">
+      <button onClick="{{ onOpenHowto }}" style="font-family:var(--mono);font-size:10px;color:var(--ok);background:rgba(95,211,139,.1);border:1px solid rgba(95,211,139,.4);border-radius:8px;padding:7px 10px;cursor:pointer" style-hover="background:rgba(95,211,139,.2)">？ 使い方</button>
       <button onClick="{{ onOpenDict }}" style="font-family:var(--mono);font-size:10px;color:var(--accent2);background:rgba(122,162,255,.1);border:1px solid rgba(122,162,255,.4);border-radius:8px;padding:7px 10px;cursor:pointer" style-hover="background:rgba(122,162,255,.2)">⊕ 反応図鑑</button>
       <button onClick="{{ onToggleLearn }}" style="font-family:var(--mono);font-size:10px;color:{{ learnFg }};background:{{ learnBg }};border:1px solid {{ learnBorder }};border-radius:8px;padding:7px 10px;cursor:pointer">{{ learnLabel }}</button>
       <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;color:var(--muted)">
@@ -514,6 +524,22 @@
       </div>
     </div>
   </sc-if>
+
+  <sc-if value="{{ howtoOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:60;background:rgba(4,6,9,.72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:14px">
+      <div style="width:100%;max-width:980px;height:90vh;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;background:#0b1118;box-shadow:0 30px 80px rgba(0,0,0,.6);overflow:hidden">
+        <div style="flex:none;display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line)">
+          <div style="line-height:1.1;min-width:0">
+            <div style="font-size:15px;font-weight:600">使い方ガイド / HOW TO USE</div>
+            <div style="font-size:10.5px;color:var(--muted)">操作方法・画面の見方・端末別の使い方</div>
+          </div>
+          <a href="how-to.html" target="_blank" rel="noopener" style="margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--ok);background:rgba(95,211,139,.1);border:1px solid rgba(95,211,139,.4);border-radius:8px;padding:8px 12px;cursor:pointer;text-decoration:none;white-space:nowrap">別タブ ↗</a>
+          <button onClick="{{ onCloseHowto }}" style="font-size:13px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px 14px;cursor:pointer;white-space:nowrap" style-hover="color:var(--text)">✕ 閉じる</button>
+        </div>
+        <iframe src="how-to.html" title="使い方ガイド" style="flex:1;width:100%;border:none;background:#0a0e13"></iframe>
+      </div>
+    </div>
+  </sc-if>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3fd9c8&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;soundEnabled&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;hazardSensitivity&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:1,&quot;min&quot;:0.4,&quot;max&quot;:2.2,&quot;step&quot;:0.1,&quot;tsType&quot;:&quot;number&quot;}}">
@@ -610,7 +636,7 @@ class Component extends DCLogic {
     this.missions=[{goal:'Na_water',jp:'水素を生成せよ',en:'Generate hydrogen gas'},{goal:'Cu_HNO3',jp:'銅を溶かし青い溶液を作れ',en:'Dissolve copper into a blue solution'},{goal:'bleach_HCl',jp:'塩素を発生させ安全に換気せよ',en:'Generate & safely vent chlorine'}];
     this.sim=this.freshSim();
     this.hist=[]; this.samples=[];
-    this.state={tick:0,beaker:[],missionIdx:0,missionDone:false,blackout:false,failure:null,event:null,log:[],soundOn:true,learning:false,showReport:false,running:false,tab:'elements',q:'',dictOpen:false,dictQ:'',difficulty:'初級',hintShown:false};
+    this.state={tick:0,beaker:[],missionIdx:0,missionDone:false,blackout:false,failure:null,event:null,log:[],soundOn:true,learning:false,showReport:false,running:false,tab:'elements',q:'',dictOpen:false,dictQ:'',difficulty:'初級',hintShown:false,howtoOpen:false};
     this.lastUi=0; this.audio=null; this.siren=null; this.ready=false; this.lastSample=0; this.lastActive=null;
     this._seenRx=new Set(); this.expHistory=[];
     try{ const h=JSON.parse(localStorage.getItem('vcl_history')||'[]'); if(Array.isArray(h)) this.expHistory=h.slice(0,40); }catch(e){}
@@ -691,6 +717,8 @@ class Component extends DCLogic {
   onClearSearch=()=>{ this.setState({q:''}); }
   onOpenDict=()=>{ this.setState({dictOpen:true}); }
   onCloseDict=()=>{ this.setState({dictOpen:false}); }
+  onOpenHowto=()=>{ this.setState({howtoOpen:true}); }
+  onCloseHowto=()=>{ this.setState({howtoOpen:false}); }
   onDictSearch=(e)=>{ this.setState({dictQ:e.target.value}); }
   onClearHistory=()=>{ this.expHistory=[]; try{localStorage.removeItem('vcl_history');}catch(e){} this.setState(s=>({tick:s.tick+1})); }
   onDiff=(e)=>{ const d=e.currentTarget.dataset.d; if(!this.missionPool)return; this.missions=this.missionPool[d]||this.missionPool['初級']; this.setState({difficulty:d,missionIdx:0,missionDone:false,hintShown:false}); }
@@ -935,7 +963,7 @@ class Component extends DCLogic {
       q:this.state.q||'', searching, searchEls, searchMats, searchNone:searching&&searchEls.length===0&&searchMats.length===0,
       showEls:!searching&&tab==='elements', showReagents:!searching&&tab==='reagents', showIndicators:!searching&&tab==='indicators',
       tabEls:this.elements, tabMatGroups, tabIndicators:indicators, elTab, reTab, inTab,
-      dictOpen:this.state.dictOpen, dictList, dictQ:this.state.dictQ||'', dictCount:dictList.length, dictNone:dictList.length===0,
+      dictOpen:this.state.dictOpen, dictList, dictQ:this.state.dictQ||'', dictCount:dictList.length, dictNone:dictList.length===0, howtoOpen:this.state.howtoOpen, onOpenHowto:this.onOpenHowto, onCloseHowto:this.onCloseHowto,
       history, historyEmpty:history.length===0, difficulty:this.state.difficulty, diffBtns, missionHint, hintShown:this.state.hintShown, hintLabel:this.state.hintShown?'ヒントを閉じる':'ヒントを見る', onToggleHint:this.onToggleHint,
       onTab:this.onTab,onSearch:this.onSearch,onClearSearch:this.onClearSearch,onOpenDict:this.onOpenDict,onCloseDict:this.onCloseDict,onDictSearch:this.onDictSearch,onClearHistory:this.onClearHistory,onDiff:this.onDiff };
   }
