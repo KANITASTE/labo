@@ -25,42 +25,42 @@
   @keyframes flicker{0%,100%{opacity:.9}50%{opacity:.55}}
   
   /* ── Responsive layout ── */
-  /* large desktop = inline 3-col grid (300 / 1fr / 360) */
-  @media (max-width:1180px){
-    #lab-main{grid-template-columns:264px 1fr 320px!important}
-  }
-  /* tablet landscape ~1024 */
-  @media (max-width:1080px){
-    #lab-main{grid-template-columns:240px 1fr 296px!important}
-    #lab-header{gap:10px!important;padding:0 14px!important}
-  }
-  /* tablet portrait 768–899 : 2 columns, observation drops to a capped bottom row */
+  /* large desktop = inline 3-col grid */
+  @media (max-width:1180px){ #lab-main{grid-template-columns:248px 1fr 312px!important} }
+  @media (max-width:1080px){ #lab-main{grid-template-columns:228px 1fr 288px!important} #lab-header{gap:10px!important;padding:0 14px!important} }
+  /* tablet 768–899 : 2 columns, observation as a capped bottom row */
   @media (max-width:899px){
-    #lab-main{grid-template-columns:224px 1fr!important;grid-template-rows:minmax(0,1fr) auto!important}
-    #lab-observe{grid-column:1 / span 2!important;border-left:none!important;border-top:1px solid var(--line)!important;max-height:300px}
+    #lab-main{grid-template-columns:216px 1fr!important;grid-template-rows:minmax(0,1fr) auto!important}
+    #lab-observe{grid-column:1 / span 2!important;border-left:none!important;border-top:1px solid var(--line)!important;max-height:280px}
     #lab-headctl{min-width:0!important}
   }
-  /* phones (375 portrait & 667 landscape) : single-column flow, body scrolls */
+  /* phones : DEDICATED single-column order — buttons → beaker → tabs → tiles (display:contents flattens the columns) */
   @media (max-width:767px){
     html,body{overflow:auto!important;height:auto!important}
     #app-root{height:auto!important;min-height:100vh!important;overflow:visible!important}
     #lab-main{display:flex!important;flex-direction:column!important;min-height:0!important}
-    #lab-header{height:auto!important;flex-wrap:wrap!important;padding:8px 12px!important;gap:8px!important;position:sticky;top:0;z-index:25}
+    #lab-library,#lab-bench,#lab-observe{display:contents!important}
+    #lab-header{height:auto!important;flex-wrap:wrap!important;padding:8px 12px!important;gap:8px!important;position:sticky;top:0;z-index:30}
     #lab-headmissionwrap{order:3;flex:1 0 100%!important;justify-content:flex-start!important}
     #lab-headmission{max-width:none!important;width:100%}
     #lab-headctl{min-width:0!important;flex:1;justify-content:flex-end!important;flex-wrap:wrap!important;row-gap:6px!important}
-    #lab-library{border-right:none!important;border-bottom:1px solid var(--line)!important;max-height:none!important}
-    #lab-libbody{max-height:300px!important}
-    #lab-bench{min-height:0!important;flex:none!important}
-    #lab-drop{height:62vw!important;min-height:240px!important;max-height:62vh;flex:none!important}
-    #lab-observe{border-left:none!important;border-top:1px solid var(--line)!important;flex:none!important}
-    #lab-observe>div{overflow:visible!important}
-    #lab-toolbar{flex-wrap:wrap!important;padding:10px 12px!important;gap:7px!important}
-    #lab-toolbar button{flex:1 1 auto;min-height:44px}
-    #lab-toolbar>div{flex-basis:100%!important}
+    #lab-toolbar{order:1;border-top:none!important;border-bottom:1px solid var(--line)!important;background:rgba(8,12,17,.85)!important;flex-wrap:wrap!important;padding:9px 12px!important;gap:6px!important}
+    #lab-toolbar button{flex:1 1 30%;min-height:46px;justify-content:center}
+    #lab-toolbar>div{display:none!important}
+    #lab-rxbar{order:2;border-bottom:none!important;border-top:1px solid var(--line)!important;padding:9px 14px!important;flex-wrap:wrap!important}
+    #lab-drop{order:3;height:64vw!important;min-height:240px!important;max-height:74vh;flex:none!important}
+    #lab-caution{order:4;padding:7px 14px 2px!important}
+    #lab-search{order:5;padding:10px 12px 2px!important}
+    #lab-libtabs{order:6;padding-top:8px!important}
+    #lab-libbody{order:7;max-height:none!important;overflow:visible!important;padding-top:8px!important}
+    #lab-obsbody{order:8;overflow:visible!important}
+    #lab-elgrid{grid-template-columns:repeat(6,1fr)!important;gap:5px!important}
+    .reagent-list{display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important}
+    .reagent-tile{padding:9px!important;flex-wrap:wrap!important}
+    .reagent-tile .mt-en{display:none!important}
   }
   @media (max-width:430px){
-    #lab-elgrid{grid-template-columns:repeat(4,1fr)!important}
+    #lab-elgrid{grid-template-columns:repeat(5,1fr)!important}
     #lab-headbrand{min-width:0!important}
     #lab-headbrand .brandsub{display:none}
   }
@@ -90,7 +90,10 @@
         <span style="width:1px;height:18px;background:var(--line)"></span>
         <span style="font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:.12em">MISSION {{ mission.idxLabel }}/{{ mission.total }}</span>
         <span style="font-size:12.5px;font-weight:500">{{ mission.jp }}</span>
-        <span style="font-size:10.5px;color:var(--muted)">{{ missionHint }}</span>
+        <button onClick="{{ onToggleHint }}" style="font-size:10px;font-weight:600;color:var(--warn);background:rgba(255,184,77,.12);border:1px solid rgba(255,184,77,.42);border-radius:7px;padding:4px 9px;cursor:pointer" style-hover="background:rgba(255,184,77,.22)">💡 {{ hintLabel }}</button>
+        <sc-if value="{{ hintShown }}" hint-placeholder-val="{{ false }}">
+          <span style="font-size:10.5px;color:var(--warn)">ヒント：{{ missionHint }}</span>
+        </sc-if>
         <sc-if value="{{ missionDone }}" hint-placeholder-val="{{ false }}">
           <span style="font-family:var(--mono);font-size:10px;color:var(--ok);border:1px solid rgba(95,211,139,.4);padding:2px 7px;border-radius:6px">✓ CLEAR</span>
         </sc-if>
@@ -113,7 +116,7 @@
     <!-- LEFT : reagent library (tabbed + search) -->
     <aside id="lab-library" style="border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:rgba(255,255,255,.012)">
       <!-- search -->
-      <div style="padding:12px 12px 0;flex:none">
+      <div id="lab-search" style="padding:12px 12px 0;flex:none">
         <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:8px 11px">
           <span style="font-size:12px;color:var(--muted)">🔍</span>
           <input value="{{ q }}" onInput="{{ onSearch }}" placeholder="検索 (例: Ag / 銀 / 硝酸銀)" style="flex:1;min-width:0;border:none;background:transparent;outline:none;color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:12.5px">
@@ -123,7 +126,7 @@
         </div>
       </div>
       <!-- tabs -->
-      <div style="display:flex;gap:4px;padding:10px 12px 0;flex:none">
+      <div id="lab-libtabs" style="display:flex;gap:4px;padding:10px 12px 0;flex:none">
         <button data-t="elements" onClick="{{ onTab }}" style="flex:1;font-size:11.5px;font-weight:600;color:{{ elTab.fg }};background:{{ elTab.bg }};border:1px solid var(--line);border-bottom:2px solid {{ elTab.border }};border-radius:8px 8px 0 0;padding:8px 4px;cursor:pointer">元素</button>
         <button data-t="reagents" onClick="{{ onTab }}" style="flex:1;font-size:11.5px;font-weight:600;color:{{ reTab.fg }};background:{{ reTab.bg }};border:1px solid var(--line);border-bottom:2px solid {{ reTab.border }};border-radius:8px 8px 0 0;padding:8px 4px;cursor:pointer">試薬</button>
         <button data-t="indicators" onClick="{{ onTab }}" style="flex:1;font-size:11.5px;font-weight:600;color:{{ inTab.fg }};background:{{ inTab.bg }};border:1px solid var(--line);border-bottom:2px solid {{ inTab.border }};border-radius:8px 8px 0 0;padding:8px 4px;cursor:pointer">指示薬</button>
@@ -180,13 +183,13 @@
           <div style="display:flex;flex-direction:column;gap:0">
             <sc-for list="{{ tabMatGroups }}" as="grp" hint-placeholder-count="6">
               <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.1em;margin:10px 2px 5px;border-top:1px solid var(--line);padding-top:8px">{{ grp.label }}</div>
-              <div style="display:flex;flex-direction:column;gap:5px">
+              <div class="reagent-list" style="display:flex;flex-direction:column;gap:5px">
                 <sc-for list="{{ grp.items }}" as="mt" hint-placeholder-count="3">
-                  <div draggable="true" data-id="{{ mt.id }}" onDragStart="{{ onDragStart }}" onClick="{{ onChipClick }}" title="{{ mt.en }}" style="display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.02);padding:6px 10px;cursor:grab;user-select:none;transition:border-color .15s" style-hover="border-color:var(--accent)">
+                  <div draggable="true" data-id="{{ mt.id }}" onDragStart="{{ onDragStart }}" onClick="{{ onChipClick }}" title="{{ mt.en }}" class="reagent-tile" style="display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.02);padding:6px 10px;cursor:grab;user-select:none;transition:border-color .15s" style-hover="border-color:var(--accent)">
                     <span style="width:11px;height:11px;border-radius:{{ mt.swatchR }};background:{{ mt.swatch }};box-shadow:0 0 0 1px rgba(255,255,255,.08) inset;flex:none"></span>
                     <span style="font-size:11.5px;font-weight:500">{{ mt.jp }}</span>
                     <sc-if value="{{ mt.hazShow }}" hint-placeholder-val="{{ false }}"><span style="font-size:8.5px;color:{{ mt.hazColor }};font-family:var(--mono);letter-spacing:-1.5px;flex:none">{{ mt.hazStars }}</span></sc-if>
-                    <span style="font-size:9px;color:var(--muted);margin-left:auto;font-family:var(--mono)">{{ mt.en }}</span>
+                    <span class="mt-en" style="font-size:9px;color:var(--muted);margin-left:auto;font-family:var(--mono)">{{ mt.en }}</span>
                   </div>
                 </sc-for>
               </div>
@@ -215,7 +218,7 @@
 
     <!-- CENTER : bench -->
     <section id="lab-bench" style="display:flex;flex-direction:column;min-height:0;position:relative">
-      <div style="flex:none;display:flex;align-items:center;gap:14px;padding:11px 18px;border-bottom:1px solid var(--line);background:rgba(8,12,17,.4)">
+      <div id="lab-rxbar" style="flex:none;display:flex;align-items:center;gap:14px;padding:11px 18px;border-bottom:1px solid var(--line);background:rgba(8,12,17,.4)">
         <span style="font-family:var(--mono);font-size:9.5px;color:var(--accent);letter-spacing:.14em">REACTION</span>
         <span style="font-family:var(--mono);font-size:15px;font-weight:500;letter-spacing:.01em;color:{{ eqColor }}">{{ eq }}</span>
         <span style="font-size:11.5px;color:var(--muted);margin-left:auto">{{ reactionName }}</span>
@@ -251,9 +254,9 @@
         </div>
       </div>
 
-      <div style="flex:none;text-align:center;padding:7px 18px 0;color:#ff5b52;font-size:11px;line-height:1.45">【注意】実際の実験とは異なります。これらの反応はイメージです。安全のため、必ず指導者のもとで正しい器具・手順で実験を行ってください。</div>
+      <div id="lab-caution" style="flex:none;text-align:center;padding:7px 18px 0;color:#ff5b52;font-size:11px;line-height:1.45">【注意】実際の実験とは異なります。これらの反応はイメージです。安全のため、必ず指導者のもとで正しい器具・手順で実験を行ってください。</div>
 
-      <div id="lab-toolbar" style="flex:none;display:flex;align-items:center;gap:9px;padding:13px 18px;border-top:1px solid var(--line);background:rgba(8,12,17,.5)">
+      <div id="lab-toolbar" style="flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:9px;padding:13px 18px;border-top:1px solid var(--line);background:rgba(8,12,17,.5)">
         <button onClick="{{ onHeat }}" style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--text);background:{{ heatBg }};border:1px solid {{ heatBorder }};border-radius:10px;padding:9px 14px;cursor:pointer;transition:.15s" style-hover="border-color:var(--warn)"><span style="width:8px;height:8px;border-radius:50%;background:var(--warn);opacity:{{ heatDot }}"></span>加熱 Heat</button>
         <button onClick="{{ onStir }}" style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--text);background:{{ stirBg }};border:1px solid {{ stirBorder }};border-radius:10px;padding:9px 14px;cursor:pointer;transition:.15s" style-hover="border-color:var(--accent2)"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent2);opacity:{{ stirDot }}"></span>撹拌 Stir</button>
         <button onClick="{{ onVent }}" style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--text);background:{{ ventBg }};border:1px solid {{ ventBorder }};border-radius:10px;padding:9px 14px;cursor:pointer;transition:.15s" style-hover="border-color:var(--accent)"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:{{ ventDot }}"></span>換気 Vent</button>
@@ -266,7 +269,7 @@
 
     <!-- RIGHT : observation -->
     <aside id="lab-observe" style="border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:rgba(255,255,255,.012)">
-      <div style="flex:1;overflow:auto;padding:15px 15px 18px">
+      <div id="lab-obsbody" style="flex:1;overflow:auto;padding:15px 15px 18px">
         <div style="display:flex;align-items:center;justify-content:space-between">
           <div>
             <div style="font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--muted)">REAL-TIME OBSERVATION</div>
@@ -446,6 +449,37 @@
         <div style="font-family:var(--mono);font-size:12px;color:#445;text-align:right">{{ report.time }}</div>
       </div>
       <div style="margin-top:18px;font-size:13px;color:#334">テーマ：{{ mission.jp }} / {{ mission.en }}</div>
+
+      <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:18px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:#10151b;border-bottom:1px solid #d4d9de;padding-bottom:5px;margin-bottom:8px">使用した試薬 / Reagents</div>
+          <sc-if value="{{ report.reagentsEmpty }}" hint-placeholder-val="{{ true }}"><div style="font-size:12px;color:#889">—</div></sc-if>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ report.reagents }}" as="rg" hint-placeholder-count="0"><span style="font-size:11.5px;background:#eef2f6;border:1px solid #dde3e9;border-radius:6px;padding:3px 9px">{{ rg }}</span></sc-for>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:#10151b;border-bottom:1px solid #d4d9de;padding-bottom:5px;margin-bottom:8px">生成物 / Products</div>
+          <sc-if value="{{ report.productsEmpty }}" hint-placeholder-val="{{ true }}"><div style="font-size:12px;color:#889">—</div></sc-if>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ report.products }}" as="pr" hint-placeholder-count="0"><span style="font-size:11.5px;background:#eaf4ee;border:1px solid #cfe6da;border-radius:6px;padding:3px 9px;color:#1a6a45">{{ pr }}</span></sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px;font-size:13px;font-weight:600">反応式 / Reactions</div>
+      <sc-if value="{{ report.reactionsEmpty }}" hint-placeholder-val="{{ true }}"><div style="font-size:12px;color:#889;margin-top:6px">記録された反応はありません。</div></sc-if>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+        <sc-for list="{{ report.reactions }}" as="rx" hint-placeholder-count="0">
+          <div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;border-bottom:1px solid #eef1f4;padding-bottom:5px"><span style="font-size:12px;font-weight:500;color:#334">{{ rx.jp }}</span><span style="font-family:var(--mono);font-size:11.5px;color:#0e3a6a">{{ rx.eq }}</span></div>
+        </sc-for>
+      </div>
+
+      <div style="margin-top:18px;font-size:13px;font-weight:600">観察結果 / Observations</div>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">
+        <sc-for list="{{ report.observations }}" as="ob" hint-placeholder-count="0"><div style="font-size:12.5px;color:#334">・ {{ ob }}</div></sc-for>
+      </div>
+
       <div style="margin-top:18px;font-size:13px;font-weight:600">最終測定値 / Final readings</div>
       <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:13px">
         <sc-for list="{{ report.items }}" as="r" hint-placeholder-count="0">
@@ -466,39 +500,17 @@
   </sc-if>
 
   <sc-if value="{{ dictOpen }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;inset:0;z-index:60;background:rgba(4,6,9,.72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px">
-      <div style="width:100%;max-width:740px;max-height:88vh;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;background:#0b1118;box-shadow:0 30px 80px rgba(0,0,0,.6);overflow:hidden">
-        <div style="flex:none;display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)">
-          <div style="line-height:1.1">
+    <div style="position:fixed;inset:0;z-index:60;background:rgba(4,6,9,.72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:14px">
+      <div style="width:100%;max-width:980px;height:90vh;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;background:#0b1118;box-shadow:0 30px 80px rgba(0,0,0,.6);overflow:hidden">
+        <div style="flex:none;display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line)">
+          <div style="line-height:1.1;min-width:0">
             <div style="font-size:15px;font-weight:600">反応図鑑 / REACTION INDEX</div>
-            <div style="font-size:10.5px;color:var(--muted)">全 {{ dictCount }} 反応 ・ 危険度レベル付き</div>
+            <div style="font-size:10.5px;color:var(--muted)">変化が確認できる組み合わせ一覧 ・ 危険度 Lv.1〜5 ・ 検索・タグ絞り込み対応</div>
           </div>
-          <button onClick="{{ onCloseDict }}" style="margin-left:auto;font-size:13px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px 14px;cursor:pointer" style-hover="color:var(--text)">✕ 閉じる</button>
+          <a href="reaction-list.html" target="_blank" rel="noopener" style="margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--accent2);background:rgba(122,162,255,.1);border:1px solid rgba(122,162,255,.4);border-radius:8px;padding:8px 12px;cursor:pointer;text-decoration:none;white-space:nowrap">別タブ ↗</a>
+          <button onClick="{{ onCloseDict }}" style="font-size:13px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px 14px;cursor:pointer;white-space:nowrap" style-hover="color:var(--text)">✕ 閉じる</button>
         </div>
-        <div style="flex:none;padding:12px 18px 0">
-          <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:9px 12px">
-            <span style="font-size:12px;color:var(--muted)">🔍</span>
-            <input value="{{ dictQ }}" onInput="{{ onDictSearch }}" placeholder="検索 (例: CO₂ / 白色沈殿 / 酸化還元 / 水素)" style="flex:1;min-width:0;border:none;background:transparent;outline:none;color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:12.5px">
-          </div>
-        </div>
-        <div style="flex:1;overflow:auto;padding:14px 18px 18px;display:flex;flex-direction:column;gap:9px">
-          <sc-if value="{{ dictNone }}" hint-placeholder-val="{{ false }}">
-            <div style="font-size:12px;color:var(--muted);padding:18px 4px;text-align:center">該当する反応が見つかりません。</div>
-          </sc-if>
-          <sc-for list="{{ dictList }}" as="r" hint-placeholder-count="8">
-            <div style="border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:12px 13px">
-              <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:8px">
-                <span style="font-size:12.5px;font-weight:600">{{ r.jp }}</span>
-                <span style="font-size:10px;color:var(--muted);font-family:var(--mono)">{{ r.en }}</span>
-                <span style="font-size:10px;background:rgba(122,162,255,.12);border:1px solid rgba(122,162,255,.35);border-radius:6px;padding:2px 7px;color:var(--accent2)">{{ r.rxClass }}</span>
-                <span style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:10px;color:{{ r.dlColor }}"><span style="font-family:var(--mono);letter-spacing:-1px">{{ r.stars }}</span>{{ r.dlLabel }}</span>
-              </div>
-              <div style="font-family:var(--mono);font-size:11.5px;line-height:1.45;color:var(--text);word-break:break-word">{{ r.eq }}</div>
-              <div style="font-family:var(--mono);font-size:11px;line-height:1.45;color:var(--accent);margin-top:3px;word-break:break-word">{{ r.ionEq }}</div>
-              <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-top:7px">{{ r.note }}</div>
-            </div>
-          </sc-for>
-        </div>
+        <iframe src="reaction-list.html" title="反応図鑑" style="flex:1;width:100%;border:none;background:#fff"></iframe>
       </div>
     </div>
   </sc-if>
@@ -598,7 +610,7 @@ class Component extends DCLogic {
     this.missions=[{goal:'Na_water',jp:'水素を生成せよ',en:'Generate hydrogen gas'},{goal:'Cu_HNO3',jp:'銅を溶かし青い溶液を作れ',en:'Dissolve copper into a blue solution'},{goal:'bleach_HCl',jp:'塩素を発生させ安全に換気せよ',en:'Generate & safely vent chlorine'}];
     this.sim=this.freshSim();
     this.hist=[]; this.samples=[];
-    this.state={tick:0,beaker:[],missionIdx:0,missionDone:false,blackout:false,failure:null,event:null,log:[],soundOn:true,learning:false,showReport:false,running:false,tab:'elements',q:'',dictOpen:false,dictQ:'',difficulty:'初級'};
+    this.state={tick:0,beaker:[],missionIdx:0,missionDone:false,blackout:false,failure:null,event:null,log:[],soundOn:true,learning:false,showReport:false,running:false,tab:'elements',q:'',dictOpen:false,dictQ:'',difficulty:'初級',hintShown:false};
     this.lastUi=0; this.audio=null; this.siren=null; this.ready=false; this.lastSample=0; this.lastActive=null;
     this._seenRx=new Set(); this.expHistory=[];
     try{ const h=JSON.parse(localStorage.getItem('vcl_history')||'[]'); if(Array.isArray(h)) this.expHistory=h.slice(0,40); }catch(e){}
@@ -663,7 +675,7 @@ class Component extends DCLogic {
     else this.pushLog('反応を停止。','var(--muted)');
     this.setState({running:run}); }
   onEmergency=()=>{ this.sim.venting=true; this.sim.heating=false; this.startSiren(); setTimeout(()=>this.stopSiren(),900); this.beep(200,0.3,'square',0.14); this.pushLog('緊急停止 — 換気作動・加熱停止。','var(--warn)'); this.setState({running:false}); }
-  onReset=()=>{ this.stopSiren(); const adv=this.state.missionDone?(this.state.missionIdx+1)%this.missions.length:this.state.missionIdx; this.sim=this.freshSim(); this.hist=[]; this.samples=[]; this.lastActive=null; this._seenRx=new Set(); if(this.engine){ const ce=this.sol.constructor; this.sol=new ce(); this.snap=this.sol.snapshot(); } this.setState({beaker:[],blackout:false,failure:null,missionDone:false,missionIdx:adv,running:false,showReport:false}); }
+  onReset=()=>{ this.stopSiren(); const adv=this.state.missionDone?(this.state.missionIdx+1)%this.missions.length:this.state.missionIdx; this.sim=this.freshSim(); this.hist=[]; this.samples=[]; this.lastActive=null; this._seenRx=new Set(); if(this.engine){ const ce=this.sol.constructor; this.sol=new ce(); this.snap=this.sol.snapshot(); } this.setState({beaker:[],blackout:false,failure:null,missionDone:false,missionIdx:adv,running:false,showReport:false,hintShown:false}); }
   onSound=()=>{ const on=!this.state.soundOn; if(!on)this.stopSiren(); this.setState({soundOn:on}); }
   onToggleLearn=()=>{ this.setState(s=>({learning:!s.learning})); }
   onCSV=()=>{ const rows=[['t_s','pH','T_C','cond_mS_cm','gas_pct','pressure_kPa','volume_mL']]; this.samples.forEach(x=>rows.push([x.t.toFixed(1),x.pH.toFixed(2),x.T.toFixed(1),x.cond.toFixed(1),x.gas.toFixed(0),x.press.toFixed(1),x.vol.toFixed(0)])); const csv=rows.map(r=>r.join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='experiment_'+Date.now()+'.csv'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); this.pushLog('CSVを書き出しました。','var(--ok)'); }
@@ -681,7 +693,8 @@ class Component extends DCLogic {
   onCloseDict=()=>{ this.setState({dictOpen:false}); }
   onDictSearch=(e)=>{ this.setState({dictQ:e.target.value}); }
   onClearHistory=()=>{ this.expHistory=[]; try{localStorage.removeItem('vcl_history');}catch(e){} this.setState(s=>({tick:s.tick+1})); }
-  onDiff=(e)=>{ const d=e.currentTarget.dataset.d; if(!this.missionPool)return; this.missions=this.missionPool[d]||this.missionPool['初級']; this.setState({difficulty:d,missionIdx:0,missionDone:false}); }
+  onDiff=(e)=>{ const d=e.currentTarget.dataset.d; if(!this.missionPool)return; this.missions=this.missionPool[d]||this.missionPool['初級']; this.setState({difficulty:d,missionIdx:0,missionDone:false,hintShown:false}); }
+  onToggleHint=()=>{ this.setState(s=>({hintShown:!s.hintShown})); }
 
   buildMissions(curated){
     const G=this.GASES, R=this.REACTIONS;
@@ -888,6 +901,17 @@ class Component extends DCLogic {
     // ── mission difficulty ──
     const diffBtns=['初級','中級','上級'].map(d=>({d,fg:this.state.difficulty===d?'#04110d':'var(--muted)',bg:this.state.difficulty===d?'var(--accent)':'var(--panel)',border:this.state.difficulty===d?'var(--accent)':'var(--line)'}));
     const missionHint=(this.missions&&this.missions[this.state.missionIdx]&&this.missions[this.state.missionIdx].hint)||'';
+    // ── auto-compiled experiment report ──
+    const seenRx=[...(this._seenRx||[])].map(id=>this.rxById&&this.rxById[id]).filter(Boolean);
+    const repReagents=this.state.beaker.map(b=>b.jp);
+    const repReactions=seenRx.map(Rx=>({jp:Rx.jp,eq:Rx.eq}));
+    const repProducts=[]; const pushP=(v)=>{ if(v&&repProducts.indexOf(v)<0)repProducts.push(v); };
+    seenRx.forEach(Rx=>{ const p=Rx.products||{}; if(p.gasMol)Object.keys(p.gasMol).forEach(g=>{const G=this.GASES[g];pushP((G?G.name:g)+'（気体）');}); if(p.precip)Object.keys(p.precip).forEach(x=>pushP(x+'（沈殿）')); });
+    const repObs=[]; repObs.push('溶液の色：'+(s.liquid[3]>0.06?'着色あり':'ほぼ無色・透明'));
+    repObs.push('pH '+snap.pH.toFixed(2)+'　／　温度 '+snap.T_C.toFixed(1)+' ℃');
+    if(dom)repObs.push('発生ガス：'+dom.name+'（におい：'+dom.odor+'）');
+    if(s.precipLevel>0.05)repObs.push('沈殿の生成を確認');
+    repObs.push('危険度ステータス：'+hz.statusEn);
     return { rootRef:this.rootRef,canvasRef:this.canvasRef,sparkRef:this.sparkRef, elements:this.elements,materials:this.materials,materialGroups,
       beaker:this.state.beaker, beakerEmpty:this.state.beaker.length===0,
       metrics, solColor:this.rgba(s.liquid,Math.max(0.12,s.liquid[3])), runState:running?'反応中 RUNNING':'待機 IDLE',
@@ -899,7 +923,7 @@ class Component extends DCLogic {
       blackout:this.state.blackout, failure:this.state.failure||{cause_jp:'',cause_en:'',fix_jp:'',fix_en:''},
       soundLabel:this.state.soundOn?'♪ SOUND ON':'♪ SOUND OFF',
       learning:this.state.learning, learnLabel:this.state.learning?'◉ 学習モード':'○ 自由モード', learnFg:this.state.learning?'var(--accent2)':'var(--muted)', learnBg:this.state.learning?'rgba(122,162,255,.14)':'var(--panel)', learnBorder:this.state.learning?'var(--accent2)':'var(--line)', learnPanel,
-      showReport:this.state.showReport, report:{time:new Date().toLocaleString('ja-JP'),items:repItems,logs:[...this.state.log].reverse()},
+      showReport:this.state.showReport, report:{time:new Date().toLocaleString('ja-JP'),items:repItems,logs:[...this.state.log].reverse(),reagents:repReagents,reagentsEmpty:repReagents.length===0,reactions:repReactions,reactionsEmpty:repReactions.length===0,products:repProducts,productsEmpty:repProducts.length===0,observations:repObs},
       heatBg:heatOn?'rgba(255,184,77,.16)':'var(--panel)',heatBorder:heatOn?'var(--warn)':'var(--line)',heatDot:heatOn?1:0.3,
       stirBg:stirOn?'rgba(122,162,255,.16)':'var(--panel)',stirBorder:stirOn?'var(--accent2)':'var(--line)',stirDot:stirOn?1:0.3,
       ventBg:ventOn?'rgba(63,217,200,.16)':'var(--panel)',ventBorder:ventOn?'var(--accent)':'var(--line)',ventDot:ventOn?1:0.3,
@@ -912,7 +936,7 @@ class Component extends DCLogic {
       showEls:!searching&&tab==='elements', showReagents:!searching&&tab==='reagents', showIndicators:!searching&&tab==='indicators',
       tabEls:this.elements, tabMatGroups, tabIndicators:indicators, elTab, reTab, inTab,
       dictOpen:this.state.dictOpen, dictList, dictQ:this.state.dictQ||'', dictCount:dictList.length, dictNone:dictList.length===0,
-      history, historyEmpty:history.length===0, difficulty:this.state.difficulty, diffBtns, missionHint,
+      history, historyEmpty:history.length===0, difficulty:this.state.difficulty, diffBtns, missionHint, hintShown:this.state.hintShown, hintLabel:this.state.hintShown?'ヒントを閉じる':'ヒントを見る', onToggleHint:this.onToggleHint,
       onTab:this.onTab,onSearch:this.onSearch,onClearSearch:this.onClearSearch,onOpenDict:this.onOpenDict,onCloseDict:this.onCloseDict,onDictSearch:this.onDictSearch,onClearHistory:this.onClearHistory,onDiff:this.onDiff };
   }
 }
