@@ -4,8 +4,127 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
+
+<style id="device-access-style">
+  #device-access-gate{display:none;position:fixed;inset:0;z-index:100000;background:radial-gradient(120% 90% at 50% -15%,#152433 0%,#090e14 48%,#05080c 100%);color:#e8eef3;font-family:'IBM Plex Sans',system-ui,sans-serif;overflow:auto;padding:28px 18px}
+  body.device-blocked{overflow:hidden!important;background:#06090d}
+  body.device-blocked>#device-access-gate{display:flex;align-items:center;justify-content:center}
+  body.device-blocked>x-dc{display:none!important}
+  .dag-card{width:min(720px,100%);border:1px solid rgba(255,255,255,.11);border-radius:24px;background:rgba(12,18,25,.86);box-shadow:0 28px 90px rgba(0,0,0,.5);padding:clamp(26px,6vw,52px);text-align:center;backdrop-filter:blur(14px)}
+  .dag-icon{width:74px;height:74px;margin:0 auto 22px;border-radius:22px;display:grid;place-items:center;font-size:35px;background:rgba(63,217,200,.10);border:1px solid rgba(63,217,200,.32);box-shadow:0 0 42px rgba(63,217,200,.13)}
+  .dag-eyebrow{font:600 11px/1.2 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#3fd9c8;margin-bottom:12px}
+  .dag-title{font-size:clamp(25px,5vw,38px);line-height:1.3;margin:0 0 16px;font-weight:600}
+  .dag-copy{font-size:clamp(14px,2.6vw,17px);line-height:1.9;color:#a7b4c0;margin:0 auto 28px;max-width:570px}
+  .dag-device-note{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border-radius:999px;border:1px solid rgba(122,162,255,.32);background:rgba(122,162,255,.09);color:#b8c9ff;font-size:12px;margin-bottom:24px}
+  .dag-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .dag-btn{appearance:none;border-radius:12px;padding:13px 20px;font-weight:600;font-size:14px;cursor:pointer;min-width:190px;transition:transform .15s ease,filter .15s ease;border:1px solid transparent}
+  .dag-btn:hover{filter:brightness(1.08)}
+  .dag-btn:active{transform:scale(.98)}
+  .dag-btn-primary{background:#3fd9c8;color:#04110d;border-color:#3fd9c8}
+  .dag-btn-secondary{background:rgba(255,255,255,.04);color:#e8eef3;border-color:rgba(255,255,255,.13)}
+  #demo-gallery{display:none;position:fixed;inset:0;z-index:100001;background:rgba(3,6,9,.96);color:#e8eef3;font-family:'IBM Plex Sans',system-ui,sans-serif;overflow:auto;padding:18px}
+  #demo-gallery.open{display:block}
+  .demo-shell{width:min(980px,100%);margin:0 auto;padding:12px 0 36px}
+  .demo-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+  .demo-head h2{font-size:clamp(23px,5vw,34px);margin:5px 0 7px}
+  .demo-head p{color:#8a98a6;line-height:1.7;font-size:14px}
+  .demo-close{flex:none;width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#fff;font-size:22px;cursor:pointer}
+  .demo-player-wrap{border:1px solid rgba(255,255,255,.11);border-radius:18px;overflow:hidden;background:#06090d;box-shadow:0 20px 55px rgba(0,0,0,.42)}
+  #demo-player{display:block;width:100%;aspect-ratio:16/9;background:#06090d;object-fit:contain}
+  .demo-caption{padding:14px 16px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;gap:12px;align-items:center}
+  .demo-caption strong{font-size:15px}.demo-caption span{font:12px 'IBM Plex Mono',monospace;color:#3fd9c8}
+  .demo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+  .demo-choice{border:1px solid rgba(255,255,255,.1);border-radius:13px;background:rgba(255,255,255,.035);color:#e8eef3;padding:13px 10px;text-align:left;cursor:pointer;min-height:74px}
+  .demo-choice.active{border-color:#3fd9c8;background:rgba(63,217,200,.10)}
+  .demo-choice b{display:block;font-size:13px;margin-bottom:5px}.demo-choice small{color:#8a98a6;font-size:11px;line-height:1.45}
+  .demo-foot{color:#748290;text-align:center;font-size:11px;line-height:1.7;margin-top:18px}
+  @media(max-width:700px){.demo-grid{grid-template-columns:1fr 1fr}.demo-caption{align-items:flex-start;flex-direction:column}.dag-card{border-radius:20px}.dag-actions{flex-direction:column}.dag-btn{width:100%}}
+</style>
 </head>
 <body>
+<div id="device-access-gate" aria-live="polite">
+  <section class="dag-card">
+    <div class="dag-icon" id="dag-icon">↻</div>
+    <div class="dag-eyebrow">VIRTUAL CHEMISTRY LAB</div>
+    <h1 class="dag-title" id="dag-title">画面を横向きにしてください</h1>
+    <p class="dag-copy" id="dag-copy">タブレット版は、実験器具と観察パネルを安全に表示するため横向きでのみ起動します。</p>
+    <div class="dag-device-note" id="dag-note">PCでの利用を推奨しています</div>
+    <div class="dag-actions">
+      <button class="dag-btn dag-btn-primary" id="open-demo" type="button">反応デモを見る</button>
+      <button class="dag-btn dag-btn-secondary" id="retry-device" type="button">向きを再確認</button>
+    </div>
+  </section>
+</div>
+<div id="demo-gallery" role="dialog" aria-modal="true" aria-label="反応デモ">
+  <div class="demo-shell">
+    <div class="demo-head">
+      <div><div class="dag-eyebrow">REACTION DEMO</div><h2>スマホでも見られる反応デモ</h2><p>実験室本体で観察できる代表的な反応を、短い映像で紹介します。</p></div>
+      <button class="demo-close" id="close-demo" type="button" aria-label="閉じる">×</button>
+    </div>
+    <div class="demo-player-wrap">
+      <video id="demo-player" controls muted playsinline loop preload="metadata" src="assets/demo/neutralization.mp4"></video>
+      <div class="demo-caption"><strong id="demo-title">酸・塩基中和</strong><span id="demo-eq">HCl + NaOH → NaCl + H₂O</span></div>
+    </div>
+    <div class="demo-grid">
+      <button class="demo-choice active" data-src="assets/demo/neutralization.mp4" data-title="酸・塩基中和" data-eq="HCl + NaOH → NaCl + H₂O"><b>01 中和反応</b><small>指示薬の色が変化</small></button>
+      <button class="demo-choice" data-src="assets/demo/precipitate.mp4" data-title="沈殿反応" data-eq="AgNO₃ + NaCl → AgCl↓ + NaNO₃"><b>02 沈殿反応</b><small>白い沈殿が生成</small></button>
+      <button class="demo-choice" data-src="assets/demo/gas.mp4" data-title="気体発生反応" data-eq="2HCl + CaCO₃ → CaCl₂ + H₂O + CO₂↑"><b>03 気体発生</b><small>泡と気体を観察</small></button>
+      <button class="demo-choice" data-src="assets/demo/flame.mp4" data-title="燃焼反応" data-eq="燃焼・発光のデモ"><b>04 燃焼反応</b><small>炎色と発光を観察</small></button>
+    </div>
+    <p class="demo-foot">デモ映像は画面表現の紹介です。実際の薬品を用いた実験手順を示すものではありません。</p>
+  </div>
+</div>
+<script id="device-access-script">
+(function(){
+  const body=document.body;
+  const gate=document.getElementById('device-access-gate');
+  const gallery=document.getElementById('demo-gallery');
+  const player=document.getElementById('demo-player');
+  const title=document.getElementById('dag-title');
+  const copy=document.getElementById('dag-copy');
+  const note=document.getElementById('dag-note');
+  const icon=document.getElementById('dag-icon');
+  function deviceType(){
+    const ua=navigator.userAgent||'';
+    const touch=navigator.maxTouchPoints||0;
+    const ipad=/iPad/i.test(ua)||(navigator.platform==='MacIntel'&&touch>1);
+    const iphone=/iPhone|iPod/i.test(ua);
+    const android=/Android/i.test(ua);
+    const androidPhone=android&&/Mobile/i.test(ua);
+    const tablet=ipad||(android&&!androidPhone)||(touch>1&&Math.min(screen.width,screen.height)>=600&&Math.max(screen.width,screen.height)<=1400);
+    const phone=iphone||androidPhone||(touch>1&&Math.min(screen.width,screen.height)<600);
+    return phone?'phone':(tablet?'tablet':'desktop');
+  }
+  function updateGate(){
+    const type=deviceType();
+    const portrait=window.matchMedia('(orientation: portrait)').matches;
+    const blocked=type==='phone'||(type==='tablet'&&portrait);
+    body.classList.toggle('device-blocked',blocked);
+    if(type==='phone'){
+      icon.textContent='▣'; title.textContent='スマートフォンでは起動できません';
+      copy.innerHTML='本実験室は、複数の操作パネルと精密な観察表示を使用するため、<strong style="color:#e8eef3">PCでの利用を推奨</strong>しています。<br>スマホでは下のデモから反応の雰囲気をお楽しみください。';
+      note.textContent='推奨環境：PC ／ タブレット横向き';
+      document.getElementById('retry-device').style.display='none';
+    } else if(type==='tablet'&&portrait){
+      icon.textContent='↻'; title.textContent='タブレットを横向きにしてください';
+      copy.textContent='実験器具・操作ボタン・観察パネルを正しく表示するため、タブレット版は横向きでのみ起動します。';
+      note.textContent='横向きにすると自動的に実験室が起動します';
+      document.getElementById('retry-device').style.display='inline-block';
+    }
+  }
+  document.getElementById('open-demo').addEventListener('click',()=>{gallery.classList.add('open');player.play().catch(()=>{});});
+  document.getElementById('close-demo').addEventListener('click',()=>{gallery.classList.remove('open');player.pause();});
+  document.getElementById('retry-device').addEventListener('click',updateGate);
+  gallery.addEventListener('click',e=>{if(e.target===gallery){gallery.classList.remove('open');player.pause();}});
+  document.querySelectorAll('.demo-choice').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('.demo-choice').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
+    player.src=btn.dataset.src;document.getElementById('demo-title').textContent=btn.dataset.title;document.getElementById('demo-eq').textContent=btn.dataset.eq;player.play().catch(()=>{});
+  }));
+  window.addEventListener('resize',updateGate);window.addEventListener('orientationchange',()=>setTimeout(updateGate,180));
+  updateGate();
+})();
+</script>
+
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
