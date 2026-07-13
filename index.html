@@ -4,127 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
-
-<style id="device-access-style">
-  #device-access-gate{display:none;position:fixed;inset:0;z-index:100000;background:radial-gradient(120% 90% at 50% -15%,#152433 0%,#090e14 48%,#05080c 100%);color:#e8eef3;font-family:'IBM Plex Sans',system-ui,sans-serif;overflow:auto;padding:28px 18px}
-  body.device-blocked{overflow:hidden!important;background:#06090d}
-  body.device-blocked>#device-access-gate{display:flex;align-items:center;justify-content:center}
-  body.device-blocked>x-dc{display:none!important}
-  .dag-card{width:min(720px,100%);border:1px solid rgba(255,255,255,.11);border-radius:24px;background:rgba(12,18,25,.86);box-shadow:0 28px 90px rgba(0,0,0,.5);padding:clamp(26px,6vw,52px);text-align:center;backdrop-filter:blur(14px)}
-  .dag-icon{width:74px;height:74px;margin:0 auto 22px;border-radius:22px;display:grid;place-items:center;font-size:35px;background:rgba(63,217,200,.10);border:1px solid rgba(63,217,200,.32);box-shadow:0 0 42px rgba(63,217,200,.13)}
-  .dag-eyebrow{font:600 11px/1.2 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#3fd9c8;margin-bottom:12px}
-  .dag-title{font-size:clamp(25px,5vw,38px);line-height:1.3;margin:0 0 16px;font-weight:600}
-  .dag-copy{font-size:clamp(14px,2.6vw,17px);line-height:1.9;color:#a7b4c0;margin:0 auto 28px;max-width:570px}
-  .dag-device-note{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border-radius:999px;border:1px solid rgba(122,162,255,.32);background:rgba(122,162,255,.09);color:#b8c9ff;font-size:12px;margin-bottom:24px}
-  .dag-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-  .dag-btn{appearance:none;border-radius:12px;padding:13px 20px;font-weight:600;font-size:14px;cursor:pointer;min-width:190px;transition:transform .15s ease,filter .15s ease;border:1px solid transparent}
-  .dag-btn:hover{filter:brightness(1.08)}
-  .dag-btn:active{transform:scale(.98)}
-  .dag-btn-primary{background:#3fd9c8;color:#04110d;border-color:#3fd9c8}
-  .dag-btn-secondary{background:rgba(255,255,255,.04);color:#e8eef3;border-color:rgba(255,255,255,.13)}
-  #demo-gallery{display:none;position:fixed;inset:0;z-index:100001;background:rgba(3,6,9,.96);color:#e8eef3;font-family:'IBM Plex Sans',system-ui,sans-serif;overflow:auto;padding:18px}
-  #demo-gallery.open{display:block}
-  .demo-shell{width:min(980px,100%);margin:0 auto;padding:12px 0 36px}
-  .demo-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
-  .demo-head h2{font-size:clamp(23px,5vw,34px);margin:5px 0 7px}
-  .demo-head p{color:#8a98a6;line-height:1.7;font-size:14px}
-  .demo-close{flex:none;width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#fff;font-size:22px;cursor:pointer}
-  .demo-player-wrap{border:1px solid rgba(255,255,255,.11);border-radius:18px;overflow:hidden;background:#06090d;box-shadow:0 20px 55px rgba(0,0,0,.42)}
-  #demo-player{display:block;width:100%;aspect-ratio:16/9;background:#06090d;object-fit:contain}
-  .demo-caption{padding:14px 16px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;gap:12px;align-items:center}
-  .demo-caption strong{font-size:15px}.demo-caption span{font:12px 'IBM Plex Mono',monospace;color:#3fd9c8}
-  .demo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
-  .demo-choice{border:1px solid rgba(255,255,255,.1);border-radius:13px;background:rgba(255,255,255,.035);color:#e8eef3;padding:13px 10px;text-align:left;cursor:pointer;min-height:74px}
-  .demo-choice.active{border-color:#3fd9c8;background:rgba(63,217,200,.10)}
-  .demo-choice b{display:block;font-size:13px;margin-bottom:5px}.demo-choice small{color:#8a98a6;font-size:11px;line-height:1.45}
-  .demo-foot{color:#748290;text-align:center;font-size:11px;line-height:1.7;margin-top:18px}
-  @media(max-width:700px){.demo-grid{grid-template-columns:1fr 1fr}.demo-caption{align-items:flex-start;flex-direction:column}.dag-card{border-radius:20px}.dag-actions{flex-direction:column}.dag-btn{width:100%}}
-</style>
 </head>
 <body>
-<div id="device-access-gate" aria-live="polite">
-  <section class="dag-card">
-    <div class="dag-icon" id="dag-icon">↻</div>
-    <div class="dag-eyebrow">VIRTUAL CHEMISTRY LAB</div>
-    <h1 class="dag-title" id="dag-title">画面を横向きにしてください</h1>
-    <p class="dag-copy" id="dag-copy">タブレット版は、実験器具と観察パネルを安全に表示するため横向きでのみ起動します。</p>
-    <div class="dag-device-note" id="dag-note">PCでの利用を推奨しています</div>
-    <div class="dag-actions">
-      <button class="dag-btn dag-btn-primary" id="open-demo" type="button">反応デモを見る</button>
-      <button class="dag-btn dag-btn-secondary" id="retry-device" type="button">向きを再確認</button>
-    </div>
-  </section>
-</div>
-<div id="demo-gallery" role="dialog" aria-modal="true" aria-label="反応デモ">
-  <div class="demo-shell">
-    <div class="demo-head">
-      <div><div class="dag-eyebrow">REACTION DEMO</div><h2>スマホでも見られる反応デモ</h2><p>実験室本体で観察できる代表的な反応を、短い映像で紹介します。</p></div>
-      <button class="demo-close" id="close-demo" type="button" aria-label="閉じる">×</button>
-    </div>
-    <div class="demo-player-wrap">
-      <video id="demo-player" controls muted playsinline loop preload="metadata" src="assets/demo/neutralization.mp4"></video>
-      <div class="demo-caption"><strong id="demo-title">酸・塩基中和</strong><span id="demo-eq">HCl + NaOH → NaCl + H₂O</span></div>
-    </div>
-    <div class="demo-grid">
-      <button class="demo-choice active" data-src="assets/demo/neutralization.mp4" data-title="酸・塩基中和" data-eq="HCl + NaOH → NaCl + H₂O"><b>01 中和反応</b><small>指示薬の色が変化</small></button>
-      <button class="demo-choice" data-src="assets/demo/precipitate.mp4" data-title="沈殿反応" data-eq="AgNO₃ + NaCl → AgCl↓ + NaNO₃"><b>02 沈殿反応</b><small>白い沈殿が生成</small></button>
-      <button class="demo-choice" data-src="assets/demo/gas.mp4" data-title="気体発生反応" data-eq="2HCl + CaCO₃ → CaCl₂ + H₂O + CO₂↑"><b>03 気体発生</b><small>泡と気体を観察</small></button>
-      <button class="demo-choice" data-src="assets/demo/flame.mp4" data-title="燃焼反応" data-eq="燃焼・発光のデモ"><b>04 燃焼反応</b><small>炎色と発光を観察</small></button>
-    </div>
-    <p class="demo-foot">デモ映像は画面表現の紹介です。実際の薬品を用いた実験手順を示すものではありません。</p>
-  </div>
-</div>
-<script id="device-access-script">
-(function(){
-  const body=document.body;
-  const gate=document.getElementById('device-access-gate');
-  const gallery=document.getElementById('demo-gallery');
-  const player=document.getElementById('demo-player');
-  const title=document.getElementById('dag-title');
-  const copy=document.getElementById('dag-copy');
-  const note=document.getElementById('dag-note');
-  const icon=document.getElementById('dag-icon');
-  function deviceType(){
-    const ua=navigator.userAgent||'';
-    const touch=navigator.maxTouchPoints||0;
-    const ipad=/iPad/i.test(ua)||(navigator.platform==='MacIntel'&&touch>1);
-    const iphone=/iPhone|iPod/i.test(ua);
-    const android=/Android/i.test(ua);
-    const androidPhone=android&&/Mobile/i.test(ua);
-    const tablet=ipad||(android&&!androidPhone)||(touch>1&&Math.min(screen.width,screen.height)>=600&&Math.max(screen.width,screen.height)<=1400);
-    const phone=iphone||androidPhone||(touch>1&&Math.min(screen.width,screen.height)<600);
-    return phone?'phone':(tablet?'tablet':'desktop');
-  }
-  function updateGate(){
-    const type=deviceType();
-    const portrait=window.matchMedia('(orientation: portrait)').matches;
-    const blocked=type==='phone'||(type==='tablet'&&portrait);
-    body.classList.toggle('device-blocked',blocked);
-    if(type==='phone'){
-      icon.textContent='▣'; title.textContent='スマートフォンでは起動できません';
-      copy.innerHTML='本実験室は、複数の操作パネルと精密な観察表示を使用するため、<strong style="color:#e8eef3">PCでの利用を推奨</strong>しています。<br>スマホでは下のデモから反応の雰囲気をお楽しみください。';
-      note.textContent='推奨環境：PC ／ タブレット横向き';
-      document.getElementById('retry-device').style.display='none';
-    } else if(type==='tablet'&&portrait){
-      icon.textContent='↻'; title.textContent='タブレットを横向きにしてください';
-      copy.textContent='実験器具・操作ボタン・観察パネルを正しく表示するため、タブレット版は横向きでのみ起動します。';
-      note.textContent='横向きにすると自動的に実験室が起動します';
-      document.getElementById('retry-device').style.display='inline-block';
-    }
-  }
-  document.getElementById('open-demo').addEventListener('click',()=>{gallery.classList.add('open');player.play().catch(()=>{});});
-  document.getElementById('close-demo').addEventListener('click',()=>{gallery.classList.remove('open');player.pause();});
-  document.getElementById('retry-device').addEventListener('click',updateGate);
-  gallery.addEventListener('click',e=>{if(e.target===gallery){gallery.classList.remove('open');player.pause();}});
-  document.querySelectorAll('.demo-choice').forEach(btn=>btn.addEventListener('click',()=>{
-    document.querySelectorAll('.demo-choice').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
-    player.src=btn.dataset.src;document.getElementById('demo-title').textContent=btn.dataset.title;document.getElementById('demo-eq').textContent=btn.dataset.eq;player.play().catch(()=>{});
-  }));
-  window.addEventListener('resize',updateGate);window.addEventListener('orientationchange',()=>setTimeout(updateGate,180));
-  updateGate();
-})();
-</script>
-
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -196,6 +77,9 @@
 </style>
 </helmet>
 <div ref="{{ rootRef }}" id="app-root" style="--accent:#3fd9c8;--accent2:#7aa2ff;--danger:#ff5b52;--warn:#ffb84d;--ok:#5fd38b;--bg:#0a0e13;--panel:rgba(255,255,255,.035);--panel2:rgba(255,255,255,.055);--line:rgba(255,255,255,.085);--text:#e8eef3;--muted:#8a98a6;--mono:'IBM Plex Mono',ui-monospace,monospace;font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--text);height:100vh;width:100vw;overflow:hidden;display:flex;flex-direction:column;background:radial-gradient(120% 80% at 50% -10%,#101822 0%,#0a0e13 45%,#06090d 100%)">
+
+  <sc-if value="{{ showLab }}" hint-placeholder-val="{{ true }}">
+  <div style="display:contents">
 
   <header id="lab-header" style="height: 62px; flex: none; display: flex; align-items: center; gap: 18px; padding: 0 22px; border-bottom: 1px solid var(--line); background: rgba(8,12,17,.6); backdrop-filter: blur(8px); position: relative">
     <div id="lab-headbrand" style="display:flex;align-items:center;gap:12px;min-width:200px">
@@ -383,7 +267,7 @@
         </div>
       </div>
 
-      <div id="lab-caution" style="flex:none;text-align:center;padding:7px 18px 0;color:#ff5b52;font-size:11px;line-height:1.45">【注意】実際の実験とは異なります。これらの反応はイメージです。安全のため、必ず指導者のもとで正しい器具・手順で実験を行ってください。</div>
+      <div id="lab-caution" style="flex:none;text-align:center;padding:7px 18px 0;color:#ff5b52;font-size:11px;line-height:1.45">【注意】実際の実験とは異なります。これらの反応はイメージです。安全のため、必ず指導者のもとで正しい器具・手順で実験を行ってください。<span style="display:block;margin-top:2px;color:var(--muted);font-size:10px;opacity:.78;font-weight:400">本シミュレーターはPCでの利用を推奨しています。</span></div>
 
       <div id="lab-toolbar" style="flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:9px;padding:13px 18px;border-top:1px solid var(--line);background:rgba(8,12,17,.5)">
         <button onClick="{{ onHeat }}" style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--text);background:{{ heatBg }};border:1px solid {{ heatBorder }};border-radius:10px;padding:9px 14px;cursor:pointer;transition:.15s" style-hover="border-color:var(--warn)"><span style="width:8px;height:8px;border-radius:50%;background:var(--warn);opacity:{{ heatDot }}"></span>加熱 Heat</button>
@@ -659,6 +543,103 @@
       </div>
     </div>
   </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ── GATE : tablet-portrait / smartphone ── -->
+  <sc-if value="{{ showGate }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="端末案内画面" style="flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 22px;text-align:center;overflow:auto">
+      <div style="width:54px;height:54px;border-radius:16px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:radial-gradient(60% 60% at 40% 30%,rgba(63,217,200,.35),transparent),#0e151c;box-shadow:0 0 34px rgba(63,217,200,.22);flex:none">
+        <div style="width:13px;height:13px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent)"></div>
+      </div>
+      <div style="margin-top:15px;font-size:22px;font-weight:600;letter-spacing:.05em">バーチャル実験室</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.22em;margin-top:5px">VIRTUAL CHEMISTRY LAB</div>
+      <div style="position:relative;width:124px;margin-top:20px;flex:none">
+        <img src="assets/beaker.png" draggable="false" style="width:100%;display:block;opacity:.92;filter:drop-shadow(0 16px 30px rgba(0,0,0,.55))">
+        <div style="position:absolute;left:16%;right:16%;bottom:13%;height:30%;background:linear-gradient(180deg,rgba(63,217,200,.34),rgba(63,217,200,.12));border-radius:4px 4px 12px 12px;filter:blur(1.5px)"></div>
+      </div>
+      <div style="margin-top:22px;border:1px solid var(--line);border-radius:15px;background:var(--panel);backdrop-filter:blur(8px);padding:17px 19px;max-width:340px;width:100%">
+        <sc-if value="{{ gateTablet }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="font-size:16px;font-weight:600;color:var(--accent)">タブレットを横向きにしてください</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.75">このバーチャル実験室は、横向き画面でご利用いただけます。<br>横向きにすると自動的に実験室が起動します。</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ gatePhone }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div style="font-size:14.5px;font-weight:600;line-height:1.6">このシミュレーターはPCでの利用を推奨しています。</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.75">タブレットをご利用の場合は、画面を横向きにしてください。</div>
+          </div>
+        </sc-if>
+      </div>
+      <button onClick="{{ onOpenDemo }}" style="margin-top:18px;display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;color:#04110d;background:var(--accent);border:1px solid var(--accent);border-radius:12px;padding:13px 26px;cursor:pointer;box-shadow:0 8px 26px rgba(63,217,200,.28)" style-hover="filter:brightness(1.08)">実験反応のデモを見る ▶</button>
+      <div style="margin-top:12px;font-size:10.5px;color:var(--muted);opacity:.85">本編と同じ反応エンジンによる実験デモを閲覧できます</div>
+    </div>
+  </sc-if>
+
+  <!-- ── REACTION DEMO : preset experiments played through the real engine ── -->
+  <sc-if value="{{ demoOpen }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="反応デモ画面" style="position:fixed;inset:0;z-index:80;background:rgba(4,6,9,.82);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:10px">
+      <div style="width:100%;max-width:440px;max-height:97vh;overflow:auto;border:1px solid var(--line);border-radius:18px;background:#0b1118;box-shadow:0 30px 80px rgba(0,0,0,.65);display:flex;flex-direction:column">
+        <div style="flex:none;display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line)">
+          <span style="font-family:var(--mono);font-size:9.5px;color:var(--accent);letter-spacing:.16em">REACTION DEMO</span>
+          <span style="font-family:var(--mono);font-size:10.5px;color:var(--muted)">{{ demoIdxLabel }} / {{ demoTotal }}</span>
+          <span style="font-family:var(--mono);font-size:9.5px;color:{{ demoStatusColor }};margin-left:auto">{{ demoStatus }}</span>
+          <button onClick="{{ onDemoClose }}" style="font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 11px;cursor:pointer;flex:none" style-hover="color:var(--text)">✕ 閉じる</button>
+        </div>
+        <div style="padding:14px 16px 16px">
+          <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+            <div style="font-size:16px;font-weight:600">{{ demo.title }}</div>
+            <sc-if value="{{ demo.dangerShow }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:10px;font-weight:600;color:{{ demo.dangerFg }};border:1px solid {{ demo.dangerFg }};border-radius:6px;padding:2px 7px">⚠ {{ demo.dangerLabel }} <span style="font-family:var(--mono);letter-spacing:-1px">{{ demo.stars }}</span></span>
+            </sc-if>
+          </div>
+          <div style="font-family:var(--mono);font-size:12px;color:var(--accent);margin-top:6px">{{ demo.eq }}</div>
+
+          <div style="position:relative;width:min(100%,270px);margin:12px auto 0;aspect-ratio:1211/1299">
+            <img src="assets/beaker.png" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none">
+            <canvas ref="{{ demoCanvasRef }}" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+            <img src="assets/beaker.png" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;mix-blend-mode:lighten">
+            <sc-if value="{{ hazard.show }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:9px;border:1px solid {{ hazard.dot }};background:{{ hazard.bg }};backdrop-filter:blur(6px);white-space:nowrap">
+                <span style="width:8px;height:8px;border-radius:50%;background:{{ hazard.dot }};box-shadow:0 0 10px {{ hazard.dot }};animation:pulseDot 1s infinite"></span>
+                <span style="font-weight:600;font-size:11.5px;color:{{ hazard.dot }}">{{ hazard.label_jp }}</span>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:10px;min-height:20px">
+            <sc-for list="{{ demoChips }}" as="b" hint-placeholder-count="0">
+              <span style="display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9.5px;background:rgba(8,12,17,.72);border:1px solid var(--line);border-radius:6px;padding:3px 6px"><span style="width:6px;height:6px;border-radius:2px;background:{{ b.swatch }}"></span>{{ b.jp }}</span>
+            </sc-for>
+          </div>
+
+          <div style="height:4px;border-radius:3px;background:rgba(255,255,255,.07);margin-top:12px;overflow:hidden">
+            <div style="height:100%;width:{{ demoProg }}%;background:var(--accent);border-radius:3px"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:6px;margin-top:11px">
+            <button onClick="{{ onDemoPrev }}" style="font-size:11px;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 10px;cursor:pointer;flex:none;min-height:44px" style-hover="border-color:var(--accent)">◀ 前</button>
+            <button onClick="{{ onDemoToggle }}" style="flex:1;font-size:12.5px;font-weight:600;color:#04110d;background:var(--accent);border:1px solid var(--accent);border-radius:10px;padding:11px 6px;cursor:pointer;min-height:44px" style-hover="filter:brightness(1.08)">{{ playLabel }}</button>
+            <button onClick="{{ onDemoRestart }}" title="最初から再生" style="font-size:11px;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 10px;cursor:pointer;flex:none;min-height:44px" style-hover="border-color:var(--accent)">⟲ 最初から</button>
+            <button onClick="{{ onDemoNext }}" style="font-size:11px;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 10px;cursor:pointer;flex:none;min-height:44px" style-hover="border-color:var(--accent)">次 ▶</button>
+          </div>
+
+          <div style="margin-top:13px;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:12px 13px;text-align:left">
+            <div style="display:flex;gap:8px;align-items:baseline">
+              <span style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.1em;flex:none">使用例</span>
+              <span style="font-size:12px;font-weight:500">{{ demo.use }}</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-top:8px">{{ demo.desc }}</div>
+            <sc-if value="{{ demo.hasWarn }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:9px;border:1px solid rgba(255,91,82,.4);border-radius:9px;background:rgba(255,91,82,.08);padding:8px 10px;font-size:11px;color:var(--danger);line-height:1.6">⚠ {{ demo.warn }}</div>
+            </sc-if>
+          </div>
+          <div style="margin-top:10px;font-size:9.5px;color:var(--muted);opacity:.8;text-align:center;line-height:1.6">本編の反応エンジンによる再生です。実際の実験とは異なります。</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3fd9c8&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;soundEnabled&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;hazardSensitivity&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:1,&quot;min&quot;:0.4,&quot;max&quot;:2.2,&quot;step&quot;:0.1,&quot;tsType&quot;:&quot;number&quot;}}">
@@ -759,31 +740,104 @@ class Component extends DCLogic {
     this.lastUi=0; this.audio=null; this.siren=null; this.ready=false; this.lastSample=0; this.lastActive=null;
     this._seenRx=new Set(); this.expHistory=[];
     try{ const h=JSON.parse(localStorage.getItem('vcl_history')||'[]'); if(Array.isArray(h)) this.expHistory=h.slice(0,40); }catch(e){}
+    // ── device gating / smartphone demo (single source of truth) ──
+    this.raf=null; this.labStarted=false; this._labStarting=false;
+    this.device=this.detectDevice();
+    this._mqLand=window.matchMedia('(orientation: landscape)');
+    this.demoCanvasRef=React.createRef();
+    this.demoT=0; this.demoStepIdx=0; this.demoBeaker=[];
+    Object.assign(this.state,{landscape:this._mqLand.matches,demoOpen:false,demoIdx:0,demoPlaying:false,demoEnded:false});
+    // presets are real in-engine experiments (same REACTIONS / same renderer)
+    this.demos=[
+      {title:'酸とアルカリの中和',en:'Neutralization',use:'塩酸 ＋ 水酸化ナトリウム（BTB指示薬）',desc:'酸性とアルカリ性の物質が反応し、水と塩が生成されます。BTB指示薬の色が 黄 → 緑 → 青 とpHの変化を示します。',eq:'HCl + NaOH → NaCl + H₂O',danger:0,warn:'',dur:15,
+        steps:[[0.6,'add','塩酸'],[1.8,'add','BTB溶液'],[3.2,'run'],[4.2,'stir',true],[4.8,'add','水酸化ナトリウム'],[6.8,'add','水酸化ナトリウム'],[8.8,'add','水酸化ナトリウム'],[11.5,'stir',false]]},
+      {title:'沈殿が生成される反応',en:'Precipitation',use:'硝酸銀 ＋ 塩化ナトリウム',desc:'銀イオンと塩化物イオンが結びつき、水に溶けない白い塩化銀（AgCl）が生成して底に沈みます。',eq:'AgNO₃ + NaCl → AgCl↓ + NaNO₃',danger:2,warn:'',dur:14,
+        steps:[[0.6,'add','水'],[1.6,'add','水'],[2.8,'add','硝酸銀'],[4.0,'run'],[4.6,'add','塩化ナトリウム'],[5.4,'stir',true],[10,'stir',false]]},
+      {title:'気体（泡）が発生する反応',en:'Gas evolution',use:'亜鉛 ＋ 塩酸',desc:'金属の亜鉛が塩酸に溶け、水素の泡が発生して上昇します。',eq:'Zn + 2HCl → ZnCl₂ + H₂↑',danger:2,warn:'発生する水素は引火性があります。実際の実験では火気厳禁です。',dur:14,
+        steps:[[0.6,'add','塩酸'],[1.6,'add','塩酸'],[2.8,'add','Zn'],[4.0,'run']]},
+      {title:'燃焼・発光を伴う反応',en:'Combustion / Ignition',use:'ナトリウム ＋ 水',desc:'ナトリウムが水面を走りながら激しく反応し、炎を上げて水素を発生します。',eq:'2Na + 2H₂O → 2NaOH + H₂↑',danger:5,warn:'非常に危険な反応です。実際に行うと爆発・火傷のおそれがあります。',dur:14,
+        steps:[[0.6,'add','水'],[1.6,'add','水'],[3.0,'add','Na'],[4.2,'run']]}
+    ];
   }
   freshSim(){ return {bubbles:[],gasP:[],sparks:[],pellets:[],solids:[],fumes:[],precip:[],spatter:[],deposits:[],whiskers:[],
     precipLevel:0,precipColor:[230,235,240],atmoColor:null,atmoLevel:0,solidInit:{},
     liquid:[150,178,200,0],target:[150,178,200,0],heating:false,stirring:false,venting:false,flame:0,t:0,
     flameColor:null,burning:false,flash:0,hazard:0,amalgam:0}; }
 
-  async componentDidMount(){
+  componentDidMount(){
     const root=this.rootRef.current;
     if(root&&this.props.accentColor) root.style.setProperty('--accent',this.props.accentColor);
     this.state.soundOn=this.props.soundEnabled!==false;
-    this.ctx=this.canvasRef.current.getContext('2d');
-    this.sctx=this.sparkRef.current.getContext('2d');
-    this.sprites={}; ['Na','K','Fe','Cu','Au','Mg','Al','Ca','Zn','Ag','Pb','Ni','Hg','S','Sn','Cr','Co','Mn'].forEach(id=>{ const im=new Image(); im.src='assets/elp/'+id+'.png'; this.sprites[id]=im; });
-    this._resize=()=>this.resize(); window.addEventListener('resize',this._resize); this.resize(); this.syncImgs();
-    try{ const ce=await import('./chem.js'); const cd=await import('./chemdata.js'); this.GASES=cd.GASES; this.REACTIONS=cd.REACTIONS; this.REAGENTS=cd.REAGENTS; this.engine=new ce.ChemEngine(); this.sol=new ce.Solution(); this.rxById={}; this.REACTIONS.forEach(r=>this.rxById[r.id]=r); this.ready=true; this.snap=this.sol.snapshot(); this.missionMet=ce.missionMet; this.buildMissions(cd.MISSIONS); }
-    catch(e){ console.error('engine load failed',e); }
-    try{ const ct=await import('./chemtests.js'); const qa=ct.runMissionTests(); console.log('[QA] mission self-test', qa.results); this.pushLog('QA: ミッション自動検証 '+qa.results.filter(r=>r.ok).length+'/'+qa.results.length+(qa.allPass?' ✓ 全て達成可能':' ✗ 要確認'), qa.allPass?'var(--ok)':'var(--danger)'); }catch(e){ console.error('QA tests failed',e); }
-    this.last=performance.now();
-    this.loop=(now)=>{ const dt=Math.min(0.05,(now-this.last)/1000); this.last=now; this.step(dt); this.draw(); this.drawSpark(); if(now-this.lastUi>110){this.lastUi=now;this.setState(s=>({tick:s.tick+1}));} this.raf=requestAnimationFrame(this.loop); };
-    this.raf=requestAnimationFrame(this.loop);
+    // single orientation listener (registered exactly once)
+    this._onOrient=()=>{ const land=this._mqLand.matches; if(land===this.state.landscape) return;
+      if(this.device==='tablet'&&this.state.demoOpen&&land) this.resetVessel();
+      this.setState(s=>({landscape:land, demoOpen:(this.device==='tablet'&&land)?false:s.demoOpen, demoPlaying:(this.device==='tablet'&&land)?false:s.demoPlaying})); };
+    if(this._mqLand.addEventListener) this._mqLand.addEventListener('change',this._onOrient); else this._mqLand.addListener(this._onOrient);
+    // one shared rAF loop for lab AND demo (never registered twice — see syncLoop)
+    this.loop=(now)=>{ this.raf=requestAnimationFrame(this.loop); const dt=Math.min(0.05,(now-this.last)/1000); this.last=now;
+      if(this.state.demoOpen){ const f=this.fitCanvas(this.demoCanvasRef); if(f){ this.ctx=f.ctx; this.W=f.w; this.H=f.h; if(this.state.demoPlaying){ this.advanceDemo(dt); this.step(dt); } this.draw(); } }
+      else if(this.labStarted&&this.labAllowed()){ const f=this.fitCanvas(this.canvasRef); if(f){ this.ctx=f.ctx; this.W=f.w; this.H=f.h; this.step(dt); this.draw(); } const sf=this.fitCanvas(this.sparkRef,true); if(sf){ this.sctx=sf.ctx; this.sW=sf.w; this.sH=sf.h; this.drawSpark(); } }
+      if(now-this.lastUi>110){ this.lastUi=now; this.setState(s=>({tick:s.tick+1})); } };
+    this.syncImgs(); this.maybeStartLab();
   }
-  componentWillUnmount(){ cancelAnimationFrame(this.raf); window.removeEventListener('resize',this._resize); this.stopSiren(); }
-  componentDidUpdate(){ this.syncImgs(); }
+  componentWillUnmount(){ if(this.raf!=null){ cancelAnimationFrame(this.raf); this.raf=null; } if(this._onOrient){ if(this._mqLand.removeEventListener) this._mqLand.removeEventListener('change',this._onOrient); else this._mqLand.removeListener(this._onOrient); this._onOrient=null; } this.stopSiren(); }
+  componentDidUpdate(){ this.syncImgs(); this.maybeStartLab(); this.syncLoop(); }
   syncImgs(){ const root=this.rootRef.current; if(!root)return; root.querySelectorAll('img[data-elsrc]').forEach(im=>{ const v=im.getAttribute('data-elsrc'); if(v&&v.indexOf('{{')<0&&im.getAttribute('src')!==v) im.setAttribute('src',v); }); }
-  resize(){ const c=this.canvasRef.current,p=c.parentElement,dpr=Math.min(2,window.devicePixelRatio||1); this.W=p.clientWidth;this.H=p.clientHeight; c.width=this.W*dpr;c.height=this.H*dpr;this.ctx.setTransform(dpr,0,0,dpr,0,0); const s=this.sparkRef.current; this.sW=s.clientWidth;this.sH=s.clientHeight; s.width=this.sW*dpr;s.height=this.sH*dpr;this.sctx.setTransform(dpr,0,0,dpr,0,0); }
+  // ── device detection: UA + touch points + screen size (never width-only) ──
+  detectDevice(){
+    try{ const q=new URLSearchParams(window.location.search).get('device'); if(q==='pc'||q==='tablet'||q==='phone') return q; }catch(e){}
+    const ua=navigator.userAgent||'';
+    const touch=(navigator.maxTouchPoints||0)>1||('ontouchstart' in window);
+    const iPad=/iPad/i.test(ua)||(/Macintosh/.test(ua)&&touch); /* iPadOS reports Macintosh */
+    const phoneUA=/iPhone|iPod/i.test(ua)||(/Android/i.test(ua)&&/Mobile/i.test(ua));
+    const tabletUA=iPad||(/Android/i.test(ua)&&!/Mobile/i.test(ua));
+    if(phoneUA) return 'phone';
+    if(tabletUA) return 'tablet';
+    if(touch&&!/Windows NT|CrOS|X11/.test(ua)){ const sMin=Math.min(window.screen.width,window.screen.height); return sMin<600?'phone':'tablet'; }
+    return 'pc';
+  }
+  labAllowed(){ return this.device==='pc'||(this.device==='tablet'&&this.state.landscape); }
+  fitCanvas(ref,spark){ const c=ref&&ref.current; if(!c||!c.parentElement) return null;
+    const dpr=Math.min(2,window.devicePixelRatio||1);
+    const w=spark?c.clientWidth:c.parentElement.clientWidth, h=spark?c.clientHeight:c.parentElement.clientHeight;
+    if(!w||!h) return null;
+    if(c.__w!==w||c.__h!==h){ c.__w=w; c.__h=h; c.width=w*dpr; c.height=h*dpr; c.getContext('2d').setTransform(dpr,0,0,dpr,0,0); }
+    return {ctx:c.getContext('2d'),w,h}; }
+  syncLoop(){ const need=this.state.demoOpen||(this.labStarted&&this.labAllowed());
+    if(need&&this.raf==null){ this.last=performance.now(); this.raf=requestAnimationFrame(this.loop); }
+    else if(!need&&this.raf!=null){ cancelAnimationFrame(this.raf); this.raf=null; } }
+  loadSprites(){ if(this.sprites) return; this.sprites={}; ['Na','K','Fe','Cu','Au','Mg','Al','Ca','Zn','Ag','Pb','Ni','Hg','S','Sn','Cr','Co','Mn'].forEach(id=>{ const im=new Image(); im.src='assets/elp/'+id+'.png'; this.sprites[id]=im; }); }
+  loadEngine(){ if(this._engineP) return this._engineP;
+    this._engineP=(async()=>{ const ce=await import('./chem.js'); const cd=await import('./chemdata.js'); this.GASES=cd.GASES; this.REACTIONS=cd.REACTIONS; this.REAGENTS=cd.REAGENTS; this.engine=new ce.ChemEngine(); this.sol=new ce.Solution(); this.rxById={}; this.REACTIONS.forEach(r=>this.rxById[r.id]=r); this.missionMet=ce.missionMet; this.buildMissions(cd.MISSIONS); this.snap=this.sol.snapshot(); this.ready=true; })();
+    return this._engineP; }
+  async maybeStartLab(){
+    if(!this.labAllowed()||this._labStarting) return;
+    if(this.labStarted){ this.syncLoop(); return; }
+    if(!this.canvasRef.current) return;
+    this._labStarting=true;
+    this.loadSprites();
+    try{ await this.loadEngine(); }catch(e){ console.error('engine load failed',e); }
+    try{ const ct=await import('./chemtests.js'); const qa=ct.runMissionTests(); console.log('[QA] mission self-test', qa.results); this.pushLog('QA: ミッション自動検証 '+qa.results.filter(r=>r.ok).length+'/'+qa.results.length+(qa.allPass?' ✓ 全て達成可能':' ✗ 要確認'), qa.allPass?'var(--ok)':'var(--danger)'); }catch(e){ console.error('QA tests failed',e); }
+    this.labStarted=true; this._labStarting=false; this.syncLoop();
+  }
+  resetVessel(){ this.stopSiren(); this.sim=this.freshSim(); this.hist=[]; this.samples=[]; this.lastActive=null; this._seenRx=new Set(); if(this.sol){ this.sol.reset(); this.snap=this.sol.snapshot(); } this.demoT=0; this.demoStepIdx=0; this.demoBeaker=[]; }
+  // ── smartphone / tablet-portrait demo: preset playback through the REAL engine + renderer ──
+  onOpenDemo=async()=>{ this.loadSprites(); try{ await this.loadEngine(); }catch(e){ console.error('engine load failed',e); return; } this.openDemoAt(0); }
+  openDemoAt(i){ this.resetVessel(); this.setState({demoOpen:true,demoIdx:i,demoPlaying:true,demoEnded:false,running:false,blackout:false}); }
+  onDemoClose=()=>{ this.resetVessel(); this.setState({demoOpen:false,demoPlaying:false,demoEnded:false,running:false,beaker:[]}); }
+  onDemoPrev=()=>{ this.openDemoAt((this.state.demoIdx+this.demos.length-1)%this.demos.length); }
+  onDemoNext=()=>{ this.openDemoAt((this.state.demoIdx+1)%this.demos.length); }
+  onDemoToggle=()=>{ if(this.state.demoEnded){ this.openDemoAt(this.state.demoIdx); return; } this.ac(); this.setState(s=>({demoPlaying:!s.demoPlaying})); }
+  onDemoRestart=()=>{ this.openDemoAt(this.state.demoIdx); }
+  advanceDemo(dt){ const d=this.demos[this.state.demoIdx]; if(!d) return; this.demoT+=dt;
+    while(this.demoStepIdx<d.steps.length&&d.steps[this.demoStepIdx][0]<=this.demoT){ this.execDemoStep(d.steps[this.demoStepIdx++]); }
+    if(this.demoT>=d.dur){ this.setState({demoPlaying:false,demoEnded:true,running:false}); } }
+  execDemoStep(st){ const op=st[1],arg=st[2];
+    if(op==='add'){ const r=this.byId[arg]; if(!r) return; this.pour(arg); this.demoBeaker.push({id:arg,jp:r.jp,st:r.st,swatch:this.swatchMap[arg]}); this.beep(330,0.08,'sine',0.07); }
+    else if(op==='run'){ this.setState({running:true}); }
+    else if(op==='stir'){ this.sim.stirring=!!arg; }
+    else if(op==='heat'){ this.sim.heating=!!arg; }
+    else if(op==='vent'){ this.sim.venting=!!arg; } }
 
   rgbaStr(a){ return 'rgba('+Math.round(a[0])+','+Math.round(a[1])+','+Math.round(a[2])+','+(a[3]!=null?a[3]:1)+')'; }
   rgba(a,al){ return 'rgba('+Math.round(a[0])+','+Math.round(a[1])+','+Math.round(a[2])+','+(al!=null?al:a[3])+')'; }
@@ -795,12 +849,15 @@ class Component extends DCLogic {
   pushLog(msg,c){ const d=new Date(); const t=String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0'); this.setState(s=>({log:[{t,msg,c:c||'var(--text)'},...s.log].slice(0,8)})); }
   fireEvent(){ const pool=[{icon:'🏅',jp:'ノーベル賞チャレンジ 達成！',en:'Nobel Prize Challenge complete'},{icon:'🔬',jp:'未知物質を発見！',en:'Unknown substance discovered'},{icon:'⚗️',jp:'歴史的実験を再現（ファラデー）',en:'Historic experiment recreated (Faraday)'}]; const ev=pool[Math.floor(Math.random()*pool.length)]; this.setState({event:ev}); clearTimeout(this._evT); this._evT=setTimeout(()=>this.setState({event:null}),4200); }
 
-  addReagent(id){ if(this.state.blackout||!this.ready)return; this.ac(); if(this.state.beaker.map(b=>b.id).includes(id))return;
-    const r=this.byId[id], s=this.sim; this.sol.addReagent(id);
+  // core pour (shared by lab drag&drop AND demo playback — same visuals, same solution chemistry)
+  pour(id){ const r=this.byId[id], s=this.sim; if(!r||!this.ready) return; this.sol.addReagent(id);
     if(r.state==='metal'||r.state==='powder'){ const solidId=this.REAGENTS[id].solid; s.solidInit[solidId]=Math.max(s.solidInit[solidId]||0,this.sol.solids[solidId]||0); this.spawnSolid(r); }
     else if(r.state==='gas'){ const G=this.GASES[this.REAGENTS[id].gas]; if(G){ s.atmoColor=G.color.slice(); s.atmoLevel=Math.min(0.5,s.atmoLevel+0.28); } }
     else if(r.state==='solute'){ this.spawnDeposit(r); }
     if(this.sol.lastEvent==='water_into_acid'){ this.onWaterIntoAcid(); }
+  }
+  addReagent(id){ if(this.state.blackout||!this.ready)return; this.ac(); if(this.state.beaker.map(b=>b.id).includes(id))return;
+    const r=this.byId[id]; if(!r)return; this.pour(id);
     const beaker=[...this.state.beaker,{id,jp:r.jp,st:r.st,swatch:this.swatchMap[id]}];
     this.setState({beaker}); this.beep(330,0.08,'sine',0.07);
   }
@@ -900,8 +957,8 @@ class Component extends DCLogic {
     if(E.has('char')){ s.target=[28,22,20,0.92]; if(Math.random()<0.85)this.spawnFume(false); }
     if(E.has('amalgam')){ s.amalgam=Math.min(1,s.amalgam+dt*1.8); if(Math.random()<0.75) this.spawnAmalgam(); } else { s.amalgam=Math.max(0,s.amalgam-dt*0.5); }
     s.burning=E.has('ignite')||E.has('skitter'); if(res.flame) s.flameColor=res.flame;
-    if(res.active&&res.active.length){ this.lastActive=res.active[res.active.length-1]; res.active.forEach(Rx=>{ if(!this._seenRx.has(Rx.id)){ this._seenRx.add(Rx.id); this.recordHistory(Rx); } }); }
-    { const ms=this.missions&&this.missions[this.state.missionIdx]; if(ms&&ms.target&&this.missionMet&&!this.state.missionDone&&!this.state.blackout&&this.missionMet(ms.target,this.sol,{failed:this.state.blackout})){ this.setState({missionDone:true}); this.pushLog('ミッション達成！ '+ms.jp,'var(--ok)'); if(Math.random()<0.5) this.fireEvent(); } }
+    if(res.active&&res.active.length){ this.lastActive=res.active[res.active.length-1]; res.active.forEach(Rx=>{ if(!this._seenRx.has(Rx.id)){ this._seenRx.add(Rx.id); if(!this.state.demoOpen) this.recordHistory(Rx); } }); }
+    if(!this.state.demoOpen){ const ms=this.missions&&this.missions[this.state.missionIdx]; if(ms&&ms.target&&this.missionMet&&!this.state.missionDone&&!this.state.blackout&&this.missionMet(ms.target,this.sol,{failed:this.state.blackout})){ this.setState({missionDone:true}); this.pushLog('ミッション達成！ '+ms.jp,'var(--ok)'); if(Math.random()<0.5) this.fireEvent(); } }
     if(E.has('skitter')&&!this._skitting){ this._skitting=true; this.startSkitter(); } if(!E.has('skitter')) this._skitting=false;
     // precipitate (NaCl/Fe3O4 from some reactions — based on color darkening or salt) — simple: none auto here
     // bubbles from heat
@@ -941,6 +998,7 @@ class Component extends DCLogic {
 
   computeHazard(gasPct,lethal,active){ const s=this.sim; const sens=(this.props.hazardSensitivity||1); const gp=gasPct*sens; let lvl=0;
     if(gp>18)lvl=1; if(gp>38)lvl=2; if(gp>58)lvl=3; if(gp>82)lvl=lethal?4:3;
+    if(this.state.demoOpen&&lvl>3)lvl=3; /* demo is view-only: warn but never blackout */
     if(lvl!==s.hazard){ if(lvl>s.hazard){ if(lvl>=3)this.startSiren(); this.beep(lvl>=3?880:560,0.12,'square',0.1); if(lvl===2)this.pushLog('警告：ガス濃度上昇。','var(--warn)'); if(lvl===3)this.pushLog('重度警告：直ちに換気せよ。','var(--danger)'); } else if(lvl<3)this.stopSiren(); s.hazard=lvl; }
     if(lvl>=4&&!this.state.blackout){ const r=(active&&active.find&&active.find(a=>a.fail))||null; this.triggerFailure(r); }
   }
@@ -1059,6 +1117,11 @@ class Component extends DCLogic {
     if(dom)repObs.push('発生ガス：'+dom.name+'（におい：'+dom.odor+'）');
     if(s.precipLevel>0.05)repObs.push('沈殿の生成を確認');
     repObs.push('危険度ステータス：'+hz.statusEn);
+    // ── device gate + demo view vals ──
+    const showLab=this.labAllowed();
+    const dv=this.demos[this.state.demoIdx]||this.demos[0];
+    const ddl=dv.danger||0;
+    const demoView={title:dv.title,en:dv.en,use:dv.use,desc:dv.desc,eq:dv.eq,warn:dv.warn||'',hasWarn:!!dv.warn,dangerShow:ddl>=2,dangerLabel:'Lv.'+ddl+' '+(dlLabels[ddl]||''),dangerFg:dlColors[ddl]||'var(--ok)',stars:this.stars(Math.max(1,ddl))};
     return { rootRef:this.rootRef,canvasRef:this.canvasRef,sparkRef:this.sparkRef, elements:this.elements,materials:this.materials,materialGroups,
       beaker:this.state.beaker, beakerEmpty:this.state.beaker.length===0,
       metrics, solColor:this.rgba(s.liquid,Math.max(0.12,s.liquid[3])), runState:running?'反応中 RUNNING':'待機 IDLE',
@@ -1084,7 +1147,16 @@ class Component extends DCLogic {
       tabEls:this.elements, tabMatGroups, tabIndicators:indicators, elTab, reTab, inTab,
       dictOpen:this.state.dictOpen, dictList, dictQ:this.state.dictQ||'', dictCount:dictList.length, dictNone:dictList.length===0, howtoOpen:this.state.howtoOpen, onOpenHowto:this.onOpenHowto, onCloseHowto:this.onCloseHowto,
       history, historyEmpty:history.length===0, difficulty:this.state.difficulty, diffBtns, missionHint, hintShown:this.state.hintShown, hintLabel:this.state.hintShown?'ヒントを閉じる':'ヒントを見る', onToggleHint:this.onToggleHint,
-      onTab:this.onTab,onSearch:this.onSearch,onClearSearch:this.onClearSearch,onOpenDict:this.onOpenDict,onCloseDict:this.onCloseDict,onDictSearch:this.onDictSearch,onClearHistory:this.onClearHistory,onDiff:this.onDiff };
+      onTab:this.onTab,onSearch:this.onSearch,onClearSearch:this.onClearSearch,onOpenDict:this.onOpenDict,onCloseDict:this.onCloseDict,onDictSearch:this.onDictSearch,onClearHistory:this.onClearHistory,onDiff:this.onDiff,
+      showLab, showGate:!showLab, gateTablet:this.device==='tablet', gatePhone:this.device!=='tablet',
+      demoOpen:this.state.demoOpen, demo:demoView, demoChips:this.demoBeaker.slice(),
+      demoProg:Math.min(100,Math.round((this.demoT/(dv.dur||1))*100)),
+      demoIdxLabel:String(this.state.demoIdx+1), demoTotal:String(this.demos.length),
+      playLabel:this.state.demoEnded?'⟳ もう一度再生':(this.state.demoPlaying?'❚❚ 一時停止':'▶ 再生'),
+      demoStatus:this.state.demoEnded?'再生終了 / END':(this.state.demoPlaying?'再生中 / PLAYING':'一時停止 / PAUSED'),
+      demoStatusColor:this.state.demoPlaying?'var(--accent)':'var(--muted)',
+      demoCanvasRef:this.demoCanvasRef,
+      onOpenDemo:this.onOpenDemo,onDemoClose:this.onDemoClose,onDemoPrev:this.onDemoPrev,onDemoNext:this.onDemoNext,onDemoToggle:this.onDemoToggle,onDemoRestart:this.onDemoRestart };
   }
 }
 </script>
