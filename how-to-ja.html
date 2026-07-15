@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>使い方ガイド — バーチャル化学実験室</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --accent:#3fd9c8;--accent2:#7aa2ff;--danger:#ff5b52;--warn:#ffb84d;--ok:#5fd38b;
+    --panel:rgba(255,255,255,.035);--line:rgba(255,255,255,.09);--text:#e8eef3;--muted:#8a98a6;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--text);line-height:1.7;
+    background:radial-gradient(120% 80% at 50% -10%,#101822 0%,#0a0e13 45%,#06090d 100%);min-height:100vh}
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+  a{color:var(--accent)}
+  .wrap{max-width:860px;margin:0 auto;padding:40px 22px 80px}
+
+  /* hero */
+  .hero{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:30px 28px;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 90% at 12% -10%,rgba(63,217,200,.16),transparent 60%);pointer-events:none}
+  .logo{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--accent)}
+  .hero h1{font-size:30px;font-weight:600;letter-spacing:.01em;margin:10px 0 6px}
+  .hero p{color:var(--muted);font-size:14px;max-width:60ch}
+
+  /* table of contents */
+  .toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .toc a{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;text-decoration:none;color:var(--text);
+    border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:7px 12px;transition:.15s}
+  .toc a:hover{border-color:var(--accent);color:var(--accent)}
+  .toc .num{font-family:var(--mono);font-size:10px;color:var(--accent)}
+
+  section{margin-top:34px}
+  h2{font-size:19px;font-weight:600;display:flex;align-items:center;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+  h2 .badge{font-family:var(--mono);font-size:11px;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-weight:500}
+  h3{font-size:14.5px;font-weight:600;margin:20px 0 8px;color:#fff}
+  p.lead{color:var(--muted);font-size:13.5px;margin-top:10px}
+
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  @media (max-width:620px){.cards{grid-template-columns:1fr}}
+  .card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:15px 16px}
+  .card .ttl{font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:9px;margin-bottom:6px}
+  .card .ttl .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .card p{font-size:12.5px;color:var(--muted)}
+
+  ol.steps{list-style:none;counter-reset:s;margin-top:14px;display:flex;flex-direction:column;gap:11px}
+  ol.steps li{counter-increment:s;position:relative;padding:13px 15px 13px 52px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:13.5px}
+  ol.steps li::before{content:counter(s);position:absolute;left:13px;top:12px;width:26px;height:26px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;
+    color:#04110d;background:var(--accent)}
+  ol.steps li b{color:#fff;font-weight:600}
+  ol.steps li .en{color:var(--muted);font-family:var(--mono);font-size:11px;margin-left:4px}
+
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;border:1px solid var(--line);
+    background:rgba(255,255,255,.04);border-radius:8px;padding:4px 10px;margin:3px 4px 3px 0}
+  .chip .k{width:8px;height:8px;border-radius:50%}
+
+  table.ctrl{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}
+  table.ctrl th,table.ctrl td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.ctrl th{font-size:11px;letter-spacing:.06em;color:var(--muted);font-weight:600;text-transform:uppercase}
+  table.ctrl td b{color:#fff}
+  table.ctrl td .en{color:var(--muted);font-family:var(--mono);font-size:11px}
+
+  .stars{font-family:var(--mono);letter-spacing:1px}
+  .danger-row{display:flex;align-items:center;gap:11px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);margin-top:8px;font-size:13px;flex-wrap:wrap}
+  .danger-row .lv{font-family:var(--mono);font-size:11px;flex:none;width:90px}
+
+  .note{border:1px solid rgba(255,91,82,.4);background:rgba(255,91,82,.08);border-radius:12px;padding:14px 16px;margin-top:16px;font-size:13px;color:#ffb4ae;line-height:1.65}
+  .note b{color:#fff}
+
+  .device{display:flex;gap:13px;align-items:flex-start;padding:14px 15px;border:1px solid var(--line);border-radius:12px;background:var(--panel);margin-top:11px}
+  .device .ic{font-size:22px;flex:none;line-height:1.2}
+  .device .dttl{font-size:13.5px;font-weight:600;color:#fff;margin-bottom:3px}
+  .device p{font-size:12.5px;color:var(--muted)}
+
+  footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);text-align:center;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;flex-wrap:wrap;gap:10px">
+    <a href="index.html" style="font-family:var(--mono);font-size:12px;color:var(--muted);text-decoration:none">← TOPへ戻る</a>
+    <a href="faq-ja.html" style="font-family:var(--mono);font-size:12px;color:var(--accent);text-decoration:none">よくある質問 (Q&amp;A) →</a>
+  </div>
+
+  <div class="hero">
+    <div class="logo">VIRTUAL CHEMISTRY LAB / 使い方ガイド</div>
+    <h1>はじめての方へ</h1>
+    <p>ドラッグまたはタップで試薬をビーカーへ入れ、操作ボタンで反応させる定量シミュレーターです。このページで基本操作・画面の見方・端末別の使い方を確認できます。</p>
+    <nav class="toc">
+      <a href="#flow"><span class="num">01</span> はじめの3ステップ</a>
+      <a href="#screen"><span class="num">02</span> 画面の見方</a>
+      <a href="#add"><span class="num">03</span> 試薬の入れ方</a>
+      <a href="#controls"><span class="num">04</span> 操作ボタン</a>
+      <a href="#observe"><span class="num">05</span> 観察パネル・履歴</a>
+      <a href="#mission"><span class="num">06</span> ミッション</a>
+      <a href="#danger"><span class="num">07</span> 危険度表示</a>
+      <a href="#tools"><span class="num">08</span> 図鑑・レポート</a>
+      <a href="#device"><span class="num">09</span> 端末別の使い方</a>
+    </nav>
+  </div>
+
+  <section id="flow">
+    <h2><span class="badge">01</span> はじめの3ステップ</h2>
+    <ol class="steps">
+      <li><b>試薬を入れる</b> — 左のライブラリから元素・試薬のタイルを<b>タップ</b>、またはビーカーへ<b>ドラッグ</b>して投入します。</li>
+      <li><b>反応させる</b> — 中央下の<b>「反応開始 ▶」</b>を押すと反応が始まります。必要に応じて<b>加熱</b>や<b>換気</b>を使います。</li>
+      <li><b>観察する</b> — 右の観察パネルで pH・温度・ガス濃度などの変化を確認。<b>実験履歴</b>に反応が記録されます。</li>
+    </ol>
+  </section>
+
+  <section id="screen">
+    <h2><span class="badge">02</span> 画面の見方</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="ttl"><span class="dot" style="background:var(--accent)"></span>左：試薬ライブラリ</div>
+        <p>検索欄と【元素】【試薬】【指示薬】のタブ。タイルをタップ／ドラッグでビーカーへ。</p>
+      </div>
+      <div class="card">
+        <div class="ttl"><span class="dot" style="background:var(--warn)"></span>中央：ビーカー</div>
+        <p>反応の様子がリアルタイムに描画されます。上部に化学反応式、下部に操作ボタン。</p>
+      </div>
+      <div class="card">
+        <div class="ttl"><span class="dot" style="background:var(--accent2)"></span>右：観察パネル</div>
+        <p>温度・pH・圧力・導電率・体積・ガス濃度のメーターと推移グラフ、反応解析、実験履歴。</p>
+      </div>
+      <div class="card">
+        <div class="ttl"><span class="dot" style="background:var(--ok)"></span>上部：ヘッダー</div>
+        <p>ミッション・難易度切替・ヒント・反応図鑑・使い方・サウンドの各ボタン。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="add">
+    <h2><span class="badge">03</span> 試薬の入れ方</h2>
+    <p class="lead">2通りの方法があります。どちらでも同じように投入できます。</p>
+    <div class="cards">
+      <div class="card">
+        <div class="ttl">👆 タップ投入（スマホ・タブレット向け）</div>
+        <p>ライブラリのタイルを<b>タップするだけ</b>でビーカーへ入ります。指でのドラッグが難しい端末でも快適です。</p>
+      </div>
+      <div class="card">
+        <div class="ttl">🖱 ドラッグ投入（PC向け）</div>
+        <p>タイルをつかんでビーカーへ<b>ドラッグ＆ドロップ</b>します。</p>
+      </div>
+    </div>
+    <h3>検索で素早く見つける</h3>
+    <p class="lead">左上の検索欄は、元素名・試薬名・化学式のいずれでも絞り込めます。例：</p>
+    <div style="margin-top:8px">
+      <span class="chip">Ag</span><span class="chip">銀</span><span class="chip">硝酸銀</span>
+      <span style="color:var(--muted);font-size:12.5px">→ いずれでも銀・硝酸銀（AgNO₃）にヒットします。</span>
+    </div>
+  </section>
+
+  <section id="controls">
+    <h2><span class="badge">04</span> 操作ボタン</h2>
+    <table class="ctrl">
+      <thead><tr><th style="width:130px">ボタン</th><th>はたらき</th></tr></thead>
+      <tbody>
+        <tr><td><b>加熱</b> <span class="en">Heat</span></td><td>溶液を加熱します。加熱が必要な反応（濃硫酸＋銅、硫黄の燃焼など）に使います。</td></tr>
+        <tr><td><b>撹拌</b> <span class="en">Stir</span></td><td>かき混ぜて反応・溶解を促します。</td></tr>
+        <tr><td><b>換気</b> <span class="en">Vent</span></td><td>ドラフト（換気装置）を作動。発生したガスを排出し濃度を下げます。<b style="color:var(--warn)">危険ガスを出す反応では必須。</b></td></tr>
+        <tr><td><b>反応開始 ▶</b> <span class="en">React</span></td><td>反応を開始／停止します。</td></tr>
+        <tr><td><b>緊急停止</b> <span class="en">STOP</span></td><td>加熱を止め、換気を作動させる緊急処置。</td></tr>
+        <tr><td><b>リセット ⟳</b></td><td>ビーカーを空にして最初の状態へ戻します。ミッション達成後は次の課題へ進みます。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="observe">
+    <h2><span class="badge">05</span> 観察パネル・実験履歴</h2>
+    <p class="lead">右パネルでは反応中の数値がリアルタイムに更新されます。</p>
+    <div class="cards">
+      <div class="card"><div class="ttl">📊 メーター＆グラフ</div><p>温度・pH・圧力・導電率・体積・ガス濃度。pHと温度の推移は折れ線グラフで確認できます。</p></div>
+      <div class="card"><div class="ttl">🧪 におい・ガス情報</div><p>発生したガスの名称・におい・危険度・濃度を表示します。</p></div>
+      <div class="card"><div class="ttl">🔬 反応解析</div><p>化学反応式・イオン反応式・反応の種類・危険度を解説（学習モードで詳細）。</p></div>
+      <div class="card"><div class="ttl">🕘 実験履歴</div><p>起きた反応を時系列で記録。例：<span style="font-family:var(--mono)">Zn + 2HCl → 水素 発生</span>。「クリア」で消去できます。</p></div>
+    </div>
+  </section>
+
+  <section id="mission">
+    <h2><span class="badge">06</span> ミッション</h2>
+    <p class="lead">ヘッダー中央のミッションに沿って実験を進めると達成できます。</p>
+    <div class="cards">
+      <div class="card"><div class="ttl"><span class="dot" style="background:var(--ok)"></span>難易度</div><p><b>初級</b>／<b>中級</b>／<b>上級</b>を切り替えできます。反応データベースから自動生成され、危険度や加熱の要否で分類されます。</p></div>
+      <div class="card"><div class="ttl"><span class="dot" style="background:var(--warn)"></span>💡 ヒントを見る</div><p>進め方に迷ったら「ヒントを見る」ボタン。使う試薬の組み合わせが表示されます。</p></div>
+    </div>
+  </section>
+
+  <section id="danger">
+    <h2><span class="badge">07</span> 危険度表示</h2>
+    <p class="lead">危険な試薬・反応には★で危険度（Lv.1〜5）を表示します。試薬タイルの ⚠ マークや反応解析・図鑑で確認できます。</p>
+    <div class="danger-row"><span class="lv stars" style="color:var(--ok)">★☆☆☆☆</span><span>Lv.1 安全 — 通常の操作で問題のない反応。</span></div>
+    <div class="danger-row"><span class="lv stars" style="color:var(--warn)">★★☆☆☆</span><span>Lv.2 注意 — 気体発生など、軽い注意が必要。</span></div>
+    <div class="danger-row"><span class="lv stars" style="color:#ff8c00">★★★☆☆</span><span>Lv.3 危険 — 有毒ガスや発熱。換気を推奨。</span></div>
+    <div class="danger-row"><span class="lv stars" style="color:var(--danger)">★★★★☆</span><span>Lv.4 非常に危険 — 有毒ガス多量。換気必須。</span></div>
+    <div class="danger-row"><span class="lv stars" style="color:#ff1a1a">★★★★★</span><span>Lv.5 実験室以外禁止 — 致死性・劇的反応。</span></div>
+    <div class="note"><b>【注意】</b>実際の実験とは異なります。これらの反応はイメージです。安全のため、必ず指導者のもとで正しい器具・手順で実験を行ってください。</div>
+  </section>
+
+  <section id="tools">
+    <h2><span class="badge">08</span> 反応図鑑・レポート</h2>
+    <div class="cards">
+      <div class="card"><div class="ttl">⊕ 反応図鑑</div><p>実験室内から開ける反応一覧。化学反応式・イオン反応式・危険度・観察結果をキーワードやタグで検索できます。</p></div>
+      <div class="card"><div class="ttl">📄 レポート（PDF）／CSV</div><p>実験後、<b>使用した試薬・反応式・生成物・観察結果</b>を自動でまとめた簡易レポートを生成。印刷・PDF保存や、測定データのCSV書き出しができます。</p></div>
+    </div>
+  </section>
+
+  <section id="device">
+    <h2><span class="badge">09</span> 端末別の使い方</h2>
+    <div class="device"><div class="ic">🖥</div><div><div class="dttl">PC（推奨）</div><p>左・中央・右の3カラム表示。ドラッグ＆ドロップ、またはタップで試薬を投入できます。すべての機能を利用できます。</p></div></div>
+    <div class="device"><div class="ic">📲</div><div><div class="dttl">タブレット（横向き）</div><p>横向きにすると実験室が起動します。ビーカーと観察パネルは縦スクロールでき、操作ボタンは常に画面下部に固定表示されます。</p></div></div>
+    <div class="device"><div class="ic">📲</div><div><div class="dttl">タブレット（縦向き）</div><p>本編は起動せず、横向きを促す案内画面を表示します。案内画面から「実験反応のデモ」を閲覧できます。</p></div></div>
+    <div class="device"><div class="ic">📱</div><div><div class="dttl">スマートフォン</div><p>本編は起動しません。PCでの利用を推奨する案内画面を表示し、そこから「実験反応のデモ」を閲覧できます。</p></div></div>
+  </section>
+
+  <footer>
+    バーチャル化学実験室 ・ Virtual Chemistry Lab<br>
+    【注意】実際の実験とは異なります。これらの反応はイメージです。必ず指導者のもとで正しい器具・手順で実験を行ってください。
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Use — Virtual Chemistry Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --accent:#3fd9c8;--accent2:#7aa2ff;--danger:#ff5b52;--warn:#ffb84d;--ok:#5fd38b;
+    --panel:rgba(255,255,255,.035);--line:rgba(255,255,255,.09);--text:#e8eef3;--muted:#8a98a6;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--text);line-height:1.7;
+    background:radial-gradient(120% 80% at 50% -10%,#101822 0%,#0a0e13 45%,#06090d 100%);min-height:100vh}
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+  a{color:var(--accent)}
+  .wrap{max-width:860px;margin:0 auto;padding:40px 22px 80px}
+  .hero{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:30px 28px;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 90% at 12% -10%,rgba(63,217,200,.16),transparent 60%);pointer-events:none}
+  .logo{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--accent)}
+  .hero h1{font-size:30px;font-weight:600;letter-spacing:.01em;margin:10px 0 6px}
+  .hero p{color:var(--muted);font-size:14px;max-width:60ch}
+  .toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .toc a{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;text-decoration:none;color:var(--text);
+    border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:7px 12px;transition:.15s}
+  .toc a:hover{border-color:var(--accent);color:var(--accent)}
+  .toc .num{font-family:var(--mono);font-size:10px;color:var(--accent)}
+  section{margin-top:34px}
+  h2{font-size:19px;font-weight:600;display:flex;align-items:center;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+  h2 .badge{font-family:var(--mono);font-size:11px;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-weight:500}
+  h3{font-size:14.5px;font-weight:600;margin:20px 0 8px;color:#fff}
+  p.lead{color:var(--muted);font-size:13.5px;margin-top:10px}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  @media (max-width:620px){.cards{grid-template-columns:1fr}}
+  .card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:15px 16px}
+  .card .ttl{font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:9px;margin-bottom:6px}
+  .card .ttl .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .card p{font-size:12.5px;color:var(--muted)}
+  ol.steps{list-style:none;counter-reset:s;margin-top:14px;display:flex;flex-direction:column;gap:11px}
+  ol.steps li{counter-increment:s;position:relative;padding:13px 15px 13px 52px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:13.5px}
+  ol.steps li::before{content:counter(s);position:absolute;left:13px;top:12px;width:26px;height:26px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;
+    color:#04110d;background:var(--accent)}
+  ol.steps li b{color:#fff;font-weight:600}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;border:1px solid var(--line);
+    background:rgba(255,255,255,.04);border-radius:8px;padding:4px 10px;margin:3px 4px 3px 0}
+  table.ctrl{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}
+  table.ctrl th,table.ctrl td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.ctrl th{font-size:11px;letter-spacing:.06em;color:var(--muted);font-weight:600;text-transform:uppercase}
+  table.ctrl td b{color:#fff}
+  .stars{font-family:var(--mono);letter-spacing:1px}
+  .danger-row{display:flex;align-items:center;gap:11px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);margin-top:8px;font-size:13px;flex-wrap:wrap}
+  .danger-row .lv{font-family:var(--mono);font-size:11px;flex:none;width:64px}
+  .note{border:1px solid rgba(255,91,82,.4);background:rgba(255,91,82,.08);border-radius:12px;padding:14px 16px;margin-top:16px;font-size:13px;color:#ffb4ae;line-height:1.65}
+  .note b{color:#fff}
+  .device{display:flex;gap:13px;align-items:flex-start;padding:14px 15px;border:1px solid var(--line);border-radius:12px;background:var(--panel);margin-top:11px}
+  .device .ic{font-size:22px;flex:none;line-height:1.2}
+  .device .dttl{font-size:13.5px;font-weight:600;color:#fff;margin-bottom:3px}
+  .device p{font-size:12.5px;color:var(--muted)}
+  .topnav{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;flex-wrap:wrap;gap:10px}
+  .topnav a{font-family:var(--mono);font-size:12px;text-decoration:none}
+  footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);text-align:center;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topnav">
+    <a href="index.html" style="color:var(--muted)">← Back to Top</a>
+    <a href="faq-en.html" style="color:var(--accent)">Frequently Asked Questions →</a>
+  </div>
+
+  <div class="hero">
+    <div class="logo">VIRTUAL CHEMISTRY LAB / HOW TO USE</div>
+    <h1>Getting Started</h1>
+    <p>This is a quantitative simulator: drag or tap reagents into the beaker and use the control buttons to run reactions. This page explains the basic controls, how to read the screen, and device-specific use.</p>
+    <nav class="toc">
+      <a href="#flow"><span class="num">01</span> Three quick steps</a>
+      <a href="#screen"><span class="num">02</span> Reading the screen</a>
+      <a href="#add"><span class="num">03</span> Adding reagents</a>
+      <a href="#controls"><span class="num">04</span> Control buttons</a>
+      <a href="#observe"><span class="num">05</span> Observation & history</a>
+      <a href="#mission"><span class="num">06</span> Missions</a>
+      <a href="#danger"><span class="num">07</span> Hazard levels</a>
+      <a href="#tools"><span class="num">08</span> Index & report</a>
+      <a href="#device"><span class="num">09</span> Device-specific use</a>
+    </nav>
+  </div>
+
+  <section id="flow">
+    <h2><span class="badge">01</span> Three quick steps</h2>
+    <ol class="steps">
+      <li><b>Add reagents</b> — <b>tap</b> an element or reagent tile in the left library, or <b>drag</b> it into the beaker.</li>
+      <li><b>Run the reaction</b> — press <b>"Start ▶ React"</b> at the bottom center. Use <b>Heat</b> or <b>Ventilate</b> as needed.</li>
+      <li><b>Observe</b> — watch pH, temperature, gas concentration, and more change in the right panel. Reactions are logged in the <b>Experiment History</b>.</li>
+    </ol>
+  </section>
+
+  <section id="screen">
+    <h2><span class="badge">02</span> Reading the screen</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="ttl"><span class="dot" style="background:var(--accent)"></span>Left: Reagent library</div>
+        <p>A search box plus Elements / Reagents / Indicators tabs. Tap or drag a tile into the beaker.</p>
+      </div>
+      <div class="card">
+        <div class="ttl"><span class="dot" style="background:var(--warn)"></span>Center: Beaker</div>
+        <p>The reaction is drawn in real time. The chemical equation is shown above and the control buttons below.</p>
+      </div>
+      <div class="card">
+        <div class="ttl"><span class="dot" style="background:var(--accent2)"></span>Right: Observation panel</div>
+        <p>Meters and a trend graph for temperature, pH, pressure, conductivity, volume, and gas — plus reaction analysis and experiment history.</p>
+      </div>
+      <div class="card">
+        <div class="ttl"><span class="dot" style="background:var(--ok)"></span>Top: Header</div>
+        <p>Mission, difficulty switch, hint, reaction index, how-to, Q&amp;A, and sound controls.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="add">
+    <h2><span class="badge">03</span> Adding reagents</h2>
+    <p class="lead">There are two ways — both add reagents in the same way.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="ttl">👆 Tap to add (phones & tablets)</div>
+        <p><b>Just tap</b> a tile in the library to drop it into the beaker. Comfortable even where finger-dragging is hard.</p>
+      </div>
+      <div class="card">
+        <div class="ttl">🖱 Drag to add (desktop)</div>
+        <p>Grab a tile and <b>drag and drop</b> it into the beaker.</p>
+      </div>
+    </div>
+    <h3>Search to find things fast</h3>
+    <p class="lead">The search box at the top left matches element names, reagent names, or chemical formulas. For example:</p>
+    <div style="margin-top:8px">
+      <span class="chip">Ag</span><span class="chip">Silver</span><span class="chip">AgNO₃</span>
+      <span style="color:var(--muted);font-size:12.5px">→ any of these find silver / silver nitrate (AgNO₃).</span>
+    </div>
+  </section>
+
+  <section id="controls">
+    <h2><span class="badge">04</span> Control buttons</h2>
+    <table class="ctrl">
+      <thead><tr><th style="width:150px">Button</th><th>Function</th></tr></thead>
+      <tbody>
+        <tr><td><b>Heat</b></td><td>Heats the solution. Used for reactions that require heating (e.g. copper + concentrated sulfuric acid, burning sulfur).</td></tr>
+        <tr><td><b>Stir</b></td><td>Stirs to promote reaction and dissolution.</td></tr>
+        <tr><td><b>Ventilate</b></td><td>Runs the fume hood, venting gases and lowering their concentration. <b style="color:var(--warn)">Essential for reactions that release hazardous gas.</b></td></tr>
+        <tr><td><b>Start ▶ React</b></td><td>Starts and stops the reaction.</td></tr>
+        <tr><td><b>STOP</b></td><td>Emergency stop: turns off heating and turns on ventilation.</td></tr>
+        <tr><td><b>Reset ⟳</b></td><td>Empties the beaker and returns to the start state. After completing a mission, advances to the next task.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="observe">
+    <h2><span class="badge">05</span> Observation panel & history</h2>
+    <p class="lead">The right panel updates its readings live during a reaction.</p>
+    <div class="cards">
+      <div class="card"><div class="ttl">📊 Meters & graph</div><p>Temperature, pH, pressure, conductivity, volume, and gas concentration. pH and temperature trends are shown as a line graph.</p></div>
+      <div class="card"><div class="ttl">🧪 Odor & gas</div><p>Shows the name, odor, hazard level, and concentration of any gas evolved.</p></div>
+      <div class="card"><div class="ttl">🔬 Reaction analysis</div><p>Explains the chemical equation, ionic equation, reaction type, and hazard (with details in Learning Mode).</p></div>
+      <div class="card"><div class="ttl">🕘 Experiment history</div><p>Logs reactions in order, e.g. <span style="font-family:var(--mono)">Zn + 2HCl → H₂ evolved</span>. Use "Clear" to erase.</p></div>
+    </div>
+  </section>
+
+  <section id="mission">
+    <h2><span class="badge">06</span> Missions</h2>
+    <p class="lead">Follow the mission in the center of the header to complete each task.</p>
+    <div class="cards">
+      <div class="card"><div class="ttl"><span class="dot" style="background:var(--ok)"></span>Difficulty</div><p>Switch between <b>Beginner</b>, <b>Intermediate</b>, and <b>Advanced</b>. Missions are generated from the reaction database and sorted by hazard and heating requirements.</p></div>
+      <div class="card"><div class="ttl"><span class="dot" style="background:var(--warn)"></span>💡 Show Hint</div><p>Stuck? Press "Show Hint" to reveal the combination of reagents to use.</p></div>
+    </div>
+  </section>
+
+  <section id="danger">
+    <h2><span class="badge">07</span> Hazard levels</h2>
+    <p class="lead">Hazardous reagents and reactions show a hazard level (Lv.1–5) as stars. Look for the ⚠ mark on tiles, or in the reaction analysis and index.</p>
+    <div class="danger-row"><span class="lv stars" style="color:var(--ok)">★☆☆☆☆</span><span>Lv.1 Safe — no issues under normal handling.</span></div>
+    <div class="danger-row"><span class="lv stars" style="color:var(--warn)">★★☆☆☆</span><span>Lv.2 Caution — mild care needed, e.g. gas evolution.</span></div>
+    <div class="danger-row"><span class="lv stars" style="color:#ff8c00">★★★☆☆</span><span>Lv.3 Dangerous — toxic gas or heat. Ventilation advised.</span></div>
+    <div class="danger-row"><span class="lv stars" style="color:var(--danger)">★★★★☆</span><span>Lv.4 Very dangerous — large amounts of toxic gas. Ventilation required.</span></div>
+    <div class="danger-row"><span class="lv stars" style="color:#ff1a1a">★★★★★</span><span>Lv.5 Lab-only / forbidden — lethal or dramatic reactions.</span></div>
+    <div class="note"><b>[Note]</b> This differs from real experiments. These reactions are illustrative. For safety, always experiment under an instructor with correct equipment and procedures.</div>
+  </section>
+
+  <section id="tools">
+    <h2><span class="badge">08</span> Reaction index & report</h2>
+    <div class="cards">
+      <div class="card"><div class="ttl">⊕ Reaction Index</div><p>A reaction list you can open from inside the lab. Search chemical equations, ionic equations, hazard levels, and observations by keyword or tag.</p></div>
+      <div class="card"><div class="ttl">📄 Report (PDF) / CSV</div><p>After an experiment, generate a summary of the <b>reagents used, equations, products, and observations</b>. Print or save as PDF, or export the measured data as CSV.</p></div>
+    </div>
+  </section>
+
+  <section id="device">
+    <h2><span class="badge">09</span> Device-specific use</h2>
+    <div class="device"><div class="ic">🖥</div><div><div class="dttl">Desktop / laptop (recommended)</div><p>Three-column layout. Add reagents by drag-and-drop or by tapping. All features are available.</p></div></div>
+    <div class="device"><div class="ic">📲</div><div><div class="dttl">Tablet (landscape)</div><p>Rotating to landscape launches the laboratory. The beaker and observation panel scroll vertically, and the control buttons stay fixed at the bottom.</p></div></div>
+    <div class="device"><div class="ic">📲</div><div><div class="dttl">Tablet (portrait)</div><p>The full simulator does not launch; a guidance screen prompts you to rotate. From there you can watch the reaction demonstrations.</p></div></div>
+    <div class="device"><div class="ic">📱</div><div><div class="dttl">Smartphone</div><p>The full simulator does not launch. A guidance screen recommends using a computer, and you can watch the reaction demonstrations there.</p></div></div>
+  </section>
+
+  <footer>
+    Virtual Chemistry Lab<br>
+    [Note] This differs from real experiments. These reactions are illustrative. Always experiment under an instructor with correct equipment and procedures.
+  </footer>
+
+</div>
+</body>
+</html>

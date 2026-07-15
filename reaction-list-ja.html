@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>バーチャル化学実験室 — 反応一覧</title>
+<style>
+@page { size: A4 portrait; margin: 16mm 15mm 16mm 17mm; }
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans JP',sans-serif;font-size:9pt;color:#1a1e24;background:#fff;line-height:1.5}
+.cover{page-break-after:always;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;text-align:center;background:#06090d;color:#fff;padding:28mm}
+.cover-logo{font-size:9.5pt;letter-spacing:.24em;color:#3fd9c8;margin-bottom:12mm;font-family:'IBM Plex Mono',monospace}
+.cover h1{font-size:24pt;font-weight:700;line-height:1.25;margin-bottom:5mm}
+.cover-sub{display:block;font-size:11pt;color:#8a98a6;margin-bottom:14mm}
+.cover-line{width:40mm;height:2px;background:#3fd9c8;margin:0 auto 14mm}
+.cover-info{font-size:8.5pt;color:#5a6470;line-height:1.9}
+.cover-tags{display:flex;gap:7mm;margin-top:10mm;flex-wrap:wrap;justify-content:center}
+.tag{border:1px solid rgba(63,217,200,.4);border-radius:6px;padding:3px 10px;font-size:7.5pt;color:#3fd9c8;letter-spacing:.07em;font-family:'IBM Plex Mono',monospace}
+.page{padding:0}
+h2.sec{font-size:10.5pt;font-weight:700;color:#fff;background:#1a2030;padding:5px 10px;margin-top:8mm;margin-bottom:3mm;border-left:4px solid #3fd9c8;letter-spacing:.03em;page-break-after:avoid}
+h2.sec:first-of-type{margin-top:0}
+table{width:100%;border-collapse:collapse;font-size:8pt;margin-bottom:4mm;page-break-inside:auto}
+thead tr{background:#2a3240;color:#c8d4e0}
+thead th{padding:4px 6px;text-align:left;font-weight:600;font-size:7.5pt;letter-spacing:.04em}
+tbody tr{border-bottom:1px solid #eaeff4}
+tbody tr:nth-child(even){background:#f6f8fa}
+tbody td{padding:4px 6px;vertical-align:top}
+.eq{font-family:'IBM Plex Mono',monospace;font-size:7.5pt;color:#0e3a6a}
+.gas{color:#e05a20;font-weight:600}
+.precip{color:#1a70b0;font-weight:600}
+.none{color:#8a98a6}
+.danger{color:#cc2020;font-weight:600}
+.lv1{color:#2a9a5a;font-weight:600}.lv2{color:#a07000;font-weight:600}.lv3{color:#c06010;font-weight:600}.lv4{color:#c02020;font-weight:600}.lv5{color:#900000;font-weight:700}
+.note-box{border:1px solid #f0b8b8;background:#fff8f8;border-radius:5px;padding:5px 9px;margin-bottom:4mm;font-size:7.5pt;color:#a02020;line-height:1.6}
+.info-box{border:1px solid #c0daf0;background:#f0f7ff;border-radius:5px;padding:5px 9px;margin-bottom:4mm;font-size:7.5pt;color:#1a5080;line-height:1.6}
+.ind-cell{border-radius:3px;padding:1px 6px;font-size:7.5pt;font-weight:600;text-align:center;white-space:nowrap;display:inline-block}
+.ind-y{background:#f5e840}.ind-g{background:#7ecb60;color:#fff}.ind-b{background:#3a8cd0;color:#fff}.ind-r{background:#e04030;color:#fff}.ind-o{background:#f08030;color:#fff}.ind-p{background:#9060b0;color:#fff}.ind-pk{background:#e060b0;color:#fff}.ind-cl{background:#ddeeff;color:#aaa;font-style:italic}
+.search-bar{display:flex;gap:8px;align-items:center;margin-bottom:7mm;padding:7px 11px;background:#f0f4f8;border-radius:7px;border:1px solid #d4dae0}
+.search-bar input{flex:1;border:none;background:transparent;font-size:10.5pt;outline:none;font-family:'Noto Sans JP',sans-serif}
+.search-bar input::placeholder{color:#aaa}
+.tag-btn{font-size:8pt;padding:3px 9px;border-radius:18px;border:1px solid #c0c8d4;background:#fff;cursor:pointer;white-space:nowrap}
+.tag-btn.active,.tag-btn:hover{background:#1a2030;color:#fff;border-color:#1a2030}
+.hidden-row{display:none}.hidden-section{display:none}
+.footer{margin-top:9mm;font-size:7pt;color:#aaa;text-align:center;border-top:1px solid #e0e4e8;padding-top:3mm}
+@media print{.search-bar{display:none}.topnav{display:none!important}}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-logo">VIRTUAL CHEMISTRY LAB / バーチャル化学実験室</div>
+  <h1>変化が確認できる<br>組み合わせ一覧</h1>
+  <span class="cover-sub">Observable Reactions Reference — v2</span>
+  <div class="cover-line"></div>
+  <div class="cover-info">大学初年度レベル化学教材対応 ｜ 全 47 反応＋指示薬 4 種＋非反応例<br>危険度レベル Lv.1〜5 表示付き</div>
+  <div class="cover-tags">
+    <span class="tag">イオン化傾向</span><span class="tag">沈殿・気体・酸化還元</span><span class="tag">触媒反応</span><span class="tag">pH指示薬</span><span class="tag">不動態</span>
+  </div>
+</div>
+
+<div class="page">
+<div class="topnav" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6mm;font-family:'IBM Plex Mono',monospace;font-size:9pt">
+  <a href="index.html" style="color:#1a70b0;text-decoration:none">← TOPへ戻る</a>
+  <a href="how-to-ja.html" style="color:#1a70b0;text-decoration:none">使い方ガイド →</a>
+</div>
+<div class="search-bar" id="searchBar">
+  <span style="font-size:10pt;color:#555">🔍</span>
+  <input type="text" id="searchInput" placeholder="キーワードで検索… (例: CO₂, 白色沈殿, 酸化還元, 水素, 危険)" oninput="filterReactions()">
+  <button class="tag-btn" onclick="setTag('気体')">気体発生</button>
+  <button class="tag-btn" onclick="setTag('沈殿')">沈殿</button>
+  <button class="tag-btn" onclick="setTag('酸化還元')">酸化還元</button>
+  <button class="tag-btn" onclick="setTag('中和')">中和</button>
+  <button class="tag-btn" onclick="setTag('触媒')">触媒</button>
+  <button class="tag-btn" onclick="setTag('危険')">危険度高</button>
+  <button class="tag-btn" onclick="setTag('')">全表示</button>
+</div>
+<div id="noResult" style="display:none;color:#c00;font-size:10pt;margin-bottom:5mm">該当する反応が見つかりません。</div>
+
+<div class="note-box">【注意】実際の実験とは異なります。これらの反応はイメージです。安全のため、必ず指導者のもとで正しい器具・手順で実験を行ってください。</div>
+
+<!-- 危険度表 -->
+<div class="info-box"><strong>危険度レベル：</strong>
+<span class="lv1">Lv.1 安全</span> ／ <span class="lv2">Lv.2 注意</span> ／ <span class="lv3">Lv.3 危険</span> ／ <span class="lv4">Lv.4 非常に危険</span> ／ <span class="lv5">Lv.5 実験室以外禁止</span>
+</div>
+
+<!-- 1 -->
+<h2 class="sec">① 金属 ＋ 水</h2>
+<table><thead><tr><th>試薬A</th><th>試薬B</th><th>化学反応式</th><th>観察</th><th>危険度</th></tr></thead><tbody>
+<tr><td>カリウム K</td><td>水</td><td class="eq">2K + 2H₂O → 2KOH + H₂↑</td><td><span class="gas">H₂↑ 激しく発火・紫炎</span></td><td class="lv5">Lv.5</td></tr>
+<tr><td>ナトリウム Na</td><td>水</td><td class="eq">2Na + 2H₂O → 2NaOH + H₂↑</td><td><span class="gas">H₂↑ 発火・黄炎</span></td><td class="lv5">Lv.5</td></tr>
+<tr><td>カルシウム Ca</td><td>水</td><td class="eq">Ca + 2H₂O → Ca(OH)₂ + H₂↑</td><td><span class="gas">H₂↑ 気泡</span>・pH↑</td><td class="lv3">Lv.3</td></tr>
+</tbody></table>
+
+<!-- 2 -->
+<h2 class="sec">② 金属 ＋ 塩酸（HCl）</h2>
+<table><thead><tr><th>金属</th><th>化学反応式</th><th>観察</th><th>備考</th><th>危険度</th></tr></thead><tbody>
+<tr><td>Mg</td><td class="eq">Mg + 2HCl → MgCl₂ + H₂↑</td><td><span class="gas">H₂↑ 激しい</span></td><td>—</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Al</td><td class="eq">2Al + 6HCl → 2AlCl₃ + 3H₂↑</td><td><span class="gas">H₂↑</span></td><td>両性・濃硝酸で不動態</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Zn</td><td class="eq">Zn + 2HCl → ZnCl₂ + H₂↑</td><td><span class="gas">H₂↑</span></td><td>—</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Fe</td><td class="eq">Fe + 2HCl → FeCl₂ + H₂↑</td><td><span class="gas">H₂↑</span>・淡緑色Fe²⁺</td><td>—</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Ni</td><td class="eq">Ni + 2HCl → NiCl₂ + H₂↑</td><td><span class="gas">H₂↑</span>・緑色Ni²⁺</td><td>—</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Sn</td><td class="eq">Sn + 2HCl → SnCl₂ + H₂↑</td><td><span class="gas">H₂↑</span></td><td>両性金属</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Cr</td><td class="eq">Cr + 2HCl → CrCl₂ + H₂↑</td><td><span class="gas">H₂↑</span>・青色Cr²⁺</td><td>濃硝酸で不動態</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Co</td><td class="eq">Co + 2HCl → CoCl₂ + H₂↑</td><td><span class="gas">H₂↑</span>・桃色Co²⁺</td><td>—</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Mn</td><td class="eq">Mn + 2HCl → MnCl₂ + H₂↑</td><td><span class="gas">H₂↑</span></td><td>反応性大</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Na</td><td class="eq">2Na + 2HCl → 2NaCl + H₂↑</td><td><span class="gas">H₂↑ 激しく発火</span></td><td>—</td><td class="lv5">Lv.5</td></tr>
+</tbody></table>
+
+<!-- 3 -->
+<h2 class="sec">③ 金属 ＋ 希硫酸 / ④ 希硝酸 / ⑤ 濃硝酸</h2>
+<table><thead><tr><th>金属</th><th>試薬</th><th>化学反応式</th><th>観察</th><th>危険度</th></tr></thead><tbody>
+<tr><td>Fe</td><td>希硫酸</td><td class="eq">Fe + H₂SO₄ → FeSO₄ + H₂↑</td><td><span class="gas">H₂↑</span>・淡緑色FeSO₄</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Ni</td><td>希硫酸</td><td class="eq">Ni + H₂SO₄ → NiSO₄ + H₂↑</td><td><span class="gas">H₂↑</span>・緑色NiSO₄</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Cu</td><td>希硫酸</td><td class="none">— 反応なし —</td><td class="none">変化なし（Cu &lt; H）</td><td class="lv1">Lv.1</td></tr>
+<tr><td>Cu</td><td>希硝酸</td><td class="eq">3Cu + 8HNO₃(希) → 3Cu(NO₃)₂ + 2NO↑ + 4H₂O</td><td><span class="gas">NO↑ 無色</span>・青色Cu²⁺</td><td class="lv3">Lv.3</td></tr>
+<tr><td>Ag</td><td>希硝酸</td><td class="eq">3Ag + 4HNO₃(希) → 3AgNO₃ + NO↑ + 2H₂O</td><td><span class="gas">NO↑</span></td><td class="lv3">Lv.3</td></tr>
+<tr><td>Au</td><td>希硝酸</td><td class="none">— 反応なし —</td><td class="none">王水のみ溶解</td><td class="lv1">Lv.1</td></tr>
+<tr><td>Cu</td><td>濃硝酸</td><td class="eq">Cu + 4HNO₃(濃) → Cu(NO₃)₂ + 2NO₂↑ + 2H₂O</td><td><span class="danger">NO₂↑ 赤褐色・有毒</span>・青色Cu²⁺</td><td class="lv4">Lv.4</td></tr>
+<tr><td>Ag</td><td>濃硝酸</td><td class="eq">Ag + 2HNO₃(濃) → AgNO₃ + NO₂↑ + H₂O</td><td><span class="danger">NO₂↑</span></td><td class="lv4">Lv.4</td></tr>
+<tr><td>Hg</td><td>濃硝酸</td><td class="eq">Hg + 4HNO₃(濃) → Hg(NO₃)₂ + 2NO₂↑ + 2H₂O</td><td><span class="danger">NO₂↑</span></td><td class="lv5">Lv.5</td></tr>
+<tr><td>Cr</td><td>濃硝酸</td><td>（不動態）</td><td>被膜形成・反応停止</td><td class="lv3">Lv.3</td></tr>
+<tr><td>Al</td><td>濃硝酸</td><td>（不動態）</td><td>被膜形成・反応停止</td><td class="lv3">Lv.3</td></tr>
+</tbody></table>
+
+<!-- 4 -->
+<h2 class="sec">⑤ 濃硫酸（熱） ＋ 王水</h2>
+<table><thead><tr><th>試薬A</th><th>試薬B</th><th>条件</th><th>化学反応式</th><th>観察</th><th>危険度</th></tr></thead><tbody>
+<tr><td>Cu</td><td>濃硫酸</td><td>加熱</td><td class="eq">Cu + 2H₂SO₄ → CuSO₄ + SO₂↑ + 2H₂O</td><td><span class="danger">SO₂↑ 刺激臭・有毒</span>・青色</td><td class="lv4">Lv.4</td></tr>
+<tr><td>Cu</td><td>希硫酸</td><td>常温</td><td class="none">— 反応なし —</td><td class="none">変化なし</td><td class="lv1">Lv.1</td></tr>
+<tr><td>Au</td><td>王水（HCl+HNO₃）</td><td>常温</td><td class="eq">Au + 4HCl + HNO₃ → [AuCl₄]⁻ + NO↑ + 2H₂O</td><td><span class="gas">NO↑</span>・黄色[AuCl₄]⁻</td><td class="lv5">Lv.5</td></tr>
+</tbody></table>
+
+<!-- 5 -->
+<h2 class="sec">⑥ 塩基との反応 ＋ 中和</h2>
+<table><thead><tr><th>試薬A</th><th>試薬B</th><th>化学反応式</th><th>観察</th><th>危険度</th></tr></thead><tbody>
+<tr><td>Sn</td><td>NaOH</td><td class="eq">Sn + 2NaOH + 2H₂O → Na₂[Sn(OH)₄] + H₂↑</td><td><span class="gas">H₂↑</span>（両性金属）</td><td class="lv2">Lv.2</td></tr>
+<tr><td>酸（HCl/H₂SO₄）</td><td>NaOH / KOH / 石灰水</td><td class="eq">H⁺ + OH⁻ → H₂O</td><td>発熱・pH→7・指示薬変色</td><td class="lv1">Lv.1</td></tr>
+<tr><td>アンモニア水</td><td>塩酸</td><td class="eq">NH₃ + HCl → NH₄Cl</td><td>白煙発生・中和</td><td class="lv2">Lv.2</td></tr>
+<tr><td>塩化アンモニウム NH₄Cl</td><td>NaOH（加熱）</td><td class="eq">NH₄⁺ + OH⁻ → NH₃↑ + H₂O</td><td><span class="gas">NH₃↑ 刺激臭</span>・塩基性ガス</td><td class="lv2">Lv.2</td></tr>
+<tr><td>酢酸 CH₃COOH</td><td>NaOH</td><td class="eq">CH₃COOH + NaOH → CH₃COONa + H₂O</td><td>弱酸の中和・pH変化緩やか</td><td class="lv1">Lv.1</td></tr>
+</tbody></table>
+
+<!-- 6 -->
+<h2 class="sec">⑦ 気体発生反応</h2>
+<table><thead><tr><th>試薬A</th><th>試薬B</th><th>化学反応式</th><th>発生ガス</th><th>危険度</th></tr></thead><tbody>
+<tr><td>炭酸カルシウム CaCO₃</td><td>塩酸</td><td class="eq">CaCO₃ + 2HCl → CaCl₂ + CO₂↑ + H₂O</td><td><span class="gas">CO₂↑</span></td><td class="lv1">Lv.1</td></tr>
+<tr><td>炭酸水素ナトリウム NaHCO₃</td><td>塩酸</td><td class="eq">NaHCO₃ + HCl → NaCl + CO₂↑ + H₂O</td><td><span class="gas">CO₂↑ 激しい</span></td><td class="lv1">Lv.1</td></tr>
+<tr><td>炭酸ナトリウム Na₂CO₃</td><td>塩酸</td><td class="eq">Na₂CO₃ + 2HCl → 2NaCl + CO₂↑ + H₂O</td><td><span class="gas">CO₂↑</span></td><td class="lv1">Lv.1</td></tr>
+<tr><td>硫化鉄 FeS</td><td>塩酸</td><td class="eq">FeS + 2HCl → FeCl₂ + H₂S↑</td><td><span class="danger">H₂S↑ 腐卵臭・有毒</span></td><td class="lv4">Lv.4</td></tr>
+<tr><td>漂白剤 NaClO</td><td>塩酸</td><td class="eq">NaClO + 2HCl → Cl₂↑ + NaCl + H₂O</td><td><span class="danger">Cl₂↑ 黄緑・致死性</span></td><td class="lv5">Lv.5</td></tr>
+<tr><td>過酸化水素水 H₂O₂</td><td>加熱 or MnO₂</td><td class="eq">2H₂O₂ → 2H₂O + O₂↑</td><td><span class="gas">O₂↑ 発泡</span></td><td class="lv1">Lv.1</td></tr>
+<tr><td>硫黄 S</td><td>加熱+O₂</td><td class="eq">S + O₂ → SO₂↑</td><td><span class="danger">SO₂↑ 青炎・刺激臭</span></td><td class="lv3">Lv.3</td></tr>
+<tr><td>塩化アンモニウム</td><td>NaOH（加熱）</td><td class="eq">NH₄⁺ + OH⁻ → NH₃↑ + H₂O</td><td><span class="gas">NH₃↑ 刺激臭</span></td><td class="lv2">Lv.2</td></tr>
+<tr><td>エタノール C₂H₅OH</td><td>加熱+O₂</td><td class="eq">C₂H₅OH + 3O₂ → 2CO₂↑ + 3H₂O</td><td><span class="gas">青白炎・CO₂発生</span></td><td class="lv3">Lv.3</td></tr>
+</tbody></table>
+
+<!-- 7 -->
+<h2 class="sec">⑧ 沈殿反応</h2>
+<table><thead><tr><th>試薬A</th><th>試薬B</th><th>イオン反応式</th><th>沈殿</th><th>色</th><th>危険度</th></tr></thead><tbody>
+<tr><td>硝酸銀 AgNO₃</td><td>塩化ナトリウム NaCl</td><td class="eq">Ag⁺ + Cl⁻ → AgCl↓</td><td class="precip">AgCl↓</td><td>白色</td><td class="lv1">Lv.1</td></tr>
+<tr><td>BaCl₂ / Ba(NO₃)₂</td><td>希硫酸 H₂SO₄</td><td class="eq">Ba²⁺ + SO₄²⁻ → BaSO₄↓</td><td class="precip">BaSO₄↓</td><td>白色</td><td class="lv1">Lv.1</td></tr>
+<tr><td>硝酸鉛 Pb(NO₃)₂</td><td>ヨウ化カリウム KI</td><td class="eq">Pb²⁺ + 2I⁻ → PbI₂↓</td><td class="precip">PbI₂↓</td><td>鮮黄色</td><td class="lv2">Lv.2</td></tr>
+<tr><td>石灰水 Ca(OH)₂</td><td>炭酸ナトリウム Na₂CO₃</td><td class="eq">Ca²⁺ + CO₃²⁻ → CaCO₃↓</td><td class="precip">CaCO₃↓</td><td>白色（白濁）</td><td class="lv1">Lv.1</td></tr>
+<tr><td>石灰水 Ca(OH)₂</td><td>CO₂ ガス（気中）</td><td class="eq">CO₂ + Ca²⁺ + 2OH⁻ → CaCO₃↓ + H₂O</td><td class="precip">CaCO₃↓</td><td>白色（白濁）</td><td class="lv1">Lv.1</td></tr>
+</tbody></table>
+
+<!-- 8 -->
+<h2 class="sec">⑨ 金属置換反応（イオン化傾向）</h2>
+<div class="info-box"><strong>K &gt; Ca &gt; Na &gt; Mg &gt; Al &gt; Zn &gt; Fe &gt; Ni &gt; Sn &gt; Pb &gt; H &gt; Cu &gt; Hg &gt; Ag &gt; Pt &gt; Au</strong></div>
+<table><thead><tr><th>金属</th><th>溶液</th><th>イオン反応式</th><th>観察</th><th>危険度</th></tr></thead><tbody>
+<tr><td>Zn</td><td>CuSO₄</td><td class="eq">Zn + Cu²⁺ → Zn²⁺ + Cu↓</td><td><span class="precip">赤銅色の銅析出</span>・青色薄まる</td><td class="lv1">Lv.1</td></tr>
+<tr><td>Fe</td><td>CuSO₄</td><td class="eq">Fe + Cu²⁺ → Fe²⁺ + Cu↓</td><td><span class="precip">赤銅色の銅析出</span>・緑色Fe²⁺</td><td class="lv1">Lv.1</td></tr>
+<tr><td>Cu</td><td>AgNO₃</td><td class="eq">Cu + 2Ag⁺ → Cu²⁺ + 2Ag↓</td><td><span class="precip">銀樹析出</span>・溶液が青色</td><td class="lv1">Lv.1</td></tr>
+</tbody></table>
+
+<!-- 9 -->
+<h2 class="sec">⑩ 触媒反応</h2>
+<table><thead><tr><th>試薬A</th><th>触媒</th><th>化学反応式</th><th>観察</th><th>危険度</th></tr></thead><tbody>
+<tr><td>過酸化水素水 H₂O₂</td><td>二酸化マンガン MnO₂</td><td class="eq">2H₂O₂ →(MnO₂) 2H₂O + O₂↑</td><td><span class="gas">O₂↑ 急速大量発泡</span>・MnO₂は消費されない</td><td class="lv1">Lv.1</td></tr>
+</tbody></table>
+
+<!-- 10 -->
+<h2 class="sec">⑪ 酸化・還元・特殊反応</h2>
+<table><thead><tr><th>試薬A</th><th>試薬B</th><th>化学反応式</th><th>観察</th><th>危険度</th></tr></thead><tbody>
+<tr><td>酸化銅(II) CuO</td><td>H₂ ガス（加熱）</td><td class="eq">CuO + H₂ → Cu + H₂O</td><td><span class="precip">黒色CuO→赤褐色Cu</span>（還元）</td><td class="lv2">Lv.2</td></tr>
+<tr><td>銅 Cu</td><td>O₂（加熱）</td><td class="eq">2Cu + O₂ → 2CuO</td><td>銅表面が黒色に変化</td><td class="lv1">Lv.1</td></tr>
+<tr><td>鉄 Fe</td><td>水 + O₂（時間）</td><td class="eq">4Fe + 3O₂ + 6H₂O → 2Fe₂O₃·3H₂O</td><td><span class="precip">赤褐色さび形成</span></td><td class="lv1">Lv.1</td></tr>
+<tr><td>KMnO₄</td><td>H₂O₂ + 酸</td><td class="eq">2MnO₄⁻ + 5H₂O₂ + 6H⁺ → 2Mn²⁺ + 5O₂↑ + 8H₂O</td><td>紫色消失・<span class="gas">O₂↑</span></td><td class="lv2">Lv.2</td></tr>
+<tr><td>砂糖</td><td>濃硫酸</td><td class="eq">C₁₂H₂₂O₁₁ →(濃H₂SO₄) 12C + 11H₂O</td><td>黒い炭素柱が成長・脱水・炭化</td><td class="lv3">Lv.3</td></tr>
+<tr><td>鉄 Fe + 硫黄 S</td><td>加熱</td><td class="eq">Fe + S → FeS</td><td>赤熱・黒い硫化鉄生成</td><td class="lv2">Lv.2</td></tr>
+<tr><td>水銀 Hg</td><td>加熱</td><td class="eq">Hg(l) → Hg(g)</td><td class="danger">無臭の有毒水銀蒸気</td><td class="lv5">Lv.5</td></tr>
+<tr><td>Al + Hg（アマルガム）</td><td>空気</td><td class="eq">4Al(Hg) + 3O₂ → 2Al₂O₃</td><td>白い酸化アルミニウムの髭・発熱</td><td class="lv5">Lv.5</td></tr>
+<tr><td>デンプン</td><td>ヨウ素 I₂</td><td class="eq">デンプン + I₂ → 青紫色包接体</td><td>溶液が青紫色に呈色</td><td class="lv1">Lv.1</td></tr>
+</tbody></table>
+
+<!-- 11 -->
+<h2 class="sec">⑫ pH 指示薬</h2>
+<table><thead><tr><th>指示薬</th><th>pH域</th><th>酸性（pH&lt;3）</th><th>弱酸性（3–6）</th><th>中性（6–8）</th><th>弱塩基性（8–10）</th><th>塩基性（&gt;10）</th></tr></thead><tbody>
+<tr><td>BTB溶液</td><td>全域</td><td><span class="ind-cell ind-y">黄</span></td><td><span class="ind-cell ind-y">黄</span></td><td><span class="ind-cell ind-g">緑</span></td><td><span class="ind-cell ind-b">青</span></td><td><span class="ind-cell ind-b">青</span></td></tr>
+<tr><td>フェノールフタレイン</td><td>8.2以上</td><td><span class="ind-cell ind-cl">無色</span></td><td><span class="ind-cell ind-cl">無色</span></td><td><span class="ind-cell ind-cl">無色</span></td><td><span class="ind-cell ind-pk">淡桃</span></td><td><span class="ind-cell ind-pk">赤桃色</span></td></tr>
+<tr><td>メチルオレンジ</td><td>3.1–4.4</td><td><span class="ind-cell ind-r">赤</span></td><td><span class="ind-cell ind-o">橙</span></td><td><span class="ind-cell ind-y">黄</span></td><td><span class="ind-cell ind-y">黄</span></td><td><span class="ind-cell ind-y">黄</span></td></tr>
+<tr><td>リトマス</td><td>5.0/8.0</td><td><span class="ind-cell ind-r">赤</span></td><td><span class="ind-cell ind-r">赤</span></td><td><span class="ind-cell ind-p">紫</span></td><td><span class="ind-cell ind-b">青</span></td><td><span class="ind-cell ind-b">青</span></td></tr>
+</tbody></table>
+
+<!-- 12 -->
+<h2 class="sec">⑬ 反応しない組み合わせ（教育ポイント）</h2>
+<table><thead><tr><th>試薬A</th><th>試薬B</th><th>なぜ反応しないか</th></tr></thead><tbody>
+<tr><td>銅 Cu</td><td>希硫酸</td><td>イオン化傾向 Cu &lt; H → H⁺を還元できない</td></tr>
+<tr><td>銅 Cu</td><td>塩酸 HCl</td><td>非酸化性酸には溶けない</td></tr>
+<tr><td>金 Au</td><td>希硝酸・濃硝酸・塩酸</td><td>最もイオン化傾向が小さく、王水のみに溶解</td></tr>
+<tr><td>クロム Cr</td><td>濃硝酸</td><td>不動態：緻密なCr₂O₃被膜が形成され反応停止</td></tr>
+<tr><td>アルミニウム Al</td><td>濃硝酸</td><td>不動態：Al₂O₃被膜が形成され反応停止</td></tr>
+<tr><td>銀 Ag</td><td>塩酸・希硫酸</td><td>Agは酸化性酸（硝酸）以外には実質溶けない</td></tr>
+</tbody></table>
+
+<div class="footer">バーチャル化学実験室 v2 ｜ 全47反応＋指示薬4種 ｜【注意】実際の実験とは異なります。これらの反応はイメージです。</div>
+</div>
+
+<script>
+let activeTag='';
+function setTag(t){activeTag=t;document.getElementById('searchInput').value=t;filterReactions();document.querySelectorAll('.tag-btn').forEach(b=>b.classList.toggle('active',b.textContent===t&&t!==''));}
+function filterReactions(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  let anyVisible=false;
+  document.querySelectorAll('h2.sec').forEach(h=>{
+    let rows=[],el=h.nextElementSibling;
+    while(el&&el.tagName!=='H2'){if(el.tagName==='TABLE')rows.push(...el.querySelectorAll('tbody tr'));el=el.nextElementSibling;}
+    let secVisible=false;
+    rows.forEach(tr=>{const show=!q||tr.textContent.toLowerCase().includes(q);tr.classList.toggle('hidden-row',!show);if(show)secVisible=true;});
+    let tableEl=h.nextElementSibling;
+    while(tableEl&&tableEl.tagName!=='H2'){if(tableEl.tagName==='TABLE'){const vis=[...tableEl.querySelectorAll('tbody tr')].some(r=>!r.classList.contains('hidden-row'));tableEl.style.display=vis?'':'none';}tableEl=tableEl.nextElementSibling;}
+    h.classList.toggle('hidden-section',!secVisible);
+    if(secVisible)anyVisible=true;
+  });
+  document.getElementById('noResult').style.display=anyVisible||!q?'none':'block';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAQ (Q&amp;A) — Virtual Chemistry Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--accent:#3fd9c8;--accent2:#7aa2ff;--danger:#ff5b52;--warn:#ffb84d;--ok:#5fd38b;
+    --panel:rgba(255,255,255,.035);--panel2:rgba(255,255,255,.06);--line:rgba(255,255,255,.09);
+    --text:#e8eef3;--muted:#8a98a6;--mono:'IBM Plex Mono',ui-monospace,monospace;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--text);line-height:1.75;
+    background:radial-gradient(120% 80% at 50% -10%,#101822 0%,#0a0e13 45%,#06090d 100%);min-height:100vh}
+  ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:8px}::-webkit-scrollbar-track{background:transparent}
+  a{color:var(--accent)}
+  .wrap{max-width:820px;margin:0 auto;padding:40px 22px 80px}
+  .topnav{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;flex-wrap:wrap;gap:10px}
+  .topnav a{font-family:var(--mono);font-size:12px;text-decoration:none}
+  .hero{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:30px 28px;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 90% at 12% -10%,rgba(63,217,200,.16),transparent 60%);pointer-events:none}
+  .logo{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--accent)}
+  .hero h1{font-size:29px;font-weight:600;margin:10px 0 6px}
+  .hero p{color:var(--muted);font-size:14px;max-width:60ch}
+  .search{margin-top:24px;display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;background:rgba(6,9,13,.5);padding:12px 15px}
+  .search input{flex:1;border:none;background:transparent;outline:none;color:var(--text);font-family:inherit;font-size:14.5px}
+  .search input::placeholder{color:var(--muted)}
+  .cats{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .cat{font-size:12.5px;color:var(--muted);border:1px solid var(--line);background:var(--panel);border-radius:20px;padding:7px 14px;cursor:pointer;transition:.15s}
+  .cat:hover{color:var(--text);border-color:var(--accent)}
+  .cat.active{background:var(--accent);color:#04110d;border-color:var(--accent);font-weight:600}
+  .list{margin-top:22px;display:flex;flex-direction:column;gap:10px}
+  .item{border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden;transition:border-color .15s}
+  .item:hover{border-color:rgba(63,217,200,.35)}
+  .item summary{list-style:none;cursor:pointer;padding:16px 18px;display:flex;align-items:flex-start;gap:12px;font-size:14.5px;font-weight:500}
+  .item summary::-webkit-details-marker{display:none}
+  .item summary .qmark{font-family:var(--mono);color:var(--accent);font-weight:600;flex:none}
+  .item summary .tag{margin-left:auto;font-family:var(--mono);font-size:9.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px;flex:none;white-space:nowrap;align-self:center}
+  .item summary .chev{flex:none;color:var(--muted);transition:transform .2s;align-self:center}
+  .item[open] summary .chev{transform:rotate(180deg)}
+  .item .a{padding:0 18px 18px 42px;font-size:13.5px;color:#c6d0d9;line-height:1.8}
+  .item .a b{color:#fff}
+  .noresult{display:none;text-align:center;color:var(--muted);font-size:14px;padding:30px}
+  footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);text-align:center;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav">
+    <a href="index.html" style="color:var(--muted)">← Back to Top</a>
+    <a href="how-to-en.html" style="color:var(--accent)">How to Use →</a>
+  </div>
+
+  <div class="hero">
+    <div class="logo">VIRTUAL CHEMISTRY LAB / FAQ</div>
+    <h1>Frequently Asked Questions</h1>
+    <p>Common questions about controls, devices, reactions, and safety. Filter by keyword search or by category.</p>
+    <div class="search">
+      <span style="color:var(--muted)">🔍</span>
+      <input id="q" type="text" placeholder="Search by keyword… (e.g. phone, save, hazard, no reaction)" oninput="filterFaq()">
+    </div>
+    <div class="cats" id="cats">
+      <button class="cat active" data-cat="all" onclick="setCat(this)">All</button>
+      <button class="cat" data-cat="general" onclick="setCat(this)">General</button>
+      <button class="cat" data-cat="usage" onclick="setCat(this)">Usage</button>
+      <button class="cat" data-cat="device" onclick="setCat(this)">Devices</button>
+      <button class="cat" data-cat="reaction" onclick="setCat(this)">Reactions</button>
+      <button class="cat" data-cat="safety" onclick="setCat(this)">Safety</button>
+      <button class="cat" data-cat="trouble" onclick="setCat(this)">Troubleshooting</button>
+    </div>
+  </div>
+
+  <div class="list" id="list">
+
+    <details class="item" data-cat="general"><summary><span class="qmark">Q</span><span>What is this site?</span><span class="tag">General</span><span class="chev">▾</span></summary><div class="a">It is an <b>educational chemistry simulator</b> where you combine elements and reagents and observe reactions and changes in pH, temperature, gases, precipitates, and more. You can safely experience and learn how reactions behave without handling real chemicals.</div></details>
+
+    <details class="item" data-cat="general"><summary><span class="qmark">Q</span><span>Is it free? Do I need to register?</span><span class="tag">General</span><span class="chev">▾</span></summary><div class="a">Yes. <b>No registration or installation is required</b> — it runs for free in your browser.</div></details>
+
+    <details class="item" data-cat="general"><summary><span class="qmark">Q</span><span>Can I switch between Japanese and English?</span><span class="tag">General</span><span class="chev">▾</span></summary><div class="a">Yes. Use the language switch on the top page, or the language option in the lab header, to switch between the <b>Japanese and English versions</b>.</div></details>
+
+    <details class="item" data-cat="general"><summary><span class="qmark">Q</span><span>Who is it for?</span><span class="tag">General</span><span class="chev">▾</span></summary><div class="a">It suits learners from secondary school up to introductory university-level chemistry, and anyone curious about chemistry. It also works well for lesson preparation, review, and self-study.</div></details>
+
+    <details class="item" data-cat="usage"><summary><span class="qmark">Q</span><span>How do I add reagents (elements / chemicals)?</span><span class="tag">Usage</span><span class="chev">▾</span></summary><div class="a"><b>Tap</b> a tile in the left library, or <b>drag and drop</b> it into the beaker. Both methods add reagents the same way.</div></details>
+
+    <details class="item" data-cat="usage"><summary><span class="qmark">Q</span><span>How do I start a reaction?</span><span class="tag">Usage</span><span class="chev">▾</span></summary><div class="a">After adding reagents, press <b>"Start ▶ React"</b> at the bottom center. Some reactions require <b>heating</b>, and some require <b>ventilation</b>.</div></details>
+
+    <details class="item" data-cat="usage"><summary><span class="qmark">Q</span><span>What is the difference between Heat, Stir, and Ventilate?</span><span class="tag">Usage</span><span class="chev">▾</span></summary><div class="a"><b>Heat</b> warms the solution to drive reactions that need heating. <b>Stir</b> mixes to promote reaction and dissolution. <b>Ventilate</b> runs the fume hood to vent evolved gases and lower their concentration. Ventilation is essential for reactions that release hazardous gas.</div></details>
+
+    <details class="item" data-cat="usage"><summary><span class="qmark">Q</span><span>What are missions?</span><span class="tag">Usage</span><span class="chev">▾</span></summary><div class="a">A <b>task</b> shown in the center of the header. Follow the instructions to complete it. You can switch between Beginner, Intermediate, and Advanced difficulty, and use "Show Hint" to reveal the reagent combination to use.</div></details>
+
+    <details class="item" data-cat="usage"><summary><span class="qmark">Q</span><span>Can I save my experiment results?</span><span class="tag">Usage</span><span class="chev">▾</span></summary><div class="a">Use the <b>CSV</b> button in the observation panel to export measured data. The <b>PDF</b> button generates a report summarizing the reagents used, equations, products, and observations, which you can print or save as PDF.</div></details>
+
+    <details class="item" data-cat="usage"><summary><span class="qmark">Q</span><span>What is the Reaction Index?</span><span class="tag">Usage</span><span class="chev">▾</span></summary><div class="a">A list of observable reactions. You can search chemical equations, ionic equations, hazard levels, and observations by keyword or tag. Open it from the lab header.</div></details>
+
+    <details class="item" data-cat="usage"><summary><span class="qmark">Q</span><span>How do I clear the experiment history?</span><span class="tag">Usage</span><span class="chev">▾</span></summary><div class="a">Use the <b>"Clear"</b> button at the top right of the "Experiment History" section in the observation panel.</div></details>
+
+    <details class="item" data-cat="device"><summary><span class="qmark">Q</span><span>Which devices are supported?</span><span class="tag">Devices</span><span class="chev">▾</span></summary><div class="a">A <b>desktop or laptop computer is recommended</b>. Tablets can run the lab in landscape orientation. On smartphones and portrait-orientation tablets the full lab does not launch, but you can watch the <b>reaction demonstrations</b>.</div></details>
+
+    <details class="item" data-cat="device"><summary><span class="qmark">Q</span><span>The full lab does not start on my smartphone.</span><span class="tag">Devices</span><span class="chev">▾</span></summary><div class="a">By design, the full lab does not launch on smartphones; a computer is recommended. On a smartphone you can still watch the <b>reaction demonstrations</b> from the guidance screen.</div></details>
+
+    <details class="item" data-cat="device"><summary><span class="qmark">Q</span><span>My tablet shows a guidance screen instead of the lab.</span><span class="tag">Devices</span><span class="chev">▾</span></summary><div class="a">Rotate the tablet to <b>landscape</b>. The lab launches automatically in landscape. In portrait orientation only the demonstrations are available.</div></details>
+
+    <details class="item" data-cat="device"><summary><span class="qmark">Q</span><span>Is there a recommended browser?</span><span class="tag">Devices</span><span class="chev">▾</span></summary><div class="a">The latest versions of <b>Chrome, Edge, Safari, or Firefox</b> are recommended. Older browsers may not display or run correctly.</div></details>
+
+    <details class="item" data-cat="device"><summary><span class="qmark">Q</span><span>There is sound / I want to turn it off.</span><span class="tag">Devices</span><span class="chev">▾</span></summary><div class="a">Use the <b>"♪ SOUND"</b> button in the lab header to toggle sound on and off.</div></details>
+
+    <details class="item" data-cat="reaction"><summary><span class="qmark">Q</span><span>Are the reactions exactly like real ones?</span><span class="tag">Reactions</span><span class="chev">▾</span></summary><div class="a">No. Reactions, colors, flames, smoke, gases, temperature, pH, and so on include <b>simplified representations for learning</b> and do not perfectly reproduce real results. Actual reactions differ with concentration, purity, quantity, temperature, equipment, and more.</div></details>
+
+    <details class="item" data-cat="reaction"><summary><span class="qmark">Q</span><span>What do the hazard stars (Lv.1–5) mean?</span><span class="tag">Reactions</span><span class="chev">▾</span></summary><div class="a">They indicate the hazard of a reaction or reagent: <b>Lv.1 Safe</b> / <b>Lv.2 Caution</b> / <b>Lv.3 Dangerous (ventilation advised)</b> / <b>Lv.4 Very dangerous (ventilation required)</b> / <b>Lv.5 Lab-only / forbidden (lethal or dramatic)</b>.</div></details>
+
+    <details class="item" data-cat="reaction"><summary><span class="qmark">Q</span><span>Some combinations do not react.</span><span class="tag">Reactions</span><span class="chev">▾</span></summary><div class="a">Some combinations do not react because of the ionization series or passivation (e.g. copper with dilute sulfuric acid, gold with dilute nitric acid, aluminium in concentrated nitric acid). See "Non-reacting combinations" in the <b>Reaction Index</b> for the reasons.</div></details>
+
+    <details class="item" data-cat="reaction"><summary><span class="qmark">Q</span><span>What happens if an experiment "fails"?</span><span class="tag">Reactions</span><span class="chev">▾</span></summary><div class="a">If a hazardous gas reaches a lethal concentration, a <b>warning and experiment-failed screen</b> appears. It shows the cause and the <b>correct procedure</b>, so you can learn and try again.</div></details>
+
+    <details class="item" data-cat="reaction"><summary><span class="qmark">Q</span><span>How many reactions are included?</span><span class="tag">Reactions</span><span class="chev">▾</span></summary><div class="a">It includes about <b>47 reactions and 4 pH indicators</b>, covering metals and acids, gas evolution, precipitation, metal displacement, catalysis, redox, passivation, and more.</div></details>
+
+    <details class="item" data-cat="safety"><summary><span class="qmark">Q</span><span>Can I perform these experiments for real as shown?</span><span class="tag">Safety</span><span class="chev">▾</span></summary><div class="a"><b>No.</b> This simulator is not a laboratory procedure. To perform real chemical experiments, always work in a properly equipped environment under the supervision of a <b>qualified or knowledgeable instructor</b>, following safety data sheets and your institution's standards.</div></details>
+
+    <details class="item" data-cat="safety"><summary><span class="qmark">Q</span><span>Where can I read the safety notice and disclaimer?</span><span class="tag">Safety</span><span class="chev">▾</span></summary><div class="a">The full text is on the top page under <b>"Safety Notice &amp; Disclaimer."</b> Please read it before use.</div></details>
+
+    <details class="item" data-cat="trouble"><summary><span class="qmark">Q</span><span>The screen is black or nothing happens.</span><span class="tag">Troubleshooting</span><span class="chev">▾</span></summary><div class="a">First, <b>reload</b> the page. If that does not help, update your browser to the latest version, try a different browser, or open it on a computer.</div></details>
+
+    <details class="item" data-cat="trouble"><summary><span class="qmark">Q</span><span>The "Enter" button is disabled.</span><span class="tag">Troubleshooting</span><span class="chev">▾</span></summary><div class="a">Tick the <b>checkbox</b> in the safety notice and disclaimer on the top page to enable the start button.</div></details>
+
+  </div>
+  <div class="noresult" id="noresult">No matching questions found. Try a different keyword.</div>
+
+  <footer>
+    Virtual Chemistry Lab<br>
+    [Note] This differs from real experiments. These reactions are illustrative. Always experiment under an instructor with correct equipment and procedures.
+  </footer>
+</div>
+
+<script>
+  var curCat='all';
+  function setCat(btn){
+    curCat=btn.dataset.cat;
+    document.querySelectorAll('.cat').forEach(function(c){c.classList.toggle('active',c===btn);});
+    filterFaq();
+  }
+  function filterFaq(){
+    var q=(document.getElementById('q').value||'').toLowerCase().trim();
+    var any=false;
+    document.querySelectorAll('.item').forEach(function(it){
+      var okCat=(curCat==='all'||it.dataset.cat===curCat);
+      var okQ=(!q||it.textContent.toLowerCase().indexOf(q)>=0);
+      var show=okCat&&okQ;
+      it.style.display=show?'':'none';
+      if(show)any=true;
+      if(!show)it.open=false;
+    });
+    document.getElementById('noresult').style.display=any?'none':'block';
+  }
+</script>
+</body>
+</html>

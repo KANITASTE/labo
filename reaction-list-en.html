@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Virtual Chemistry Lab — Reaction List</title>
+<style>
+@page { size: A4 portrait; margin: 16mm 15mm 16mm 17mm; }
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:9pt;color:#1a1e24;background:#fff;line-height:1.5}
+.cover{page-break-after:always;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;text-align:center;background:#06090d;color:#fff;padding:28mm}
+.cover-logo{font-size:9.5pt;letter-spacing:.24em;color:#3fd9c8;margin-bottom:12mm;font-family:'IBM Plex Mono',monospace}
+.cover h1{font-size:24pt;font-weight:700;line-height:1.25;margin-bottom:5mm}
+.cover-sub{display:block;font-size:11pt;color:#8a98a6;margin-bottom:14mm}
+.cover-line{width:40mm;height:2px;background:#3fd9c8;margin:0 auto 14mm}
+.cover-info{font-size:8.5pt;color:#5a6470;line-height:1.9}
+.cover-tags{display:flex;gap:7mm;margin-top:10mm;flex-wrap:wrap;justify-content:center}
+.tag{border:1px solid rgba(63,217,200,.4);border-radius:6px;padding:3px 10px;font-size:7.5pt;color:#3fd9c8;letter-spacing:.07em;font-family:'IBM Plex Mono',monospace}
+.page{padding:0}
+h2.sec{font-size:10.5pt;font-weight:700;color:#fff;background:#1a2030;padding:5px 10px;margin-top:8mm;margin-bottom:3mm;border-left:4px solid #3fd9c8;letter-spacing:.03em;page-break-after:avoid}
+h2.sec:first-of-type{margin-top:0}
+table{width:100%;border-collapse:collapse;font-size:8pt;margin-bottom:4mm;page-break-inside:auto}
+thead tr{background:#2a3240;color:#c8d4e0}
+thead th{padding:4px 6px;text-align:left;font-weight:600;font-size:7.5pt;letter-spacing:.04em}
+tbody tr{border-bottom:1px solid #eaeff4}
+tbody tr:nth-child(even){background:#f6f8fa}
+tbody td{padding:4px 6px;vertical-align:top}
+.eq{font-family:'IBM Plex Mono',monospace;font-size:7.5pt;color:#0e3a6a}
+.gas{color:#e05a20;font-weight:600}
+.precip{color:#1a70b0;font-weight:600}
+.none{color:#8a98a6}
+.danger{color:#cc2020;font-weight:600}
+.lv1{color:#2a9a5a;font-weight:600}.lv2{color:#a07000;font-weight:600}.lv3{color:#c06010;font-weight:600}.lv4{color:#c02020;font-weight:600}.lv5{color:#900000;font-weight:700}
+.note-box{border:1px solid #f0b8b8;background:#fff8f8;border-radius:5px;padding:5px 9px;margin-bottom:4mm;font-size:7.5pt;color:#a02020;line-height:1.6}
+.info-box{border:1px solid #c0daf0;background:#f0f7ff;border-radius:5px;padding:5px 9px;margin-bottom:4mm;font-size:7.5pt;color:#1a5080;line-height:1.6}
+.ind-cell{border-radius:3px;padding:1px 6px;font-size:7.5pt;font-weight:600;text-align:center;white-space:nowrap;display:inline-block}
+.ind-y{background:#f5e840}.ind-g{background:#7ecb60;color:#fff}.ind-b{background:#3a8cd0;color:#fff}.ind-r{background:#e04030;color:#fff}.ind-o{background:#f08030;color:#fff}.ind-p{background:#9060b0;color:#fff}.ind-pk{background:#e060b0;color:#fff}.ind-cl{background:#ddeeff;color:#aaa;font-style:italic}
+.search-bar{display:flex;gap:8px;align-items:center;margin-bottom:7mm;padding:7px 11px;background:#f0f4f8;border-radius:7px;border:1px solid #d4dae0;flex-wrap:wrap}
+.search-bar input{flex:1;min-width:180px;border:none;background:transparent;font-size:10.5pt;outline:none;font-family:'IBM Plex Sans',sans-serif}
+.search-bar input::placeholder{color:#aaa}
+.tag-btn{font-size:8pt;padding:3px 9px;border-radius:18px;border:1px solid #c0c8d4;background:#fff;cursor:pointer;white-space:nowrap}
+.tag-btn.active,.tag-btn:hover{background:#1a2030;color:#fff;border-color:#1a2030}
+.hidden-row{display:none}.hidden-section{display:none}
+.topnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:6mm;font-family:'IBM Plex Mono',monospace;font-size:9pt}
+.topnav a{color:#1a70b0;text-decoration:none}
+.footer{margin-top:9mm;font-size:7pt;color:#aaa;text-align:center;border-top:1px solid #e0e4e8;padding-top:3mm}
+@media print{.search-bar{display:none}.topnav{display:none!important}}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-logo">VIRTUAL CHEMISTRY LAB</div>
+  <h1>Observable Reaction<br>Combinations</h1>
+  <span class="cover-sub">Observable Reactions Reference — v2</span>
+  <div class="cover-line"></div>
+  <div class="cover-info">For introductory university-level chemistry ｜ 47 reactions + 4 indicators + non-reacting examples<br>with hazard levels Lv.1–5</div>
+  <div class="cover-tags">
+    <span class="tag">Ionization series</span><span class="tag">Precipitation · Gas · Redox</span><span class="tag">Catalysis</span><span class="tag">pH indicators</span><span class="tag">Passivation</span>
+  </div>
+</div>
+
+<div class="page">
+<div class="topnav">
+  <a href="index.html">← Back to Top</a>
+  <a href="how-to-en.html">How to Use →</a>
+</div>
+<div class="search-bar" id="searchBar">
+  <span style="font-size:10pt;color:#555">🔍</span>
+  <input type="text" id="searchInput" placeholder="Search by keyword… (e.g. CO₂, white precipitate, redox, hydrogen, danger)" oninput="filterReactions()">
+  <button class="tag-btn" onclick="setTag('↑')">Gas evolution</button>
+  <button class="tag-btn" onclick="setTag('↓')">Precipitate</button>
+  <button class="tag-btn" onclick="setTag('redox')">Redox</button>
+  <button class="tag-btn" onclick="setTag('neutraliz')">Neutralization</button>
+  <button class="tag-btn" onclick="setTag('catalyst')">Catalyst</button>
+  <button class="tag-btn" onclick="setTag('Lv.5')">High hazard</button>
+  <button class="tag-btn" onclick="setTag('')">Show all</button>
+</div>
+<div id="noResult" style="display:none;color:#c00;font-size:10pt;margin-bottom:5mm">No matching reactions found.</div>
+
+<div class="note-box">[Note] This differs from real experiments. These reactions are illustrative. For safety, always experiment under an instructor with correct equipment and procedures.</div>
+
+<div class="info-box"><strong>Hazard levels:</strong>
+<span class="lv1">Lv.1 Safe</span> ／ <span class="lv2">Lv.2 Caution</span> ／ <span class="lv3">Lv.3 Dangerous</span> ／ <span class="lv4">Lv.4 Very dangerous</span> ／ <span class="lv5">Lv.5 Lab-only / forbidden</span>
+</div>
+
+<h2 class="sec">① Metals + Water</h2>
+<table><thead><tr><th>Reagent A</th><th>Reagent B</th><th>Equation</th><th>Observation</th><th>Hazard</th></tr></thead><tbody>
+<tr><td>Potassium K</td><td>Water</td><td class="eq">2K + 2H₂O → 2KOH + H₂↑</td><td><span class="gas">H₂↑ ignites violently, purple flame</span></td><td class="lv5">Lv.5</td></tr>
+<tr><td>Sodium Na</td><td>Water</td><td class="eq">2Na + 2H₂O → 2NaOH + H₂↑</td><td><span class="gas">H₂↑ ignites, yellow flame</span></td><td class="lv5">Lv.5</td></tr>
+<tr><td>Calcium Ca</td><td>Water</td><td class="eq">Ca + 2H₂O → Ca(OH)₂ + H₂↑</td><td><span class="gas">H₂↑ bubbles</span> · pH↑</td><td class="lv3">Lv.3</td></tr>
+</tbody></table>
+
+<h2 class="sec">② Metals + Hydrochloric acid (HCl)</h2>
+<table><thead><tr><th>Metal</th><th>Equation</th><th>Observation</th><th>Notes</th><th>Hazard</th></tr></thead><tbody>
+<tr><td>Mg</td><td class="eq">Mg + 2HCl → MgCl₂ + H₂↑</td><td><span class="gas">H₂↑ vigorous</span></td><td>—</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Al</td><td class="eq">2Al + 6HCl → 2AlCl₃ + 3H₂↑</td><td><span class="gas">H₂↑</span></td><td>amphoteric · passivated by conc. HNO₃</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Zn</td><td class="eq">Zn + 2HCl → ZnCl₂ + H₂↑</td><td><span class="gas">H₂↑</span></td><td>—</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Fe</td><td class="eq">Fe + 2HCl → FeCl₂ + H₂↑</td><td><span class="gas">H₂↑</span> · pale-green Fe²⁺</td><td>—</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Ni</td><td class="eq">Ni + 2HCl → NiCl₂ + H₂↑</td><td><span class="gas">H₂↑</span> · green Ni²⁺</td><td>—</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Sn</td><td class="eq">Sn + 2HCl → SnCl₂ + H₂↑</td><td><span class="gas">H₂↑</span></td><td>amphoteric metal</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Cr</td><td class="eq">Cr + 2HCl → CrCl₂ + H₂↑</td><td><span class="gas">H₂↑</span> · blue Cr²⁺</td><td>passivated by conc. HNO₃</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Co</td><td class="eq">Co + 2HCl → CoCl₂ + H₂↑</td><td><span class="gas">H₂↑</span> · pink Co²⁺</td><td>—</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Mn</td><td class="eq">Mn + 2HCl → MnCl₂ + H₂↑</td><td><span class="gas">H₂↑</span></td><td>highly reactive</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Na</td><td class="eq">2Na + 2HCl → 2NaCl + H₂↑</td><td><span class="gas">H₂↑ ignites violently</span></td><td>—</td><td class="lv5">Lv.5</td></tr>
+</tbody></table>
+
+<h2 class="sec">③ Metals + dilute H₂SO₄ / dilute HNO₃ / conc. HNO₃</h2>
+<table><thead><tr><th>Metal</th><th>Reagent</th><th>Equation</th><th>Observation</th><th>Hazard</th></tr></thead><tbody>
+<tr><td>Fe</td><td>dilute H₂SO₄</td><td class="eq">Fe + H₂SO₄ → FeSO₄ + H₂↑</td><td><span class="gas">H₂↑</span> · pale-green FeSO₄</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Ni</td><td>dilute H₂SO₄</td><td class="eq">Ni + H₂SO₄ → NiSO₄ + H₂↑</td><td><span class="gas">H₂↑</span> · green NiSO₄</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Cu</td><td>dilute H₂SO₄</td><td class="none">— no reaction —</td><td class="none">no change (Cu &lt; H)</td><td class="lv1">Lv.1</td></tr>
+<tr><td>Cu</td><td>dilute HNO₃</td><td class="eq">3Cu + 8HNO₃(dil) → 3Cu(NO₃)₂ + 2NO↑ + 4H₂O</td><td><span class="gas">NO↑ colorless</span> · blue Cu²⁺ (redox)</td><td class="lv3">Lv.3</td></tr>
+<tr><td>Ag</td><td>dilute HNO₃</td><td class="eq">3Ag + 4HNO₃(dil) → 3AgNO₃ + NO↑ + 2H₂O</td><td><span class="gas">NO↑</span></td><td class="lv3">Lv.3</td></tr>
+<tr><td>Au</td><td>dilute HNO₃</td><td class="none">— no reaction —</td><td class="none">dissolves only in aqua regia</td><td class="lv1">Lv.1</td></tr>
+<tr><td>Cu</td><td>conc. HNO₃</td><td class="eq">Cu + 4HNO₃(conc) → Cu(NO₃)₂ + 2NO₂↑ + 2H₂O</td><td><span class="danger">NO₂↑ red-brown · toxic</span> · blue Cu²⁺</td><td class="lv4">Lv.4</td></tr>
+<tr><td>Ag</td><td>conc. HNO₃</td><td class="eq">Ag + 2HNO₃(conc) → AgNO₃ + NO₂↑ + H₂O</td><td><span class="danger">NO₂↑</span></td><td class="lv4">Lv.4</td></tr>
+<tr><td>Hg</td><td>conc. HNO₃</td><td class="eq">Hg + 4HNO₃(conc) → Hg(NO₃)₂ + 2NO₂↑ + 2H₂O</td><td><span class="danger">NO₂↑</span></td><td class="lv5">Lv.5</td></tr>
+<tr><td>Cr</td><td>conc. HNO₃</td><td>(passivation)</td><td>film forms · reaction stops</td><td class="lv3">Lv.3</td></tr>
+<tr><td>Al</td><td>conc. HNO₃</td><td>(passivation)</td><td>film forms · reaction stops</td><td class="lv3">Lv.3</td></tr>
+</tbody></table>
+
+<h2 class="sec">⑤ Hot conc. H₂SO₄ & Aqua regia</h2>
+<table><thead><tr><th>Reagent A</th><th>Reagent B</th><th>Conditions</th><th>Equation</th><th>Observation</th><th>Hazard</th></tr></thead><tbody>
+<tr><td>Cu</td><td>conc. H₂SO₄</td><td>heated</td><td class="eq">Cu + 2H₂SO₄ → CuSO₄ + SO₂↑ + 2H₂O</td><td><span class="danger">SO₂↑ pungent · toxic</span> · blue</td><td class="lv4">Lv.4</td></tr>
+<tr><td>Cu</td><td>dilute H₂SO₄</td><td>room temp</td><td class="none">— no reaction —</td><td class="none">no change</td><td class="lv1">Lv.1</td></tr>
+<tr><td>Au</td><td>aqua regia (HCl+HNO₃)</td><td>room temp</td><td class="eq">Au + 4HCl + HNO₃ → [AuCl₄]⁻ + NO↑ + 2H₂O</td><td><span class="gas">NO↑</span> · yellow [AuCl₄]⁻</td><td class="lv5">Lv.5</td></tr>
+</tbody></table>
+
+<h2 class="sec">⑥ Reactions with bases & neutralization</h2>
+<table><thead><tr><th>Reagent A</th><th>Reagent B</th><th>Equation</th><th>Observation</th><th>Hazard</th></tr></thead><tbody>
+<tr><td>Sn</td><td>NaOH</td><td class="eq">Sn + 2NaOH + 2H₂O → Na₂[Sn(OH)₄] + H₂↑</td><td><span class="gas">H₂↑</span> (amphoteric metal)</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Acid (HCl/H₂SO₄)</td><td>NaOH / KOH / limewater</td><td class="eq">H⁺ + OH⁻ → H₂O</td><td>exothermic neutralization · pH→7 · indicator changes color</td><td class="lv1">Lv.1</td></tr>
+<tr><td>Ammonia</td><td>Hydrochloric acid</td><td class="eq">NH₃ + HCl → NH₄Cl</td><td>white fumes · neutralization</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Ammonium chloride NH₄Cl</td><td>NaOH (heated)</td><td class="eq">NH₄⁺ + OH⁻ → NH₃↑ + H₂O</td><td><span class="gas">NH₃↑ pungent</span> · basic gas</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Acetic acid CH₃COOH</td><td>NaOH</td><td class="eq">CH₃COOH + NaOH → CH₃COONa + H₂O</td><td>weak-acid neutralization · gradual pH change</td><td class="lv1">Lv.1</td></tr>
+</tbody></table>
+
+<h2 class="sec">⑦ Gas-evolving reactions</h2>
+<table><thead><tr><th>Reagent A</th><th>Reagent B</th><th>Equation</th><th>Gas evolved</th><th>Hazard</th></tr></thead><tbody>
+<tr><td>Calcium carbonate CaCO₃</td><td>Hydrochloric acid</td><td class="eq">CaCO₃ + 2HCl → CaCl₂ + CO₂↑ + H₂O</td><td><span class="gas">CO₂↑</span></td><td class="lv1">Lv.1</td></tr>
+<tr><td>Sodium bicarbonate NaHCO₃</td><td>Hydrochloric acid</td><td class="eq">NaHCO₃ + HCl → NaCl + CO₂↑ + H₂O</td><td><span class="gas">CO₂↑ vigorous</span></td><td class="lv1">Lv.1</td></tr>
+<tr><td>Sodium carbonate Na₂CO₃</td><td>Hydrochloric acid</td><td class="eq">Na₂CO₃ + 2HCl → 2NaCl + CO₂↑ + H₂O</td><td><span class="gas">CO₂↑</span></td><td class="lv1">Lv.1</td></tr>
+<tr><td>Iron sulfide FeS</td><td>Hydrochloric acid</td><td class="eq">FeS + 2HCl → FeCl₂ + H₂S↑</td><td><span class="danger">H₂S↑ rotten-egg · toxic</span></td><td class="lv4">Lv.4</td></tr>
+<tr><td>Bleach NaClO</td><td>Hydrochloric acid</td><td class="eq">NaClO + 2HCl → Cl₂↑ + NaCl + H₂O</td><td><span class="danger">Cl₂↑ yellow-green · lethal</span></td><td class="lv5">Lv.5</td></tr>
+<tr><td>Hydrogen peroxide H₂O₂</td><td>heat or MnO₂</td><td class="eq">2H₂O₂ → 2H₂O + O₂↑</td><td><span class="gas">O₂↑ fizzing</span></td><td class="lv1">Lv.1</td></tr>
+<tr><td>Sulfur S</td><td>heat + O₂</td><td class="eq">S + O₂ → SO₂↑</td><td><span class="danger">SO₂↑ blue flame · pungent</span></td><td class="lv3">Lv.3</td></tr>
+<tr><td>Ammonium chloride</td><td>NaOH (heated)</td><td class="eq">NH₄⁺ + OH⁻ → NH₃↑ + H₂O</td><td><span class="gas">NH₃↑ pungent</span></td><td class="lv2">Lv.2</td></tr>
+<tr><td>Ethanol C₂H₅OH</td><td>heat + O₂</td><td class="eq">C₂H₅OH + 3O₂ → 2CO₂↑ + 3H₂O</td><td><span class="gas">pale-blue flame · CO₂ evolved</span></td><td class="lv3">Lv.3</td></tr>
+</tbody></table>
+
+<h2 class="sec">⑧ Precipitation reactions</h2>
+<table><thead><tr><th>Reagent A</th><th>Reagent B</th><th>Ionic equation</th><th>Precipitate</th><th>Color</th><th>Hazard</th></tr></thead><tbody>
+<tr><td>Silver nitrate AgNO₃</td><td>Sodium chloride NaCl</td><td class="eq">Ag⁺ + Cl⁻ → AgCl↓</td><td class="precip">AgCl↓</td><td>white</td><td class="lv1">Lv.1</td></tr>
+<tr><td>BaCl₂ / Ba(NO₃)₂</td><td>dilute H₂SO₄</td><td class="eq">Ba²⁺ + SO₄²⁻ → BaSO₄↓</td><td class="precip">BaSO₄↓</td><td>white</td><td class="lv1">Lv.1</td></tr>
+<tr><td>Lead nitrate Pb(NO₃)₂</td><td>Potassium iodide KI</td><td class="eq">Pb²⁺ + 2I⁻ → PbI₂↓</td><td class="precip">PbI₂↓</td><td>bright yellow</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Limewater Ca(OH)₂</td><td>Sodium carbonate Na₂CO₃</td><td class="eq">Ca²⁺ + CO₃²⁻ → CaCO₃↓</td><td class="precip">CaCO₃↓</td><td>white (cloudy)</td><td class="lv1">Lv.1</td></tr>
+<tr><td>Limewater Ca(OH)₂</td><td>CO₂ gas (headspace)</td><td class="eq">CO₂ + Ca²⁺ + 2OH⁻ → CaCO₃↓ + H₂O</td><td class="precip">CaCO₃↓</td><td>white (cloudy)</td><td class="lv1">Lv.1</td></tr>
+</tbody></table>
+
+<h2 class="sec">⑨ Metal displacement (ionization series)</h2>
+<div class="info-box"><strong>K &gt; Ca &gt; Na &gt; Mg &gt; Al &gt; Zn &gt; Fe &gt; Ni &gt; Sn &gt; Pb &gt; H &gt; Cu &gt; Hg &gt; Ag &gt; Pt &gt; Au</strong></div>
+<table><thead><tr><th>Metal</th><th>Solution</th><th>Ionic equation</th><th>Observation</th><th>Hazard</th></tr></thead><tbody>
+<tr><td>Zn</td><td>CuSO₄</td><td class="eq">Zn + Cu²⁺ → Zn²⁺ + Cu↓</td><td><span class="precip">copper-red Cu deposits</span> · blue fades (redox)</td><td class="lv1">Lv.1</td></tr>
+<tr><td>Fe</td><td>CuSO₄</td><td class="eq">Fe + Cu²⁺ → Fe²⁺ + Cu↓</td><td><span class="precip">copper-red Cu deposits</span> · green Fe²⁺ (redox)</td><td class="lv1">Lv.1</td></tr>
+<tr><td>Cu</td><td>AgNO₃</td><td class="eq">Cu + 2Ag⁺ → Cu²⁺ + 2Ag↓</td><td><span class="precip">silver tree deposits</span> · solution turns blue (redox)</td><td class="lv1">Lv.1</td></tr>
+</tbody></table>
+
+<h2 class="sec">⑩ Catalytic reactions</h2>
+<table><thead><tr><th>Reagent A</th><th>Catalyst</th><th>Equation</th><th>Observation</th><th>Hazard</th></tr></thead><tbody>
+<tr><td>Hydrogen peroxide H₂O₂</td><td>Manganese dioxide MnO₂</td><td class="eq">2H₂O₂ →(MnO₂) 2H₂O + O₂↑</td><td><span class="gas">O₂↑ rapid, copious fizzing</span> · MnO₂ not consumed (catalyst)</td><td class="lv1">Lv.1</td></tr>
+</tbody></table>
+
+<h2 class="sec">⑪ Oxidation, reduction & special reactions</h2>
+<table><thead><tr><th>Reagent A</th><th>Reagent B</th><th>Equation</th><th>Observation</th><th>Hazard</th></tr></thead><tbody>
+<tr><td>Copper(II) oxide CuO</td><td>H₂ gas (heated)</td><td class="eq">CuO + H₂ → Cu + H₂O</td><td><span class="precip">black CuO → red-brown Cu</span> (reduction / redox)</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Copper Cu</td><td>O₂ (heated)</td><td class="eq">2Cu + O₂ → 2CuO</td><td>copper surface turns black (oxidation)</td><td class="lv1">Lv.1</td></tr>
+<tr><td>Iron Fe</td><td>water + O₂ (over time)</td><td class="eq">4Fe + 3O₂ + 6H₂O → 2Fe₂O₃·3H₂O</td><td><span class="precip">red-brown rust forms</span> (oxidation)</td><td class="lv1">Lv.1</td></tr>
+<tr><td>KMnO₄</td><td>H₂O₂ + acid</td><td class="eq">2MnO₄⁻ + 5H₂O₂ + 6H⁺ → 2Mn²⁺ + 5O₂↑ + 8H₂O</td><td>purple fades · <span class="gas">O₂↑</span> (redox)</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Sugar</td><td>conc. H₂SO₄</td><td class="eq">C₁₂H₂₂O₁₁ →(conc. H₂SO₄) 12C + 11H₂O</td><td>black carbon column grows · dehydration / carbonization</td><td class="lv3">Lv.3</td></tr>
+<tr><td>Iron Fe + Sulfur S</td><td>heated</td><td class="eq">Fe + S → FeS</td><td>red glow · black iron sulfide forms</td><td class="lv2">Lv.2</td></tr>
+<tr><td>Mercury Hg</td><td>heated</td><td class="eq">Hg(l) → Hg(g)</td><td class="danger">odorless toxic mercury vapor</td><td class="lv5">Lv.5</td></tr>
+<tr><td>Al + Hg (amalgam)</td><td>Air</td><td class="eq">4Al(Hg) + 3O₂ → 2Al₂O₃</td><td>white aluminium-oxide whiskers · heat</td><td class="lv5">Lv.5</td></tr>
+<tr><td>Starch</td><td>Iodine I₂</td><td class="eq">Starch + I₂ → blue-violet complex</td><td>solution turns blue-violet (indicator)</td><td class="lv1">Lv.1</td></tr>
+</tbody></table>
+
+<h2 class="sec">⑫ pH indicators</h2>
+<table><thead><tr><th>Indicator</th><th>pH range</th><th>Acidic (pH&lt;3)</th><th>Weakly acidic (3–6)</th><th>Neutral (6–8)</th><th>Weakly basic (8–10)</th><th>Basic (&gt;10)</th></tr></thead><tbody>
+<tr><td>BTB solution</td><td>full range</td><td><span class="ind-cell ind-y">Yellow</span></td><td><span class="ind-cell ind-y">Yellow</span></td><td><span class="ind-cell ind-g">Green</span></td><td><span class="ind-cell ind-b">Blue</span></td><td><span class="ind-cell ind-b">Blue</span></td></tr>
+<tr><td>Phenolphthalein</td><td>≥8.2</td><td><span class="ind-cell ind-cl">Colorless</span></td><td><span class="ind-cell ind-cl">Colorless</span></td><td><span class="ind-cell ind-cl">Colorless</span></td><td><span class="ind-cell ind-pk">Pale pink</span></td><td><span class="ind-cell ind-pk">Magenta</span></td></tr>
+<tr><td>Methyl orange</td><td>3.1–4.4</td><td><span class="ind-cell ind-r">Red</span></td><td><span class="ind-cell ind-o">Orange</span></td><td><span class="ind-cell ind-y">Yellow</span></td><td><span class="ind-cell ind-y">Yellow</span></td><td><span class="ind-cell ind-y">Yellow</span></td></tr>
+<tr><td>Litmus</td><td>5.0/8.0</td><td><span class="ind-cell ind-r">Red</span></td><td><span class="ind-cell ind-r">Red</span></td><td><span class="ind-cell ind-p">Purple</span></td><td><span class="ind-cell ind-b">Blue</span></td><td><span class="ind-cell ind-b">Blue</span></td></tr>
+</tbody></table>
+
+<h2 class="sec">⑬ Non-reacting combinations (teaching points)</h2>
+<table><thead><tr><th>Reagent A</th><th>Reagent B</th><th>Why there is no reaction</th></tr></thead><tbody>
+<tr><td>Copper Cu</td><td>dilute H₂SO₄</td><td>Ionization: Cu &lt; H → cannot reduce H⁺</td></tr>
+<tr><td>Copper Cu</td><td>Hydrochloric acid HCl</td><td>Insoluble in non-oxidizing acids</td></tr>
+<tr><td>Gold Au</td><td>dilute / conc. HNO₃ / HCl</td><td>Lowest ionization tendency; dissolves only in aqua regia</td></tr>
+<tr><td>Chromium Cr</td><td>conc. HNO₃</td><td>Passivation: a dense Cr₂O₃ film forms and the reaction stops</td></tr>
+<tr><td>Aluminium Al</td><td>conc. HNO₃</td><td>Passivation: an Al₂O₃ film forms and the reaction stops</td></tr>
+<tr><td>Silver Ag</td><td>HCl / dilute H₂SO₄</td><td>Ag dissolves essentially only in an oxidizing acid (nitric)</td></tr>
+</tbody></table>
+
+<div class="footer">Virtual Chemistry Lab v2 ｜ 47 reactions + 4 indicators ｜ [Note] This differs from real experiments. These reactions are illustrative.</div>
+</div>
+
+<script>
+let activeTag='';
+function setTag(t){activeTag=t;document.getElementById('searchInput').value=t;filterReactions();document.querySelectorAll('.tag-btn').forEach(b=>b.classList.toggle('active',b.textContent===t&&t!==''));}
+function filterReactions(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  let anyVisible=false;
+  document.querySelectorAll('h2.sec').forEach(h=>{
+    let rows=[],el=h.nextElementSibling;
+    while(el&&el.tagName!=='H2'){if(el.tagName==='TABLE')rows.push(...el.querySelectorAll('tbody tr'));el=el.nextElementSibling;}
+    let secVisible=false;
+    rows.forEach(tr=>{const show=!q||tr.textContent.toLowerCase().includes(q);tr.classList.toggle('hidden-row',!show);if(show)secVisible=true;});
+    let tableEl=h.nextElementSibling;
+    while(tableEl&&tableEl.tagName!=='H2'){if(tableEl.tagName==='TABLE'){const vis=[...tableEl.querySelectorAll('tbody tr')].some(r=>!r.classList.contains('hidden-row'));tableEl.style.display=vis?'':'none';}tableEl=tableEl.nextElementSibling;}
+    h.classList.toggle('hidden-section',!secVisible);
+    if(secVisible)anyVisible=true;
+  });
+  document.getElementById('noResult').style.display=anyVisible||!q?'none':'block';
+}
+</script>
+</body>
+</html>

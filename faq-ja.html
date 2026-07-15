@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>よくある質問 (Q&amp;A) — バーチャル化学実験室</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--accent:#3fd9c8;--accent2:#7aa2ff;--danger:#ff5b52;--warn:#ffb84d;--ok:#5fd38b;
+    --panel:rgba(255,255,255,.035);--panel2:rgba(255,255,255,.06);--line:rgba(255,255,255,.09);
+    --text:#e8eef3;--muted:#8a98a6;--mono:'IBM Plex Mono',ui-monospace,monospace;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--text);line-height:1.75;
+    background:radial-gradient(120% 80% at 50% -10%,#101822 0%,#0a0e13 45%,#06090d 100%);min-height:100vh}
+  ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:8px}::-webkit-scrollbar-track{background:transparent}
+  a{color:var(--accent)}
+  .wrap{max-width:820px;margin:0 auto;padding:40px 22px 80px}
+  .topnav{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;flex-wrap:wrap;gap:10px}
+  .topnav a{font-family:var(--mono);font-size:12px;text-decoration:none}
+  .hero{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:30px 28px;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 90% at 12% -10%,rgba(63,217,200,.16),transparent 60%);pointer-events:none}
+  .logo{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--accent)}
+  .hero h1{font-size:29px;font-weight:600;margin:10px 0 6px}
+  .hero p{color:var(--muted);font-size:14px;max-width:60ch}
+  .search{margin-top:24px;display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;background:rgba(6,9,13,.5);padding:12px 15px}
+  .search input{flex:1;border:none;background:transparent;outline:none;color:var(--text);font-family:inherit;font-size:14.5px}
+  .search input::placeholder{color:var(--muted)}
+  .cats{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .cat{font-size:12.5px;color:var(--muted);border:1px solid var(--line);background:var(--panel);border-radius:20px;padding:7px 14px;cursor:pointer;transition:.15s}
+  .cat:hover{color:var(--text);border-color:var(--accent)}
+  .cat.active{background:var(--accent);color:#04110d;border-color:var(--accent);font-weight:600}
+  .list{margin-top:22px;display:flex;flex-direction:column;gap:10px}
+  .item{border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden;transition:border-color .15s}
+  .item:hover{border-color:rgba(63,217,200,.35)}
+  .item summary{list-style:none;cursor:pointer;padding:16px 18px;display:flex;align-items:flex-start;gap:12px;font-size:14.5px;font-weight:500}
+  .item summary::-webkit-details-marker{display:none}
+  .item summary .qmark{font-family:var(--mono);color:var(--accent);font-weight:600;flex:none}
+  .item summary .tag{margin-left:auto;font-family:var(--mono);font-size:9.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px;flex:none;white-space:nowrap;align-self:center}
+  .item summary .chev{flex:none;color:var(--muted);transition:transform .2s;align-self:center}
+  .item[open] summary .chev{transform:rotate(180deg)}
+  .item .a{padding:0 18px 18px 42px;font-size:13.5px;color:#c6d0d9;line-height:1.8}
+  .item .a b{color:#fff}
+  .noresult{display:none;text-align:center;color:var(--muted);font-size:14px;padding:30px}
+  footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);text-align:center;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav">
+    <a href="index.html" style="color:var(--muted)">← TOPへ戻る</a>
+    <a href="how-to-ja.html" style="color:var(--accent)">使い方ガイド →</a>
+  </div>
+
+  <div class="hero">
+    <div class="logo">VIRTUAL CHEMISTRY LAB / よくある質問</div>
+    <h1>よくある質問（Q&amp;A）</h1>
+    <p>操作・端末・反応内容・安全についてのよくある質問をまとめています。キーワード検索やカテゴリで絞り込めます。</p>
+    <div class="search">
+      <span style="color:var(--muted)">🔍</span>
+      <input id="q" type="text" placeholder="キーワードで検索…（例：スマホ、保存、危険度、反応しない）" oninput="filterFaq()">
+    </div>
+    <div class="cats" id="cats">
+      <button class="cat active" data-cat="all" onclick="setCat(this)">すべて</button>
+      <button class="cat" data-cat="general" onclick="setCat(this)">全般</button>
+      <button class="cat" data-cat="usage" onclick="setCat(this)">使い方・操作</button>
+      <button class="cat" data-cat="device" onclick="setCat(this)">端末・動作環境</button>
+      <button class="cat" data-cat="reaction" onclick="setCat(this)">反応・内容</button>
+      <button class="cat" data-cat="safety" onclick="setCat(this)">安全・免責</button>
+      <button class="cat" data-cat="trouble" onclick="setCat(this)">トラブル</button>
+    </div>
+  </div>
+
+  <div class="list" id="list">
+
+    <details class="item" data-cat="general"><summary><span class="qmark">Q</span><span>このサイトは何ですか？</span><span class="tag">全般</span><span class="chev">▾</span></summary><div class="a">元素や試薬を組み合わせ、化学反応や pH・温度・気体・沈殿などの変化を観察できる<b>教育用の化学シミュレーター</b>です。実際の薬品を使わずに、反応の様子を安全に体験・学習できます。</div></details>
+
+    <details class="item" data-cat="general"><summary><span class="qmark">Q</span><span>無料で使えますか？会員登録は必要ですか？</span><span class="tag">全般</span><span class="chev">▾</span></summary><div class="a">はい。<b>登録・インストールは不要</b>で、ブラウザだけで無料で利用できます。</div></details>
+
+    <details class="item" data-cat="general"><summary><span class="qmark">Q</span><span>日本語と英語を切り替えられますか？</span><span class="tag">全般</span><span class="chev">▾</span></summary><div class="a">できます。TOPページの言語切替、または実験室ヘッダーの言語選択から、<b>日本語版・英語版</b>を切り替えられます。</div></details>
+
+    <details class="item" data-cat="general"><summary><span class="qmark">Q</span><span>どのような人に向いていますか？</span><span class="tag">全般</span><span class="chev">▾</span></summary><div class="a">中学・高校から大学初年度レベルの化学を学ぶ方や、化学に興味のある方に向いています。授業の予習・復習や自主学習にも活用できます。</div></details>
+
+    <details class="item" data-cat="usage"><summary><span class="qmark">Q</span><span>試薬（元素・薬品）はどうやって入れますか？</span><span class="tag">使い方</span><span class="chev">▾</span></summary><div class="a">左のライブラリのタイルを<b>タップ</b>するか、ビーカーへ<b>ドラッグ＆ドロップ</b>します。どちらの方法でも同じように投入できます。</div></details>
+
+    <details class="item" data-cat="usage"><summary><span class="qmark">Q</span><span>反応を始めるにはどうすればよいですか？</span><span class="tag">使い方</span><span class="chev">▾</span></summary><div class="a">試薬を入れたあと、中央下の<b>「反応開始 ▶」</b>を押します。反応によっては<b>加熱</b>が必要な場合や、<b>換気</b>が必須の場合があります。</div></details>
+
+    <details class="item" data-cat="usage"><summary><span class="qmark">Q</span><span>「加熱」「撹拌」「換気」は何が違いますか？</span><span class="tag">使い方</span><span class="chev">▾</span></summary><div class="a"><b>加熱</b>は溶液を温めて加熱が必要な反応を進めます。<b>撹拌</b>はかき混ぜて反応・溶解を促します。<b>換気</b>はドラフト（換気装置）を作動させ、発生したガスを排出して濃度を下げます。危険なガスが出る反応では換気が必須です。</div></details>
+
+    <details class="item" data-cat="usage"><summary><span class="qmark">Q</span><span>ミッションとは何ですか？</span><span class="tag">使い方</span><span class="chev">▾</span></summary><div class="a">ヘッダー中央に表示される<b>課題</b>です。指示に沿って実験を進めると達成できます。初級・中級・上級の難易度を切り替えでき、「ヒントを見る」で使う試薬の組み合わせを確認できます。</div></details>
+
+    <details class="item" data-cat="usage"><summary><span class="qmark">Q</span><span>実験の結果を保存できますか？</span><span class="tag">使い方</span><span class="chev">▾</span></summary><div class="a">観察パネルの<b>CSV</b>ボタンで測定データを書き出せます。<b>PDF</b>ボタンでは、使用した試薬・反応式・生成物・観察結果をまとめたレポートを生成し、印刷・PDF保存できます。</div></details>
+
+    <details class="item" data-cat="usage"><summary><span class="qmark">Q</span><span>反応図鑑とは何ですか？</span><span class="tag">使い方</span><span class="chev">▾</span></summary><div class="a">確認できる反応の一覧です。化学反応式・イオン反応式・危険度・観察結果を、キーワードやタグで検索できます。実験室のヘッダーから開けます。</div></details>
+
+    <details class="item" data-cat="usage"><summary><span class="qmark">Q</span><span>実験履歴を消すには？</span><span class="tag">使い方</span><span class="chev">▾</span></summary><div class="a">観察パネルの「実験履歴」右上にある<b>「クリア」</b>ボタンで消去できます。</div></details>
+
+    <details class="item" data-cat="device"><summary><span class="qmark">Q</span><span>どの端末で使えますか？</span><span class="tag">端末</span><span class="chev">▾</span></summary><div class="a"><b>PCでの利用を推奨</b>します。タブレットは横向きで実験室を利用できます。スマートフォンやタブレット縦向きでは本編は起動しませんが、<b>実験反応のデモ</b>を閲覧できます。</div></details>
+
+    <details class="item" data-cat="device"><summary><span class="qmark">Q</span><span>スマートフォンで本編（実験室）が始まりません。</span><span class="tag">端末</span><span class="chev">▾</span></summary><div class="a">スマートフォンでは本編を起動しない仕様です。PCでの利用を推奨しています。スマートフォンでは案内画面から<b>実験反応のデモ</b>を閲覧できます。</div></details>
+
+    <details class="item" data-cat="device"><summary><span class="qmark">Q</span><span>タブレットで案内画面が出て実験室が始まりません。</span><span class="tag">端末</span><span class="chev">▾</span></summary><div class="a">タブレットを<b>横向き</b>にしてください。横向きにすると自動的に実験室が起動します。縦向きのままではデモの閲覧のみとなります。</div></details>
+
+    <details class="item" data-cat="device"><summary><span class="qmark">Q</span><span>推奨ブラウザはありますか？</span><span class="tag">端末</span><span class="chev">▾</span></summary><div class="a">最新版の <b>Chrome / Edge / Safari / Firefox</b> を推奨します。古いブラウザでは正しく表示・動作しない場合があります。</div></details>
+
+    <details class="item" data-cat="device"><summary><span class="qmark">Q</span><span>音が出ます／出したくありません。</span><span class="tag">端末</span><span class="chev">▾</span></summary><div class="a">実験室ヘッダーの<b>「♪ SOUND」</b>ボタンで音のオン／オフを切り替えられます。</div></details>
+
+    <details class="item" data-cat="reaction"><summary><span class="qmark">Q</span><span>表示される反応は実際とまったく同じですか？</span><span class="tag">反応</span><span class="chev">▾</span></summary><div class="a">いいえ。反応・色・炎・煙・気体・温度・pH などは<b>学習用に調整・簡略化</b>した表現を含み、実際の実験結果を完全に再現するものではありません。濃度・純度・量・温度・器具などにより実際の反応は異なります。</div></details>
+
+    <details class="item" data-cat="reaction"><summary><span class="qmark">Q</span><span>危険度の★（Lv.1〜5）は何を表しますか？</span><span class="tag">反応</span><span class="chev">▾</span></summary><div class="a">反応や試薬の危険性の目安です。<b>Lv.1 安全</b>／<b>Lv.2 注意</b>／<b>Lv.3 危険（換気推奨）</b>／<b>Lv.4 非常に危険（換気必須）</b>／<b>Lv.5 実験室以外禁止（致死性・劇的反応）</b>を表します。</div></details>
+
+    <details class="item" data-cat="reaction"><summary><span class="qmark">Q</span><span>組み合わせても反応しないことがあります。</span><span class="tag">反応</span><span class="chev">▾</span></summary><div class="a">イオン化傾向や不動態などの理由で反応しない組み合わせがあります（例：銅と希硫酸、金と希硝酸、濃硝酸中のアルミニウム）。理由は<b>反応図鑑</b>の「反応しない組み合わせ」で確認できます。</div></details>
+
+    <details class="item" data-cat="reaction"><summary><span class="qmark">Q</span><span>実験に「失敗」するとどうなりますか？</span><span class="tag">反応</span><span class="chev">▾</span></summary><div class="a">危険なガスが致死濃度に達すると<b>警告・実験失敗の画面</b>が表示されます。事故の原因と<b>正しい実験手順</b>が示されるので、学びながら再挑戦できます。</div></details>
+
+    <details class="item" data-cat="reaction"><summary><span class="qmark">Q</span><span>どのくらいの反応が用意されていますか？</span><span class="tag">反応</span><span class="chev">▾</span></summary><div class="a">金属と酸、気体発生、沈殿、金属置換、触媒、酸化還元、不動態など、<b>約47種類の反応と4種類のpH指示薬</b>を収録しています。</div></details>
+
+    <details class="item" data-cat="safety"><summary><span class="qmark">Q</span><span>表示どおりに、実際に実験してよいですか？</span><span class="tag">安全</span><span class="chev">▾</span></summary><div class="a"><b>いいえ。</b>本シミュレーターは実際の実験手順書ではありません。実際に化学実験を行う場合は、必ず適切な設備のもと、資格または十分な知識を持つ<b>指導者の監督</b>のもとで、安全データシートや所属機関の基準に従ってください。</div></details>
+
+    <details class="item" data-cat="safety"><summary><span class="qmark">Q</span><span>注意事項・免責事項はどこで確認できますか？</span><span class="tag">安全</span><span class="chev">▾</span></summary><div class="a">TOPページの<b>「注意事項・免責事項」</b>で全文を確認できます。ご利用前に必ずお読みください。</div></details>
+
+    <details class="item" data-cat="trouble"><summary><span class="qmark">Q</span><span>画面が真っ暗、または動作しません。</span><span class="tag">トラブル</span><span class="chev">▾</span></summary><div class="a">まずページを<b>再読み込み</b>してください。改善しない場合は、ブラウザを最新版に更新する、別のブラウザで開く、PCで開く、をお試しください。</div></details>
+
+    <details class="item" data-cat="trouble"><summary><span class="qmark">Q</span><span>「開始」ボタンが押せません。</span><span class="tag">トラブル</span><span class="chev">▾</span></summary><div class="a">TOPページの注意事項・免責事項の<b>チェックボックス</b>にチェックを入れると、開始ボタンが有効になります。</div></details>
+
+  </div>
+  <div class="noresult" id="noresult">該当する質問が見つかりません。別のキーワードでお試しください。</div>
+
+  <footer>
+    バーチャル化学実験室 ・ Virtual Chemistry Lab<br>
+    【注意】実際の実験とは異なります。これらの反応はイメージです。必ず指導者のもとで正しい器具・手順で実験を行ってください。
+  </footer>
+</div>
+
+<script>
+  var curCat='all';
+  function setCat(btn){
+    curCat=btn.dataset.cat;
+    document.querySelectorAll('.cat').forEach(function(c){c.classList.toggle('active',c===btn);});
+    filterFaq();
+  }
+  function filterFaq(){
+    var q=(document.getElementById('q').value||'').toLowerCase().trim();
+    var any=false;
+    document.querySelectorAll('.item').forEach(function(it){
+      var okCat=(curCat==='all'||it.dataset.cat===curCat);
+      var okQ=(!q||it.textContent.toLowerCase().indexOf(q)>=0);
+      var show=okCat&&okQ;
+      it.style.display=show?'':'none';
+      if(show)any=true;
+      if(!show)it.open=false;
+    });
+    document.getElementById('noresult').style.display=any?'none':'block';
+  }
+</script>
+</body>
+</html>
