@@ -22,11 +22,11 @@ function simulate(ids, opt){
 // Known-good and known-bad reagent recipes per mission id.
 const RECIPES = {
   gen_H2:  { pos:['Zn','塩酸'],     neg:['水'] },
-  blue_cu: { pos:['CuSO₄','水'],    neg:['水'] },
+  blue_cu: { pos:['CuSO₄','水'],    neg:['CuSO₄'] },
   cl2_safe:{ pos:['漂白剤','塩酸'], posOpt:{ venting:true }, neg:['水'] },
   gen_SO2: { pos:['S'], posOpt:{ heating:true }, neg:['水'] },
-  ppt_AgCl:{ pos:['AgNO₃','塩化ナトリウム'], neg:['水'] },
-  displace_cu:{ pos:['CuSO₄','Zn'], neg:['水'] },
+  ppt_AgCl:{ pos:['硝酸銀','塩化ナトリウム','水'], neg:['硝酸銀','塩化ナトリウム'] },
+  displace_cu:{ pos:['CuSO₄','Zn','水'], neg:['CuSO₄','Zn'] },
 };
 
 export function runMissionTests(){

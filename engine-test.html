@@ -1,0 +1,44 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>engine test</title></head><body><pre id="out">running…</pre>
+<script type="module">
+import { Solution, ChemEngine, missionMet } from './chem.js';
+import { REAGENTS, REACTIONS, MISSIONS } from './chemdata.js';
+import { runMissionTests } from './chemtests.js';
+function sim(ids, opt){ opt=opt||{}; const sol=new Solution(); ids.forEach(id=>sol.addReagent(id));
+  const eng=new ChemEngine(); const dt=1/30, steps=Math.round((opt.seconds||8)/dt); let failed=false;
+  for(let i=0;i<steps;i++){ const r=eng.tick(sol,dt,{running:true,heating:!!opt.heating,venting:!!opt.venting,stirring:false}); if(r.snap.gasPct>82&&r.snap.lethal) failed=true; }
+  return sol; }
+const CASES=[
+ ['Zn+塩酸→H₂',['Zn','塩酸'],{},s=>(s.gas['H2']||0)>1e-3],
+ ['硝酸銀+NaCl+水→AgCl↓',['硝酸銀','塩化ナトリウム','水'],{},s=>(s.precip['AgCl']||0)>1e-3],
+ ['[neg]硝酸銀+NaCl(水なし)→反応せず',['硝酸銀','塩化ナトリウム'],{},s=>(s.precip['AgCl']||0)<1e-6],
+ ['硝酸鉛+KI+水→PbI₂↓',['硝酸鉛','ヨウ化カリウム','水'],{},s=>(s.precip['PbI2']||0)>1e-3],
+ ['H₂O₂+MnO₂→O₂',['過酸化水素水','二酸化マンガン'],{},s=>(s.gas['O2']||0)>1e-3],
+ ['Fe+CuSO₄+水→Cu析出',['Fe','CuSO₄','水'],{},s=>(s.precip['Cu']||0)>1e-3],
+ ['[neg]CuSO₄(水なし)→Cu²⁺出ず',['CuSO₄'],{},s=>(s.conc('Cu+2'))<1e-6],
+ ['Cu+硝酸銀+水→Ag析出',['Cu','硝酸銀','水'],{},s=>(s.precip['Ag']||0)>1e-3],
+ ['ヨウ素+デンプン+水→青紫',['ヨウ素','デンプン','水'],{},s=>(s.n['SI']||0)>1e-4],
+ ['S+加熱→SO₂',['S'],{heating:true},s=>(s.gas['SO2']||0)>1e-3],
+ ['石灰水+炭酸Na→CaCO₃↓',['石灰水','炭酸ナトリウム'],{},s=>(s.precip['CaCO3']||0)>1e-3],
+ ['塩酸+NaOH+水→中和',['塩酸','水酸化ナトリウム','水'],{},s=>true],
+ ['KMnO₄+H₂O₂+希硫酸→脱色',['KMnO₄','過酸化水素水','硫酸希'],{},s=>(s.n['MnO4-']||0)<1e-4&&(s.gas['O2']||0)>1e-4],
+ ['KMnO₄+加熱→O₂(熱分解)',['KMnO₄'],{heating:true},s=>(s.gas['O2']||0)>1e-3],
+ ['水酸化バリウム+希硫酸+水→BaSO₄↓',['水酸化バリウム','硫酸希','水'],{},s=>(s.precip['BaSO4']||0)>1e-3],
+ ['炭酸カルシウム+塩酸→CO₂',['炭酸カルシウム','塩酸'],{},s=>(s.gas['CO2']||0)>1e-3],
+ ['Al+Hg→アマルガム',['Al','Hg','水'],{},s=>true],
+ ['窒素N追加(クラッシュ確認)',['N','水'],{},s=>true],
+];
+const out=[];
+for(const [name,ids,opt,check] of CASES){
+  try{ const s=sim(ids,opt);
+    let extra='';
+    if(name.includes('中和')){ extra=' pH='+(s.pH?s.pH().toFixed(2):'n/a'); }
+    if(name.includes('アマルガム')){ extra=' amalgam='+((s.amalgam||0).toFixed(3)); }
+    out.push((check(s)?'PASS':'FAIL')+'  '+name+extra
+      +'  gas='+JSON.stringify(Object.fromEntries(Object.entries(s.gas||{}).filter(([k,v])=>v>1e-4).map(([k,v])=>[k,+v.toFixed(3)])))
+      +' precip='+JSON.stringify(Object.fromEntries(Object.entries(s.precip||{}).filter(([k,v])=>v>1e-4).map(([k,v])=>[k,+v.toFixed(3)]))));
+  }catch(e){ out.push('ERROR '+name+': '+e.message); }
+}
+try{ const mt=runMissionTests(); out.push('--- mission QA: allPass='+mt.allPass); mt.results.forEach(r=>out.push((r.ok?'PASS':'FAIL')+'  mission '+r.id)); }catch(e){ out.push('ERROR missions: '+e.message); }
+document.getElementById('out').textContent=out.join('\n');
+window.__testDone=true;
+</script></body></html>

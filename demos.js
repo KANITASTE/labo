@@ -76,17 +76,17 @@ function ph2btb(ph){ // BTB: yellow(acid) -> green(neutral) -> blue(base)
 var D = {
   /* ---- MEASURE: neutralization titration ---- */
   neutralize:{ cat:'measure',
-    name:{ja:'中和反応を測定する',en:'Measuring a Neutralization Reaction'},
-    sub:'Measuring a Neutralization Reaction',
+    name:{ja:'中和反応を観察する',en:'Observing a Neutralization Reaction'},
+    sub:'Observing a Neutralization Reaction',
     danger:1,
-    desc:{ja:'酸性の水溶液に塩基性の水溶液を少しずつ滴下しながら、pHと温度の変化を観察する自動デモです。操作はできません。',
-          en:'A base is added drop by drop to an acidic solution while pH and temperature are tracked. This plays automatically and cannot be operated.'},
+    desc:{ja:'酸性の水溶液と塩基性の水溶液を混ぜたときの、pH・温度・指示薬の変化を観察する自動デモです。操作はできません。',
+          en:'This automatic demo shows changes in pH, temperature, and indicator color when an acidic solution and a basic solution are mixed. The demo is view-only.'},
     eq:'H⁺ + OH⁻ → H₂O',
     materials:{ja:'塩酸（酸性）／水酸化ナトリウム水溶液（塩基性）／BTB溶液',en:'Hydrochloric acid / sodium hydroxide solution / BTB indicator'},
-    obs:{ja:['pHが酸性→中性付近→塩基性へ連続的に変化する','中和点付近で温度がわずかに上昇する（発熱）','BTBが黄→緑→青へ段階的に変化する'],
-         en:['pH shifts continuously from acidic through near-neutral to basic','Temperature rises slightly near the equivalence point (exothermic)','BTB changes yellow → green → blue in stages']},
-    notes:{ja:'発熱は誇張していません。中和点とpH7は必ずしも一致しません（今回は強酸＋強塩基のため近い値です）。',
-           en:'The temperature change is not exaggerated. The equivalence point is not always exactly pH 7 (here it is close, as both are strong).'},
+    obs:{ja:['酸性の溶液と塩基性の溶液を混ぜるとpHが中性付近へ変化する','中和反応によって温度がわずかに上昇する','BTB溶液の色がpHに応じて変化する'],
+         en:['Mixing an acid and a base shifts the pH toward neutral','Neutralization raises the temperature slightly','BTB colour changes according to pH']},
+    notes:{ja:'反応の進行や温度変化は学習用に簡略化しています。中和点とpH7は必ずしも一致しません。',
+           en:'Progress and temperature change are simplified for learning. The neutral point is not always exactly pH 7.'},
     stage:{type:'titration',duration:15000,loop:true} },
 
   /* ---- Missions: beginner ---- */
@@ -107,7 +107,7 @@ var D = {
     notes:{ja:'塩化銀は光で徐々に変色します（本デモでは省略）。',en:'Silver chloride slowly darkens in light (omitted here).'},
     stage:{type:'precip',duration:11000,loop:true, sol:[150,175,200], precip:[235,238,242]} },
   m_indi:{ cat:'mission', name:{ja:'指示薬の色を変える',en:'Change the indicator colour'}, danger:1,
-    desc:{ja:'酸性・中性・塩基性でBTB溶液の色がどう変わるかを観察します。',en:'See how BTB indicator colour differs in acidic, neutral and basic solutions.'},
+    desc:{ja:'酸性・中性・塩基性の各溶液に指示薬を加えたときの色を比較します。液性を選んで色を確認できます。',en:'Compare the indicator colour in acidic, neutral and basic solutions. Select a solution to view its colour.'},
     eq:'BTB: pH<6 黄 / 中性 緑 / pH>7.6 青',
     materials:{ja:'BTB溶液／酸性・中性・塩基性の各溶液',en:'BTB indicator / acidic, neutral and basic solutions'},
     obs:{ja:['酸性で黄色','中性付近で緑色','塩基性で青色'],en:['Yellow in acid','Green near neutral','Blue in base']},
@@ -115,13 +115,13 @@ var D = {
     stage:{type:'indicator',duration:12000,loop:true, ind:'BTB'} },
 
   /* ---- Missions: intermediate ---- */
-  m_neutral:{ cat:'mission', name:{ja:'中和点を見つける',en:'Find the equivalence point'}, danger:1,
-    desc:{ja:'pHの変化を測定し、中和点付近を確認します。',en:'Track pH to locate the equivalence point.'},
+  m_neutral:{ cat:'mission', name:{ja:'中和によるpH変化を観察する',en:'Observe pH Changes During Neutralization'}, danger:1,
+    desc:{ja:'酸性の溶液と塩基性の溶液を混ぜたときのpHの変化を観察します。',en:'Observe how pH changes when acidic and basic solutions are mixed.'},
     eq:'H⁺ + OH⁻ → H₂O',
     materials:{ja:'塩酸／水酸化ナトリウム水溶液／BTB',en:'Hydrochloric acid / sodium hydroxide / BTB'},
-    obs:{ja:['pHが急に変化する点が中和点付近','その付近で温度がわずかに上昇','指示薬が緑を通過する'],
-         en:['The sharp pH change marks the equivalence region','Temperature rises slightly there','The indicator passes through green']},
-    notes:{ja:'中和点とpH7は常に同じではありません。',en:'The equivalence point is not always pH 7.'},
+    obs:{ja:['酸性の溶液と塩基性の溶液を混ぜるとpHが中性付近へ変化する','中和反応によって温度がわずかに上昇する','BTB溶液の色がpHに応じて変化する'],
+         en:['Mixing acidic and basic solutions shifts the pH toward neutral','Neutralization raises the temperature slightly','BTB colour changes according to pH']},
+    notes:{ja:'中和点とpH7は常に同じではありません。',en:'The neutral point is not always exactly pH 7.'},
     stage:{type:'titration',duration:15000,loop:true} },
   m_deposit:{ cat:'mission', name:{ja:'金属を析出させる',en:'Deposit a metal'}, danger:1,
     desc:{ja:'硫酸銅水溶液に亜鉛を入れると、銅が析出する様子を観察します。',en:'Zinc placed in copper(II) sulfate solution displaces copper metal.'},
@@ -150,11 +150,11 @@ var D = {
     notes:{ja:'家庭で「まぜるな危険」の代表例。実際に混ぜてはいけません。',en:'A classic "never mix" hazard. Never combine these in reality.'},
     stage:{type:'gas',duration:12000,loop:true, liquid:[150,175,200], gasName:{ja:'塩素 Cl₂',en:'Chlorine Cl₂'}, prop:{ja:'淡黄緑色・有毒',en:'Pale yellow-green, toxic'}, rate:0.7, gasColor:[150,190,90], danger:true} },
   m_exo:{ cat:'mission', name:{ja:'発熱反応を安全に観察する',en:'Observe an exothermic reaction safely'}, danger:1,
-    desc:{ja:'中和反応の温度変化を測定し、急な発熱を避ける考え方を学びます。',en:'Track the temperature of a neutralization and learn to avoid sudden heat release.'},
+    desc:{ja:'酸と塩基を混ぜたときの中和反応による温度変化を観察します。',en:'Observe the temperature change from neutralization when an acid and a base are mixed.'},
     eq:'H⁺ + OH⁻ → H₂O   (ΔH < 0)',
     materials:{ja:'塩酸／水酸化ナトリウム水溶液',en:'Hydrochloric acid / sodium hydroxide solution'},
-    obs:{ja:['中和が進むと温度が上昇','中和点付近で温度が最大','少量ずつ加えると急な発熱を防げる'],
-         en:['Temperature rises as neutralization proceeds','It peaks near the equivalence point','Adding small amounts avoids sudden heating']},
+    obs:{ja:['酸と塩基を混ぜると中和反応が進む','中和反応によって温度が上昇する','温度の変化は観察パネルで確認できる'],
+         en:['Mixing an acid and a base drives neutralization','Neutralization raises the temperature','The temperature change is shown on the readout panel']},
     notes:{ja:'温度変化は控えめに表現しています。',en:'The temperature change is shown modestly.'},
     stage:{type:'titration',duration:15000,loop:true, tempFocus:true} },
   m_redox:{ cat:'mission', name:{ja:'酸化還元反応を完成させる',en:'Complete a redox reaction'}, danger:2,
@@ -174,7 +174,7 @@ var D = {
     obs:{ja:['薄い褐色の液が加わる','急に濃い青紫色に呈色','デンプン検出の指示反応'],
          en:['A pale brown solution is added','It rapidly turns deep blue-violet','Used to detect starch']},
     notes:{ja:'包接化合物による呈色で、加熱すると色が消えます。',en:'Colour comes from an inclusion compound and fades on heating.'},
-    stage:{type:'colorchange',duration:9000,loop:true, from:[210,225,225], to:[34,28,92], drip:true} },
+    stage:{type:'colorchange',duration:9000,loop:true, from:[210,225,225], to:[34,28,92]} },
   h2o2_o2:{ cat:'demo', name:{ja:'過酸化水素の分解（触媒）',en:'Decomposition of H₂O₂ (catalyst)'}, danger:1,
     desc:{ja:'二酸化マンガンを触媒として、過酸化水素が分解し酸素を発生します。',en:'With manganese dioxide as a catalyst, hydrogen peroxide decomposes to release oxygen.'},
     eq:'2H₂O₂ →(MnO₂) 2H₂O + O₂↑',
@@ -202,7 +202,7 @@ var D = {
   s_combust:{ cat:'demo', name:{ja:'硫黄の燃焼',en:'Sulfur combustion'}, danger:3,
     desc:{ja:'硫黄が青い炎を上げて燃え、二酸化硫黄を発生します。閲覧専用です。',en:'Sulfur burns with a blue flame, producing sulfur dioxide. View-only.'},
     eq:'S + O₂ → SO₂↑',
-    materials:{ja:'硫黄／酸素（空気）',en:'Sulfur / oxygen (air)'},
+    materials:{ja:'硫黄／酸素／加熱',en:'Sulfur / oxygen / heat'},
     obs:{ja:['青い炎を上げて燃える','刺激臭のあるSO₂が発生','必ず換気装置内で行う'],
          en:['Burns with a blue flame','Produces pungent SO₂','Must be done inside a fume hood']},
     notes:{ja:'これは燃焼であり、炎色反応ではありません。SO₂は有毒です。',en:'This is combustion, not a flame test. SO₂ is toxic.'},
@@ -218,19 +218,19 @@ var D = {
 
   /* ---- Phenomena: colour ---- */
   ph_kmno4:{ cat:'color', name:{ja:'過マンガン酸カリウムの色の変化',en:'Permanganate colour change'}, danger:2,
-    desc:{ja:'濃い紫色の過マンガン酸カリウムが還元され、色が消えていきます。',en:'Deep purple permanganate is reduced and its colour disappears.'},
+    desc:{ja:'酸性条件で過マンガン酸カリウムが過酸化水素により還元され、濃い紫色が消えていきます。',en:'In acidic conditions, permanganate is reduced by hydrogen peroxide and its deep purple colour fades.'},
     eq:'2MnO₄⁻ + 5H₂O₂ + 6H⁺ → 2Mn²⁺ + 5O₂↑ + 8H₂O',
-    materials:{ja:'過マンガン酸カリウム／過酸化水素水',en:'Potassium permanganate / hydrogen peroxide'},
-    obs:{ja:['濃い紫色','徐々に無色へ','MnO₄⁻ → Mn²⁺'],en:['Deep purple','Fades to colourless','MnO₄⁻ → Mn²⁺']},
-    notes:{ja:'紫色が消えることが反応の進行を示します。',en:'The fading purple shows the reaction proceeding.'},
+    materials:{ja:'過マンガン酸カリウム／過酸化水素水／希硫酸',en:'Potassium permanganate / hydrogen peroxide / dilute sulfuric acid'},
+    obs:{ja:['濃い紫色','徐々に無色へ','MnO₄⁻ → Mn²⁺（酸性が必要）'],en:['Deep purple','Fades to colourless','MnO₄⁻ → Mn²⁺ (acid required)']},
+    notes:{ja:'酸性条件（希硫酸）が必要です。紫色が消え酸素が発生するのが正しい変化です。',en:'Acidic conditions (dilute sulfuric acid) are required. The correct change is the purple fading while oxygen is released.'},
     stage:{type:'colorchange',duration:11000,loop:true, from:[140,40,150], to:[228,224,234], fizz:true} },
   ph_cu:{ cat:'color', name:{ja:'銅イオンの青い溶液',en:'Blue copper(II) solution'}, danger:1,
-    desc:{ja:'硫酸銅が水に溶け、銅(II)イオンによる青色があらわれます。',en:'Copper sulfate dissolves, revealing the blue colour of copper(II) ions.'},
-    eq:'CuSO₄ → Cu²⁺ + SO₄²⁻（青色）',
+    desc:{ja:'硫酸銅を水に加えると、銅(II)イオン（Cu²⁺）によって溶液が青色になります。これは2種類の薬品どうしの反応ではなく、水に溶けた銅(II)イオンそのものの色です。',en:'When copper(II) sulfate is added to water, the solution turns blue because of copper(II) ions (Cu²⁺). This is not a reaction between two chemicals — it is the colour of the dissolved copper(II) ion itself.'},
+    eq:'CuSO₄ → Cu²⁺ + SO₄²⁻（Cu²⁺ が青色）',
     materials:{ja:'硫酸銅(II)／水',en:'Copper(II) sulfate / water'},
-    obs:{ja:['無色の水に固体が溶ける','鮮やかな青色に色づく','Cu²⁺による色'],en:['A solid dissolves in colourless water','A vivid blue colour develops','Colour due to Cu²⁺']},
-    notes:{ja:'色の濃さは濃度に依存します。',en:'The intensity depends on concentration.'},
-    stage:{type:'colorchange',duration:9000,loop:true, from:[210,222,228], to:[42,118,205]} },
+    obs:{ja:['硫酸銅を水に加える','溶液が青色に変化する','青色は銅(II)イオンの色で、濃さは量による'],en:['Copper sulfate is added to water','The solution turns blue','The blue is the colour of Cu²⁺; intensity depends on amount']},
+    notes:{ja:'銅(II)イオンの色を示すデモで、化学反応ではありません。',en:'This shows the colour of copper(II) ions; it is not a chemical reaction.'},
+    stage:{type:'colorchange',duration:9000,loop:true, from:[205,216,224], to:[42,118,205]} },
 
   /* ---- Phenomena: gas ---- */
   gas_h2:{ cat:'gasc', name:{ja:'水素の発生',en:'Hydrogen evolution'}, danger:2,
@@ -244,7 +244,7 @@ var D = {
     desc:{ja:'過酸化水素が分解して酸素を発生します。',en:'Hydrogen peroxide decomposes to release oxygen.'},
     eq:'2H₂O₂ →(MnO₂) 2H₂O + O₂↑',
     materials:{ja:'過酸化水素水／二酸化マンガン',en:'Hydrogen peroxide / manganese dioxide'},
-    obs:{ja:['触媒で急に発泡','酸素（無色・助燃性）','線香が激しく燃える'],en:['Rapid bubbling with catalyst','Oxygen (colourless, supports combustion)','Rekindles a glowing splint']},
+    obs:{ja:['触媒で急に発泡','酸素（無色・助燃性）','酸素には、ものの燃焼を助ける性質がある'],en:['Rapid bubbling with catalyst','Oxygen (colourless, supports combustion)','Oxygen supports combustion.']},
     notes:{ja:'酸素はものを燃えやすくします。',en:'Oxygen makes things burn more readily.'},
     stage:{type:'gas',duration:11000,loop:true, liquid:[150,175,200], gasName:{ja:'酸素 O₂',en:'Oxygen O₂'}, prop:{ja:'無色・助燃性',en:'Colourless, supports combustion'}, rate:1.2} },
   gas_co2:{ cat:'gasc', name:{ja:'二酸化炭素の発生',en:'Carbon dioxide evolution'}, danger:1,
@@ -270,38 +270,38 @@ var D = {
     obs:{ja:['鮮やかな黄色に濁る','黄色い粒子が生成','ゆっくり沈む'],en:['Vivid yellow cloudiness','Yellow particles form','Settle slowly']},
     notes:{ja:'鉛化合物は有毒です。',en:'Lead compounds are toxic.'},
     stage:{type:'precip',duration:11000,loop:true, sol:[150,175,200], precip:[232,204,72]} },
-  pp_caco3:{ cat:'precipc', name:{ja:'炭酸カルシウムの白濁',en:'Calcium carbonate turbidity'}, danger:1,
-    desc:{ja:'石灰水に二酸化炭素を通すと白く濁ります。',en:'Bubbling carbon dioxide into limewater turns it cloudy.'},
-    eq:'CO₂ + Ca(OH)₂ → CaCO₃↓ + H₂O',
-    materials:{ja:'石灰水／二酸化炭素',en:'Limewater / carbon dioxide'},
-    obs:{ja:['透明な液が白く濁る','炭酸カルシウムが生成','CO₂の検出に使う'],en:['Clear liquid turns cloudy','Calcium carbonate forms','Used to detect CO₂']},
-    notes:{ja:'過剰のCO₂では再び澄むことがあります（本デモでは省略）。',en:'Excess CO₂ can re-dissolve it (omitted here).'},
+  pp_caco3:{ cat:'precipc', name:{ja:'炭酸カルシウムの白色沈殿',en:'Calcium Carbonate Precipitate'}, danger:1,
+    desc:{ja:'石灰水に炭酸ナトリウムを加えると、炭酸カルシウムの白色沈殿が生成します。',en:'Adding sodium carbonate to limewater forms a white calcium-carbonate precipitate.'},
+    eq:'Ca²⁺ + CO₃²⁻ → CaCO₃↓',
+    materials:{ja:'石灰水／炭酸ナトリウム',en:'Limewater / sodium carbonate'},
+    obs:{ja:['透明な液が白く濁る','白色の細かい沈殿が生成する','一部の沈殿が底に沈む'],en:['The clear liquid turns cloudy white','Fine white particles form','Some precipitate settles to the bottom']},
+    notes:{ja:'本編の石灰水と炭酸ナトリウムで再現できます。',en:'Reproducible in the simulator with limewater and sodium carbonate.'},
     stage:{type:'precip',duration:10000,loop:true, sol:[190,205,215], precip:[236,240,245]} },
 
   /* ---- Phenomena: indicators ---- */
   in_btb:{ cat:'indic', name:{ja:'BTB溶液',en:'BTB solution'}, danger:1,
-    desc:{ja:'酸性・中性・塩基性でBTBの色が変化します。',en:'BTB changes colour across acidic, neutral and basic ranges.'},
+    desc:{ja:'酸性・中性・塩基性の各溶液にBTBを加えたときの色を比較するデモです。液性を選んで色を確認できます。',en:'Compare the colour of BTB added to acidic, neutral and basic solutions. Select a solution to view its colour.'},
     eq:'酸性 黄 / 中性 緑 / 塩基性 青',
     materials:{ja:'BTB溶液',en:'BTB indicator'},
     obs:{ja:['酸性：黄色','中性：緑色','塩基性：青色'],en:['Acid: yellow','Neutral: green','Base: blue']},
     notes:{ja:'変色域はpH6〜7.6付近です。',en:'Its range is around pH 6–7.6.'},
     stage:{type:'indicator',duration:12000,loop:true, ind:'BTB'} },
   in_pp:{ cat:'indic', name:{ja:'フェノールフタレイン',en:'Phenolphthalein'}, danger:1,
-    desc:{ja:'酸性・中性では無色、塩基性で赤紫色になります。',en:'Colourless in acid and neutral, magenta-pink in base.'},
+    desc:{ja:'酸性・中性・塩基性の各溶液にフェノールフタレインを加えたときの色を比較するデモです。',en:'Compare the colour of phenolphthalein added to acidic, neutral and basic solutions.'},
     eq:'pH<8.2 無色 / pH>8.2 赤紫',
     materials:{ja:'フェノールフタレイン溶液',en:'Phenolphthalein solution'},
     obs:{ja:['酸性：無色','中性：無色','塩基性：赤紫色'],en:['Acid: colourless','Neutral: colourless','Base: magenta-pink']},
     notes:{ja:'塩基性の検出によく使われます。',en:'Commonly used to detect basic solutions.'},
     stage:{type:'indicator',duration:12000,loop:true, ind:'PP'} },
   in_mo:{ cat:'indic', name:{ja:'メチルオレンジ',en:'Methyl orange'}, danger:1,
-    desc:{ja:'酸性で赤、中性で橙、塩基性で黄色になります。',en:'Red in acid, orange near neutral, yellow in base.'},
+    desc:{ja:'酸性・中性・塩基性の各溶液にメチルオレンジを加えたときの色を比較するデモです。',en:'Compare the colour of methyl orange added to acidic, neutral and basic solutions.'},
     eq:'pH<3.1 赤 / 3.1〜4.4 橙 / pH>4.4 黄',
     materials:{ja:'メチルオレンジ溶液',en:'Methyl orange solution'},
     obs:{ja:['酸性：赤色','中間：橙色','塩基性：黄色'],en:['Acid: red','Middle: orange','Base: yellow']},
     notes:{ja:'変色域は酸性側（pH3.1〜4.4）です。',en:'Its range is on the acidic side (pH 3.1–4.4).'},
     stage:{type:'indicator',duration:12000,loop:true, ind:'MO'} },
   in_litmus:{ cat:'indic', name:{ja:'リトマス',en:'Litmus'}, danger:1,
-    desc:{ja:'酸性で赤、塩基性で青になります。',en:'Red in acid, blue in base.'},
+    desc:{ja:'酸性・中性・塩基性の各溶液にリトマスを加えたときの色を比較するデモです。',en:'Compare the colour of litmus added to acidic, neutral and basic solutions.'},
     eq:'酸性 赤 / 塩基性 青',
     materials:{ja:'リトマス溶液',en:'Litmus solution'},
     obs:{ja:['酸性：赤色','中性：紫色','塩基性：青色'],en:['Acid: red','Neutral: purple','Base: blue']},
@@ -316,6 +316,7 @@ var IND = {
   MO:{ acid:[214,84,58], neutral:[234,150,58], base:[232,198,82], pa:2, pn:4, pb:9 },
   LITMUS:{ acid:[210,80,70], neutral:[150,110,160], base:[70,112,200], pa:3, pn:7, pb:11 }
 };
+var IND_STATES=[['acid','pa',{ja:'酸性',en:'Acidic'}],['neutral','pn',{ja:'中性',en:'Neutral'}],['base','pb',{ja:'塩基性',en:'Basic'}]];
 
 /* difficulty groups & lists */
 var MISSION_GROUPS = [
@@ -323,7 +324,7 @@ var MISSION_GROUPS = [
   { diff:'intermediate', ids:['m_neutral','m_deposit','m_yellowppt'] },
   { diff:'advanced',     ids:['m_dangergas','m_exo','m_redox'] }
 ];
-var DEMO_LIST = ['neutralize','starch_iodine','h2o2_o2','agcl','displace','s_combust','ph_kmno4','amalgam'];
+var DEMO_LIST = ['neutralize','starch_iodine','h2o2_o2','agcl','ph_kmno4','amalgam'];
 var PHENOM = {
   color:['starch_iodine','ph_kmno4','ph_cu'],
   gas:['gas_h2','gas_o2','gas_co2'],
@@ -331,6 +332,50 @@ var PHENOM = {
   indicator:['in_btb','in_pp','in_mo','in_litmus']
 };
 var PHENOM_CAT = { color:'color', gas:'gasc', precip:'precipc', indicator:'indic' };
+
+/* ---- #12 lab-consistency metadata: map each demo to its real-engine reaction & reagent IDs ---- */
+var LAB_REAGENTS=['H','He','O','N','Cl','S','Na','K','Fe','Cu','Ni','Au','Mg','Al','Ca','Zn','Ag','Hg','Pb','Sn','Cr','Co','Mn','水','海水','エタノール','硫酸希','硫酸濃','塩酸','硝酸希','硝酸濃','酢酸','水酸化ナトリウム','水酸化カリウム','石灰水','アンモニア水','漂白剤','過酸化水素水','炭酸ナトリウム','炭酸水素ナトリウム','塩化ナトリウム','塩化バリウム','硝酸バリウム','ヨウ化カリウム','塩化アンモニウム','硝酸鉛','硝酸銀','炭酸カルシウム','硫化鉄','二酸化マンガン','酸化銅','CuSO₄','KMnO₄','ヨウ素','デンプン','砂糖','BTB溶液','フェノールフタレイン','メチルオレンジ','リトマス'];
+var LAB_REACTIONS=['neutralize_strong','Zn_HCl','AgCl_precip','Zn_CuSO4','PbI2_precip','bleach_HCl','KMnO4_H2O2','starch_iodine','H2O2_cat_MnO2','Fe_CuSO4','S_combust','Al_Hg_amalgam','CaCO3_HCl','Ca2_CO3_precip'];
+var LAB_MAP={
+  neutralize:{reactionId:'neutralize_strong',labMaterials:['塩酸','水酸化ナトリウム','BTB溶液'],labActions:['add','add','add','start'],availableInLab:true},
+  m_h2:{reactionId:'Zn_HCl',labMaterials:['Zn','塩酸'],labActions:['add','add','start'],availableInLab:true},
+  m_whiteppt:{reactionId:'AgCl_precip',labMaterials:['硝酸銀','塩化ナトリウム'],labActions:['add','add','start'],availableInLab:true},
+  m_indi:{reactionId:null,labMaterials:['BTB溶液'],labActions:['add'],availableInLab:true},
+  m_neutral:{reactionId:'neutralize_strong',labMaterials:['塩酸','水酸化ナトリウム','BTB溶液'],labActions:['add','add','add','start'],availableInLab:true},
+  m_deposit:{reactionId:'Zn_CuSO4',labMaterials:['Zn','CuSO₄'],labActions:['add','add','start'],availableInLab:true},
+  m_yellowppt:{reactionId:'PbI2_precip',labMaterials:['硝酸鉛','ヨウ化カリウム'],labActions:['add','add','start'],availableInLab:true},
+  m_dangergas:{reactionId:'bleach_HCl',labMaterials:['漂白剤','塩酸'],labActions:['add','add','start'],availableInLab:true},
+  m_exo:{reactionId:'neutralize_strong',labMaterials:['塩酸','水酸化ナトリウム'],labActions:['add','add','start'],availableInLab:true},
+  m_redox:{reactionId:'KMnO4_H2O2',labMaterials:['KMnO₄','過酸化水素水','硫酸希'],labActions:['add','add','add','start'],availableInLab:true},
+  starch_iodine:{reactionId:'starch_iodine',labMaterials:['ヨウ素','デンプン'],labActions:['add','add','start'],availableInLab:true},
+  h2o2_o2:{reactionId:'H2O2_cat_MnO2',labMaterials:['過酸化水素水','二酸化マンガン'],labActions:['add','add','start'],availableInLab:true},
+  agcl:{reactionId:'AgCl_precip',labMaterials:['硝酸銀','塩化ナトリウム'],labActions:['add','add','start'],availableInLab:true},
+  displace:{reactionId:'Fe_CuSO4',labMaterials:['Fe','CuSO₄'],labActions:['add','add','start'],availableInLab:true},
+  s_combust:{reactionId:'S_combust',labMaterials:['S'],labActions:['add','heat','start'],availableInLab:true},
+  amalgam:{reactionId:'Al_Hg_amalgam',labMaterials:['Al','Hg'],labActions:['add','add','start'],availableInLab:true},
+  ph_kmno4:{reactionId:'KMnO4_H2O2',labMaterials:['KMnO₄','過酸化水素水','硫酸希'],labActions:['add','add','add','start'],availableInLab:true},
+  ph_cu:{reactionId:null,labMaterials:['CuSO₄','水'],labActions:['add','add'],availableInLab:true},
+  gas_h2:{reactionId:'Zn_HCl',labMaterials:['Zn','塩酸'],labActions:['add','add','start'],availableInLab:true},
+  gas_o2:{reactionId:'H2O2_cat_MnO2',labMaterials:['過酸化水素水','二酸化マンガン'],labActions:['add','add','start'],availableInLab:true},
+  gas_co2:{reactionId:'CaCO3_HCl',labMaterials:['炭酸カルシウム','塩酸'],labActions:['add','add','start'],availableInLab:true},
+  pp_agcl:{reactionId:'AgCl_precip',labMaterials:['硝酸銀','塩化ナトリウム'],labActions:['add','add','start'],availableInLab:true},
+  pp_pbi2:{reactionId:'PbI2_precip',labMaterials:['硝酸鉛','ヨウ化カリウム'],labActions:['add','add','start'],availableInLab:true},
+  pp_caco3:{reactionId:'Ca2_CO3_precip',labMaterials:['石灰水','炭酸ナトリウム'],labActions:['add','add','start'],availableInLab:true},
+  in_btb:{reactionId:null,labMaterials:['BTB溶液'],labActions:['add'],availableInLab:true},
+  in_pp:{reactionId:null,labMaterials:['フェノールフタレイン'],labActions:['add'],availableInLab:true},
+  in_mo:{reactionId:null,labMaterials:['メチルオレンジ'],labActions:['add'],availableInLab:true},
+  in_litmus:{reactionId:null,labMaterials:['リトマス'],labActions:['add'],availableInLab:true}
+};
+function demoAvailable(id){ var m=LAB_MAP[id]; return !m || m.availableInLab!==false; }
+function validateDemos(){
+  Object.keys(LAB_MAP).forEach(function(id){
+    var m=LAB_MAP[id];
+    if(!D[id]){ console.warn('Demo consistency warning: demo not found ('+id+')'); return; }
+    if(m.reactionId && LAB_REACTIONS.indexOf(m.reactionId)<0) console.warn('Demo consistency warning: reaction ID not found ('+id+' → '+m.reactionId+')');
+    (m.labMaterials||[]).forEach(function(r){ if(LAB_REAGENTS.indexOf(r)<0) console.warn('Demo consistency warning: reagent ID not found ('+id+' → '+r+')'); });
+  });
+}
+try{ validateDemos(); }catch(e){ console.warn('Demo consistency check failed', e); }
 
 /* ============================================================
    CANVAS STAGE ENGINE
@@ -347,10 +392,10 @@ function makeStage(vis, info, def){
   var GEO={ ox:_ox, oy:_oy, dw:dw, dh:dh, left:_ox+dw*0.205, right:_ox+dw*0.835, cx:_ox+dw*0.52, floor:_oy+dh*0.885, fillMax:_oy+dh*0.33 };
   var flag=vis.querySelector('.stage-flag');
   var raf=null, start=null, paused=false, pauseStamp=0, offset=0, done=false;
-  var bubbles=[], parts=[], fumes=[];
+  var bubbles=[], parts=[], fumes=[], whiskers=[];
   var meters={}, sparks={};
   var dur=def.duration||12000;
-  var metalIdx=0, metalT=0; // flame
+  var metalIdx=0, metalT=0, indState=0; // flame / indicator
   var reduced=RM;
 
   /* build info-panel meters based on type */
@@ -376,7 +421,7 @@ function makeStage(vis, info, def){
     if(T.danger) readout('<div class="warn-label">⚠ '+esc(lang()==='ja'?'有毒・危険な気体。換気必須。':'Toxic / hazardous gas. Ventilation required.')+'</div>'); }
   else if(type==='precip'||type==='amalgam'){ meter('turb',t(UI.turbidity),function(){return '#cfd8e2';}); if(type==='amalgam') readout('<div class="warn-label">⚠ '+esc(lang()==='ja'?'水銀は有毒。閲覧専用。':'Mercury is toxic. View-only.')+'</div>'); }
   else if(type==='colorchange'){ meter('prog',t(UI.progress),function(){return '#a879ff';}); }
-  else if(type==='indicator'){ meter('ph',t(UI.pH),function(){return '#5aa2ff';}); }
+  else if(type==='indicator'){ buildIndicatorControls(); }
   else if(type==='flame'){ buildFlameControls(); }
 
   function buildFlameControls(){
@@ -394,6 +439,34 @@ function makeStage(vis, info, def){
     updateFlameLabel();
   }
   var flameLabel;
+  var indLabel;
+  function buildIndicatorControls(){
+    var tab=IND[T.ind]||IND.BTB;
+    var wrap=document.createElement('div'); wrap.className='meter';
+    wrap.innerHTML='<div class="mlabel"><span>'+esc(lang()==='ja'?'液性を選ぶ':'Select the solution')+'</span></div>';
+    var row=document.createElement('div'); row.style.cssText='display:flex;flex-wrap:wrap;gap:8px;margin-top:4px';
+    IND_STATES.forEach(function(st,i){
+      var b=document.createElement('button'); b.className='dbtn'; b.style.cssText='padding:8px 12px;font-size:12.5px';
+      b.textContent=t(st[2]);
+      b.addEventListener('click',function(){ indState=i; updateIndLabel(); });
+      row.appendChild(b);
+    });
+    wrap.appendChild(row); info.appendChild(wrap);
+    var cmp=document.createElement('div'); cmp.className='meter';
+    cmp.innerHTML='<div class="mlabel"><span>'+esc(lang()==='ja'?'色の比較（酸性・中性・塩基性）':'Colour comparison (acid / neutral / base)')+'</span></div>';
+    var srow=document.createElement('div'); srow.style.cssText='display:flex;gap:8px;margin-top:4px';
+    IND_STATES.forEach(function(st){
+      var c=document.createElement('div'); c.style.cssText='flex:1;text-align:center;font-size:10.5px;color:var(--muted)';
+      c.innerHTML='<div style="height:26px;border-radius:6px;border:1px solid var(--line);background:'+rgb(tab[st[0]])+'"></div><div style="margin-top:3px">'+esc(t(st[2]))+'</div>';
+      srow.appendChild(c);
+    });
+    cmp.appendChild(srow); info.appendChild(cmp);
+    indLabel=readout(''); updateIndLabel();
+  }
+  function updateIndLabel(){
+    if(!indLabel) return; var tab=IND[T.ind]||IND.BTB; var st=IND_STATES[indState];
+    indLabel.innerHTML='<div class="mlabel"><span>'+esc(t(UI.pH))+'（'+esc(t(st[2]))+'）</span><b data-v>'+tab[st[1]].toFixed(1)+'</b></div>';
+  }
   function updateFlameLabel(){
     if(!flameLabel) return; var m=T.metals[metalIdx];
     flameLabel.innerHTML='<div class="mlabel"><span>'+esc(t(UI.flameColor))+'</span><b data-v>'+esc(t({ja:m.ja,en:m.en}))+'</b></div>'+
@@ -491,7 +564,7 @@ function makeStage(vis, info, def){
     var run = paused ? pauseStamp : (ts-start);
     var p = dur>0 ? Math.min(1, run/dur) : 0;
     render(p, run);
-    if(dur>0 && p>=1){ if(T.loop){ start=ts; bubbles=[]; parts=[]; fumes=[]; } else { done=true; } }
+    if(dur>0 && p>=1){ if(T.loop){ start=ts; bubbles=[]; parts=[]; fumes=[]; whiskers=[]; } else { done=true; } }
     raf=requestAnimationFrame(frame);
   }
 
@@ -502,7 +575,6 @@ function makeStage(vis, info, def){
       var tp = 22 + 4.2*Math.exp(-Math.pow((p-0.5)/0.12,2));
       var col = ph2btb(ph);
       var reg = beaker(col, 0.62, {});
-      drip(reg.cx, reg.lvY, true);
       spawnBubbles(0, reg); // no bubbles
       // flag near equivalence
       var near=Math.abs(ph-7)<1.1;
@@ -532,7 +604,6 @@ function makeStage(vis, info, def){
       var solNow = T.solTo ? lerp(T.sol, T.solTo, Math.min(1,(p-0.2)/0.6<0?0:(p-0.2)/0.6)) : T.sol;
       var haze = Math.max(0, Math.min(1,(p-0.25)/0.4));
       var reg=beaker(solNow||[150,175,200], 0.6, {precip:T.precip, haze:haze});
-      if(p<0.3) drip(reg.cx, reg.lvY, true);
       // grow settled particles
       if(p>0.35 && parts.length< (reduced?40:110) && Math.random()<0.5){
         parts.push({x:reg.cx-reg.bw/2+10+Math.random()*(reg.bw-20), y:reg.bot-18-Math.random()*30*(p-0.35), r:1.4+Math.random()*2.4});
@@ -543,12 +614,34 @@ function makeStage(vis, info, def){
     }
     else if(type==='amalgam'){
       var pr=p;
-      var reg=beaker([120,130,140], 0.24, { extra:function(g,lvY,floor){
-        ctx.fillStyle='rgba(180,190,200,.9)'; ctx.fillRect(g.cx-28, floor-52, 56, 42);
-        var n=Math.floor((reduced?14:34)*pr);
-        for(var i=0;i<n;i++){ var wx=g.cx-24+(i*48/34); var gh=8+(Math.sin(i*3.1)*0.5+0.5)*38*pr; ctx.strokeStyle='rgba(240,244,248,'+(0.5+0.4*pr)+')'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(wx,floor-52); ctx.lineTo(wx+Math.sin(i)*3,floor-52-gh); ctx.stroke(); }
+      var reg=beaker([120,130,140], 0.22, { extra:function(g,lvY,floor){
+        var cx=g.cx, baseY=floor-12;
+        // aluminium block
+        ctx.fillStyle='rgba(176,184,194,.92)'; ctx.fillRect(cx-30, baseY-16, 60, 28);
+        ctx.fillStyle='rgba(150,158,168,.9)'; ctx.fillRect(cx-30, baseY-16, 60, 6);
+        // warm amalgam glow at the base (heat)
+        var gl=ctx.createRadialGradient(cx,baseY,3,cx,baseY,88);
+        gl.addColorStop(0,'rgba(255,176,108,'+(0.22*pr)+')'); gl.addColorStop(0.5,'rgba(255,150,90,'+(0.09*pr)+')'); gl.addColorStop(1,'rgba(255,150,90,0)');
+        ctx.fillStyle=gl; ctx.beginPath(); ctx.arc(cx,baseY,88,0,7); ctx.fill();
+        // seed whiskers once
+        if(!whiskers.length){ for(var k=0;k<(reduced?14:26);k++){ whiskers.push({x:cx+(Math.random()*2-1)*28, y:baseY-8, ang:-Math.PI/2+(Math.random()*2-1)*0.7, len:38+Math.random()*54, segs:5+((Math.random()*4)|0), w:0.9+Math.random()*1.3, seed:Math.random()*1000, branch:Math.random()<0.5 }); } }
+        var grow=Math.min(1, Math.max(0,(pr-0.05)*1.35));
+        ctx.lineCap='round'; ctx.lineJoin='round';
+        whiskers.forEach(function(w){
+          var L=w.len*grow; if(L<2) return;
+          var steps=w.segs, x=w.x, y=w.y, ang=w.ang, pts=[[x,y]];
+          for(var i=1;i<=steps;i++){ ang += Math.sin(w.seed+i*0.9)*0.28 + Math.sin(offset/520+i*0.8+w.seed)*0.05; var d=L/steps; x+=Math.cos(ang)*d; y+=Math.sin(ang)*d; pts.push([x,y]); }
+          var tip=pts[pts.length-1];
+          ctx.globalCompositeOperation='lighter'; ctx.strokeStyle='rgba(230,236,243,0.08)'; ctx.lineWidth=w.w*3.2;
+          ctx.beginPath(); pts.forEach(function(p,i){ i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); }); ctx.stroke();
+          ctx.globalCompositeOperation='source-over';
+          var grd=ctx.createLinearGradient(w.x,w.y,tip[0],tip[1]); grd.addColorStop(0,'rgba(210,217,226,0.95)'); grd.addColorStop(1,'rgba(248,250,252,0.72)');
+          ctx.strokeStyle=grd; ctx.lineWidth=w.w; ctx.beginPath(); pts.forEach(function(p,i){ i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); }); ctx.stroke();
+          if(w.branch && grow>0.5){ var bi=Math.floor(steps*0.55), bp=pts[bi]; if(bp){ var ba=w.ang+(w.seed%1-0.5)*1.4, bl=L*0.32; ctx.lineWidth=w.w*0.7; ctx.beginPath(); ctx.moveTo(bp[0],bp[1]); ctx.lineTo(bp[0]+Math.cos(ba)*bl, bp[1]+Math.sin(ba)*bl); ctx.stroke(); } }
+          ctx.fillStyle='rgba(250,252,254,0.5)'; ctx.beginPath(); ctx.arc(tip[0],tip[1],w.w*1.2,0,7); ctx.fill();
+        });
       }});
-      if(!reduced && Math.random()<0.3) fumes.push({x:reg.cx+(Math.random()-0.5)*44,y:reg.bot-80,r:6+Math.random()*8,o:0.35});
+      if(!reduced && Math.random()<0.3) fumes.push({x:reg.cx+(Math.random()-0.5)*44,y:reg.bot-70,r:6+Math.random()*8,o:0.3});
       updateFumes(reg.bot-110);
       setMeter('turb', Math.round(p*100)+'%', p, '#eef2f6');
     }
@@ -560,16 +653,9 @@ function makeStage(vis, info, def){
       setMeter('prog', Math.round(p*100)+'%', p, '#a879ff');
     }
     else if(type==='indicator'){
-      var tab=IND[T.ind]||IND.BTB;
-      var phase=(run/ (dur/3))%3; // 0..3 across acid/neutral/base
-      var col,phv,lbl;
-      if(phase<1){ col=lerp(tab.acid,tab.neutral,smooth(phase)); phv=tab.pa+(tab.pn-tab.pa)*phase; }
-      else if(phase<2){ col=lerp(tab.neutral,tab.base,smooth(phase-1)); phv=tab.pn+(tab.pb-tab.pn)*(phase-1); }
-      else { col=lerp(tab.base,tab.acid,smooth(phase-2)); phv=tab.pb+(tab.pa-tab.pb)*(phase-2); }
-      beaker(col,0.6,{});
-      setMeter('ph', phv.toFixed(1), phv/14, '#5aa2ff');
-      // phase label
-      if(flag){ var L=phv<6?({ja:'酸性',en:'Acidic'}):(phv>8?({ja:'塩基性',en:'Basic'}):({ja:'中性付近',en:'Near neutral'})); flag.textContent=t(L); flag.classList.add('show'); }
+      var tab=IND[T.ind]||IND.BTB; var st=IND_STATES[indState];
+      beaker(tab[st[0]],0.55,{});
+      if(flag){ flag.textContent=t(st[2]); flag.classList.add('show'); }
     }
     else if(type==='flame'){
       metalT+=16; if(metalT> 3600){ metalT=0; metalIdx=(metalIdx+1)%T.metals.length; updateFlameLabel(); }
@@ -588,7 +674,7 @@ function makeStage(vis, info, def){
 
   return {
     stop:function(){ if(raf) cancelAnimationFrame(raf); raf=null; },
-    restart:function(){ start=null; offset=0; pauseStamp=0; paused=false; done=false; bubbles=[]; parts=[]; fumes=[]; if(sparks.ph)sparks.ph.data=[]; if(sparks.temp)sparks.temp.data=[]; metalIdx=0; metalT=0; if(type==='flame')updateFlameLabel(); },
+    restart:function(){ start=null; offset=0; pauseStamp=0; paused=false; done=false; bubbles=[]; parts=[]; fumes=[]; whiskers=[]; if(sparks.ph)sparks.ph.data=[]; if(sparks.temp)sparks.temp.data=[]; metalIdx=0; metalT=0; indState=0; if(type==='flame')updateFlameLabel(); if(type==='indicator')updateIndLabel(); },
     toggle:function(){ paused=!paused; if(paused){ pauseStamp=(performance.now()-start); if(raf){cancelAnimationFrame(raf);raf=null;} } else { start=performance.now()-pauseStamp; raf=requestAnimationFrame(frame); } return paused; },
     isPaused:function(){ return paused; }
   };
@@ -698,7 +784,7 @@ function renderMissions(s){
   var html='';
   MISSION_GROUPS.forEach(function(g){
     html+='<div class="diff-group"><div class="diff-head"><span class="dname">'+esc(t(DIFF[g.diff]))+'</span><span class="drule"></span></div><div class="dgrid">';
-    g.ids.forEach(function(id){ html+=tileHTML(id,'mission'); });
+    g.ids.filter(demoAvailable).forEach(function(id){ html+=tileHTML(id,'mission'); });
     html+='</div></div>';
   });
   html+='<div class="consent-note">'+esc(t(UI.consentBody))+'</div>';
@@ -712,8 +798,8 @@ function renderMissions(s){
 function renderDemoList(s){
   mCat.textContent=t(CAT.demo).toUpperCase();
   mTitle.textContent=lang()==='ja'?'反応デモ一覧':'Reaction Demos';
-  var html='<p class="dm-desc">'+esc(lang()==='ja'?'既存データで正しく再現できる反応のみを掲載しています。すべて閲覧専用です。':'Only reactions that the dataset can reproduce accurately are listed. All are view-only.')+'</p><div class="dgrid">';
-  DEMO_LIST.forEach(function(id){ html+=tileHTML(id,'demo'); });
+  var html='<p class="dm-desc">'+esc(lang()==='ja'?'本編で観察できる反応を、操作なしで確認できる簡易デモです。反応の進行や演出は、学習しやすいように簡略化されています。':'These view-only demos provide simplified previews of reactions available in the full simulator. Timing and visual effects are simplified for learning purposes.')+'</p><div class="dgrid">';
+  DEMO_LIST.filter(demoAvailable).forEach(function(id){ html+=tileHTML(id,'demo'); });
   html+='</div>';
   mBody.innerHTML=html;
   wireTiles(mBody, function(id){ openModal({view:'demo', id:id, back:{view:'demolist'}}); });
@@ -727,7 +813,7 @@ function renderPhenom(s){
   mTitle.textContent=t(CAT[catKey]);
   var ids=PHENOM[s.cat]||[];
   var html='<p class="dm-desc">'+esc(lang()==='ja'?'見たいプリセットデモを選んでください。すべて閲覧専用です。':'Choose a preset demo. All are view-only.')+'</p><div class="dgrid">';
-  ids.forEach(function(id){ html+=tileHTML(id,'phenom'); });
+  ids.filter(demoAvailable).forEach(function(id){ html+=tileHTML(id,'phenom'); });
   html+='</div>';
   mBody.innerHTML=html;
   wireTiles(mBody, function(id){ openModal({view:'demo', id:id, back:{view:'phenom', cat:s.cat}}); });

@@ -21,6 +21,8 @@ export class Solution {
     this.produced = {};         // cumulative moles of gas produced (survives venting)
     this.indicator = null;      // active pH indicator: 'BTB'|'PP'|'MO'|'LITMUS'
     this.precip = {};           // precipitate id → moles (settled solid product)
+    this.aqV = 0;               // aqueous solvent volume (L) available to dissolve crystals
+    this.undissolved = [];      // dry crystalline solutes awaiting water: [reagent]
   }
   add(sp, mol){ this.n[sp] = Math.max(0, (this.n[sp]||0) + mol); }
   addHeat(J){ const massG = Math.max(60, this.V*1000); const cp = massG*4.18; this.T += J/cp; if(this.T>413) this.T=413; }
@@ -39,21 +41,43 @@ export class Solution {
         this.concReagents.add(id);
       }
       for(const sp in r.dissoc){ this.add(sp, r.dissoc[sp]*moles); }
-      this.V += Lv; if(isWater) this.waterMl += r.doseMl;
+      this.V += Lv; this.aqV += Lv; if(isWater) this.waterMl += r.doseMl;
       if(isWater && this._undilutedAcid){           // water → conc acid (DANGEROUS)
         this.addHeat(this.undilutedHeatkJ*1000); this.undilutedHeatkJ = 0; this._undilutedAcid = false;
         this.lastEvent = 'water_into_acid';
       }
+      this._dissolvePending();                      // added solvent → dissolve waiting crystals
     } else if(r.kind==='metal' || r.kind==='powder'){
       this.solids[r.solid] = (this.solids[r.solid]||0) + r.molPerAdd;
     } else if(r.kind==='solute'){
-      for(const sp in r.dissoc){ this.add(sp, (r.dissoc[sp]||0)*(r.molPerAdd||0)); }
-      this.V += (r.doseMl||8)/1000;
+      // A dry crystalline salt only dissociates into ions once dissolved in an aqueous
+      // solvent. Without water it stays undissolved (and, if it has a solid form, is
+      // available for solid-state routes such as thermal decomposition).
+      if(this.aqV > 1e-6){ this._dissolveSolute(r); }
+      else {
+        this.undissolved.push(r);
+        if(r.solid){ this.solids[r.solid] = (this.solids[r.solid]||0) + (r.molPerAdd||0); }
+      }
     } else if(r.kind==='gas'){
       this.gas[r.gas] = (this.gas[r.gas]||0) + r.molPerAdd;
     } else if(r.kind==='indicator'){
       this.indicator = r.indicator;
-      this.V += (r.doseMl||3)/1000;
+      this.V += (r.doseMl||3)/1000; this.aqV += (r.doseMl||3)/1000;
+      this._dissolvePending();
+    }
+  }
+  // Dissolve one solute now: dissociate into ions and contribute its solution volume.
+  _dissolveSolute(r){
+    for(const sp in r.dissoc){ this.add(sp, (r.dissoc[sp]||0)*(r.molPerAdd||0)); }
+    this.V += (r.doseMl||8)/1000; this.aqV += (r.doseMl||8)/1000;
+  }
+  // Flush every crystal that was waiting for water once a solvent is present.
+  _dissolvePending(){
+    if(!this.undissolved || !this.undissolved.length) return;
+    const pend = this.undissolved; this.undissolved = [];
+    for(const r of pend){
+      if(r.solid){ this.solids[r.solid] = Math.max(0, (this.solids[r.solid]||0) - (r.molPerAdd||0)); }
+      this._dissolveSolute(r);
     }
   }
 

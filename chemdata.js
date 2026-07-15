@@ -61,6 +61,7 @@ export const GASES = {
   'NO':  { name:'一酸化窒素 NO',  color:[150,160,172], danger:3, lethal:false, odor:'無臭',     flammable:false, desc:'無色のガス。空気中で速やかに酸化され赤褐色のNO₂になる。希硝酸と金属の反応で発生。' },
   'SO2': { name:'二酸化硫黄 SO₂',color:[210,205,150], danger:4, lethal:false, odor:'刺激臭',   flammable:false, desc:'刺激性・有毒。換気必須。' },
   'NH3g':{ name:'アンモニア NH₃',color:[200,210,230], danger:3, lethal:false, odor:'刺激臭',   flammable:false, desc:'刺激臭。粘膜を刺激する。' },
+  'N2':  { name:'窒素 N₂',      color:[190,205,225], danger:1, lethal:false, odor:'無臭',     flammable:false, desc:'不燃性・不活性。空気の約78%を占める。高濃度では酸欠に注意。' },
   'He':  { name:'ヘリウム He',  color:[208,224,236], danger:1, lethal:false, odor:'無臭',     flammable:false, desc:'不活性ガス。化学的に安定でほとんど反応しない。' },
   'Hgv': { name:'水銀蒸気 Hg',  color:[176,182,194], danger:4, lethal:false, odor:'無臭（無警告）', flammable:false, desc:'無臭で気付きにくいが有毒。吸入で神経を冒す。必ず換気装置内で扱う。' },
 };
@@ -109,12 +110,14 @@ export const REAGENTS = {
   '砂糖':   { kind:'solute', state:'solute', doseMl:8, molPerAdd:0.10, dissoc:{'sucrose':1} },
   'デンプン':{ kind:'solute', state:'solute', doseMl:8, molPerAdd:0.06, dissoc:{'starch':1} },
   'ヨウ素': { kind:'solute', state:'solute', doseMl:8, molPerAdd:0.03, dissoc:{'I2aq':1} },
-  'KMnO₄': { kind:'solute', state:'solute', doseMl:8, molPerAdd:0.03, dissoc:{'K+':1,'MnO4-':1} },
+  'KMnO₄': { kind:'solute', state:'solute', doseMl:8, molPerAdd:0.03, solid:'KMnO4s', dissoc:{'K+':1,'MnO4-':1} },
   'CuSO₄': { kind:'solute', state:'solute', doseMl:8, molPerAdd:0.07, dissoc:{'Cu+2':1,'SO4-2':1} },
-  'AgNO₃': { kind:'solute', state:'solute', doseMl:8, molPerAdd:0.07, dissoc:{'Ag+':1,'NO3-':1} },
+  '硝酸銀': { kind:'solute', state:'solute', doseMl:8, molPerAdd:0.07, dissoc:{'Ag+':1,'NO3-':1} },
   '硝酸鉛': { kind:'solute', state:'solute', doseMl:8, molPerAdd:0.07, dissoc:{'Pb+2':1,'NO3-':2} },
   '水酸化ナトリウム': { kind:'solute', state:'solute', doseMl:8, molPerAdd:0.10, strongBase:true, dissoc:{'Na+':1,'OH-':1} },
   '水酸化カリウム':   { kind:'solute', state:'solute', doseMl:8, molPerAdd:0.10, strongBase:true, dissoc:{'K+':1,'OH-':1} },
+  '水酸化バリウム':   { kind:'solute', state:'solute', doseMl:8, molPerAdd:0.06, strongBase:true, dissoc:{'Ba+2':1,'OH-':2} },
+  '石灰水':           { kind:'liquid', state:'liquid', doseMl:150, molarity:0.02, dissoc:{'Ca+2':1,'OH-':2} },
   '炭酸ナトリウム':   { kind:'solute', state:'solute', doseMl:8, molPerAdd:0.08, dissoc:{'Na+':2,'CO3-2':1} },
   '塩化ナトリウム':   { kind:'solute', state:'solute', doseMl:8, molPerAdd:0.10, dissoc:{'Na+':1,'Cl-':1} },
   '塩化バリウム':     { kind:'solute', state:'solute', doseMl:8, molPerAdd:0.08, dissoc:{'Ba+2':1,'Cl-':2} },
@@ -124,7 +127,6 @@ export const REAGENTS = {
   'フェノールフタレイン': { kind:'indicator', state:'indicator', doseMl:3, indicator:'PP' },
   'メチルオレンジ':     { kind:'indicator', state:'indicator', doseMl:3, indicator:'MO' },
   'リトマス':           { kind:'indicator', state:'indicator', doseMl:3, indicator:'LITMUS' },
-  '石炀水':         { kind:'liquid',  state:'liquid', doseMl:50, molarity:0.02, dissoc:{'Ca+2':1,'OH-':2} },
   '二酸化マンガン':   { kind:'powder',  state:'powder',  molPerAdd:0.05, solid:'MnO2', molarMass:86.9 },
   '酸化銅':         { kind:'powder',  state:'powder',  molPerAdd:0.06, solid:'CuO',  molarMass:79.5 },
   '塩化アンモニウム': { kind:'solute',   state:'solute',  doseMl:8, molPerAdd:0.08, dissoc:{'NH4+':1,'Cl-':1} },
@@ -248,7 +250,10 @@ export const REACTIONS = [
   { id:'H2O2_decomp', dangerLevel:1, eq:'2H₂O₂ → 2H₂O + O₂↑', ionEq:'2H₂O₂ → 2H₂O + O₂↑', rxClass:'分解', jp:'過酸化水素の分解', en:'Decomposition of H₂O₂',
     reactants:{ species:{'H2O2':2} }, products:{ gasMol:{'O2':1} }, dHkJ:-98, rate:0.03, effects:['fizz'], needHeat:true, log:'加熱で酸素を放出し発泡。' },
   { id:'KMnO4_H2O2', dangerLevel:2, eq:'2MnO₄⁻ + 5H₂O₂ + 6H⁺ → 2Mn²⁺ + 5O₂↑ + 8H₂O', ionEq:'2MnO₄⁻ + 5H₂O₂ + 6H⁺ → 2Mn²⁺ + 5O₂↑ + 8H₂O', rxClass:'酸化還元', jp:'過マンガン酸の還元', en:'Permanganate reduced',
-    reactants:{ species:{'MnO4-':2,'H2O2':5,'H+':6} }, products:{ species:{'Mn+2':2}, gasMol:{'O2':5} }, dHkJ:-300, rate:0.04, effects:['fizz','color'], log:'過マンガン酸カリウムが還元され、紫色が消える。' },
+    reactants:{ species:{'MnO4-':2,'H2O2':5,'H+':6} }, products:{ species:{'Mn+2':2}, gasMol:{'O2':5} }, dHkJ:-300, rate:0.04, effects:['fizz','color'], log:'酸性条件下で過マンガン酸カリウムが過酸化水素と常温で反応して還元され、紫色が消えて酸素を発生する。' },
+  { id:'KMnO4_thermal', dangerLevel:2, eq:'2KMnO₄ →(加熱) K₂MnO₄ + MnO₂ + O₂↑', ionEq:'2KMnO₄ → K₂MnO₄ + MnO₂ + O₂↑', rxClass:'熱分解', jp:'過マンガン酸カリウムの熱分解', en:'Thermal decomposition of KMnO₄',
+    reactants:{ solid:{'KMnO4s':2} }, products:{ gasMol:{'O2':1} }, requireSolid:['KMnO4s'],
+    dHkJ:-40, rate:0.03, effects:['gas'], needHeat:true, log:'固体の過マンガン酸カリウムを加熱すると分解して酸素を発生（マンガン酸カリウムと二酸化マンガンも生成）。水に溶かすとイオンとなり、この熱分解は起こらない。' },
   { id:'starch_iodine', dangerLevel:1, eq:'デンプン + I₂ → ヨウ素デンプン（青紫）', ionEq:'デンプン + I₂ → 青紫色の包接化合物', rxClass:'呈色（指示薬）', jp:'ヨウ素デンプン反応', en:'Starch–iodine test',
     reactants:{ species:{'starch':1,'I2aq':1} }, products:{ species:{'SI':1} }, dHkJ:-4, rate:0.5, effects:['color'], log:'ヨウ素デンプン反応で青紫色に呈色（指示薬）。' },
 
@@ -288,9 +293,9 @@ export const REACTIONS = [
     reactants:{ solid:{'Al':1,'Hg':0.02} }, products:{}, dHkJ:-320, rate:0.008, effects:['amalgam','fumes'], log:'水銀がアルミの酸化被膜を破壊。露出したアルミが空気中で急速に酸化し、白い酸化アルミニウムの髭が成長して発熱。' },
 
   // ―― 新規追加反応 ――
-  { id:'CO2_limewater', dangerLevel:1, eq:'CO₂ + Ca(OH)₂ → CaCO₃↓ + H₂O', ionEq:'CO₂ + Ca²⁺ + 2OH⁻ → CaCO₃↓ + H₂O', rxClass:'沈殿（白色）・CO₂検出', jp:'石炀水の白濁（CO₂検出）', en:'CO₂ + Limewater',
+  { id:'CO2_limewater', dangerLevel:1, eq:'CO₂ + Ca(OH)₂ → CaCO₃↓ + H₂O', ionEq:'CO₂ + Ca²⁺ + 2OH⁻ → CaCO₃↓ + H₂O', rxClass:'沈殿（白色）・CO₂検出', jp:'石灰水の白濁（CO₂検出）', en:'CO₂ + Limewater',
     reactants:{ headGas:{'CO2':1}, species:{'Ca+2':1,'OH-':2} }, products:{ precip:{'CaCO3':1} },
-    dHkJ:-113, rate:0.10, effects:['precip'], precipColor:[240,242,245], log:'CO₂が石炀水と反応し、CaCO₃の白色沈殿（白濁）が生成。CO₂の検出に使用。過剰のCO₂で再湶解する。' },
+    dHkJ:-113, rate:0.10, effects:['precip'], precipColor:[240,242,245], log:'CO₂が石灰水と反応し、CaCO₃の白色沈殿（白濁）が生成。CO₂の検出に使用。過剰のCO₂では再び溶解する。' },
 
   { id:'H2O2_cat_MnO2', dangerLevel:1, eq:'2H₂O₂ →(MnO₂) 2H₂O + O₂↑', ionEq:'2H₂O₂ → 2H₂O + O₂↑（MnO₂触媒）', rxClass:'触媒分解', jp:'過酸化水素の触媒分解（MnO₂）', en:'H₂O₂ decomp. (MnO₂ catalyst)',
     reactants:{ species:{'H2O2':2} }, products:{ gasMol:{'O2':1} }, requireSolid:['MnO2'],
@@ -298,7 +303,7 @@ export const REACTIONS = [
 
   { id:'NH4Cl_NaOH', dangerLevel:2, eq:'NH₄Cl + NaOH → NaCl + NH₃↑ + H₂O', ionEq:'NH₄⁺ + OH⁻ → NH₃↑ + H₂O', rxClass:'気体発生（弱塩基遊離）', jp:'塩化アンモニウムと水酸化ナトリウム', en:'NH₄Cl + NaOH → NH₃',
     reactants:{ species:{'NH4+':1,'OH-':1} }, products:{ gasMol:{'NH3g':1} },
-    dHkJ:-52, rate:0.12, effects:['gas'], needHeat:true, log:'加熱することでアンモニアガスが発生。刺激臭あり。弱塩を強塩アルカリで驱逐する反応。' },
+    dHkJ:-52, rate:0.12, effects:['gas'], needHeat:true, log:'加熱することでアンモニアガスが発生。刺激臭あり。弱塩基（アンモニア）を強塩基で追い出す反応（弱塩基の遊離）。' },
 
   { id:'CuO_H2_reduction', dangerLevel:2, eq:'CuO + H₂ → Cu + H₂O', ionEq:'CuO + H₂ → Cu + H₂O', rxClass:'酸化還元（還元）', jp:'酸化銅の水素による還元', en:'CuO reduced by H₂',
     reactants:{ solid:{'CuO':1}, headGas:{'H2':1} }, products:{ precip:{'Cu':1} },
@@ -308,9 +313,9 @@ export const REACTIONS = [
     reactants:{ solid:{'Cu':2} }, products:{ precip:{'CuO_coat':1} },
     dHkJ:-310, rate:0.006, effects:['precip'], needHeat:true, precipColor:[22,18,16], log:'銅が加熱されると酸化され、表面が黒色の酸化銅(II)に変化。' },
 
-  { id:'Fe_rust', dangerLevel:1, eq:'4Fe + 3O₂ + 6H₂O → 2Fe₂O₃シ3H₂O（赤さび）', ionEq:'4Fe → 4Fe²⁺ + 8e⁻（酸化）', rxClass:'酸化（腐食）', jp:'鉄のさび（腐食）', en:'Iron rusting',
+  { id:'Fe_rust', dangerLevel:1, eq:'4Fe + 3O₂ + 6H₂O → 2Fe₂O₃・3H₂O（赤さび）', ionEq:'4Fe → 4Fe²⁺ + 8e⁻（酸化）', rxClass:'酸化（腐食）', jp:'鉄のさび（腐食）', en:'Iron rusting',
     reactants:{ solid:{'Fe':4}, water:true }, products:{ precip:{'FeRust':1} },
-    dHkJ:-824, rate:0.003, effects:['precip'], precipColor:[160,72,30], log:'鉄が水と酸素により腐食し、赤褐色のさび（Fe₂O₃シnH₂O）が形成。海水（塩化物イオン）により促進される。' },
+    dHkJ:-824, rate:0.003, effects:['precip'], precipColor:[160,72,30], log:'鉄が水と酸素により腐食し、赤褐色のさび（Fe₂O₃・nH₂O）が形成。海水（塩化物イオン）により促進される。' },
 
   { id:'ethanol_combust', dangerLevel:3, eq:'C₂H₅OH + 3O₂ → 2CO₂↑ + 3H₂O', ionEq:'C₂H₅OH + 3O₂ → 2CO₂ + 3H₂O', rxClass:'燃焼', jp:'エタノールの燃焼', en:'Ethanol combustion',
     reactants:{ species:{'C2H5OH':1} }, products:{ gasMol:{'CO2':2} },
@@ -318,7 +323,7 @@ export const REACTIONS = [
 
   { id:'Al_passivate', dangerLevel:3, eq:'Al + 濃硝酸 → （不動態被膜・反応せず）', ionEq:'表面にAl₂O₃被膜が形成 → 反応停止', rxClass:'不動態', jp:'アルミニウムの不動態化', en:'Aluminium passivation',
     reactants:{ solid:{'Al':1} }, products:{}, requireConc:['硝酸濃'],
-    dHkJ:0, rate:0, effects:['passivate'], log:'アルミニウムは濃硝酸では表面に緣密な不動態被膜（Al₂O₃）を形成し、反応が停止する。洌酸・クロムと同様の不動態現象。' },
+    dHkJ:0, rate:0, effects:['passivate'], log:'アルミニウムは濃硝酸では表面に緻密な不動態被膜（Al₂O₃）を形成し、反応が停止する。鉄・クロムと同様の不動態現象。' },
 
   { id:'Ca2_CO3_precip', dangerLevel:1, eq:'Ca(OH)₂ + Na₂CO₃ → CaCO₃↓ + 2NaOH', ionEq:'Ca²⁺ + CO₃²⁻ → CaCO₃↓', rxClass:'沈殿（白色）', jp:'石灰水と炭酸塩の白濁', en:'Limewater + carbonate → CaCO₃',
     reactants:{ species:{'Ca+2':1,'CO3-2':1} }, products:{ precip:{'CaCO3':1} },
@@ -334,6 +339,6 @@ export const MISSIONS = [
   { id:'blue_cu', jp:'銅(II)の青い溶液をつくれ',     en:'Make a blue copper(II) solution', hint:'硫酸銅を水に溶かす／銅＋希硝酸', target:{ ion:'Cu+2', minConc:0.03 } },
   { id:'cl2_safe',jp:'塩素を発生させ安全に処理せよ', en:'Generate chlorine and handle it safely', hint:'漂白剤＋塩酸・換気必須', target:{ producedGas:'Cl2', min:0.004, notFailed:true } },
   { id:'gen_SO2', jp:'硫黄を燃やしSO₂を発生させよ', en:'Burn sulfur to generate SO₂', hint:'硫黄を加えて加熱（燃焼）', target:{ producedGas:'SO2', min:0.004 } },
-  { id:'ppt_AgCl',jp:'白色沈殿AgClをつくれ',         en:'Form a white AgCl precipitate', hint:'硝酸銀＋塩化ナトリウム', target:{ precip:{ id:'AgCl', min:0.004 } } },
-  { id:'displace_cu', jp:'イオン化傾向で銅を析出させよ', en:'Displace copper metal', hint:'亜鉛/鉄＋硫酸銅（Zn,Fe > Cu）', target:{ precip:{ id:'Cu', min:0.004 } } }
+  { id:'ppt_AgCl',jp:'白色沈殿AgClをつくれ',         en:'Form a white AgCl precipitate', hint:'硝酸銀＋塩化ナトリウム＋水（ともに水溶液）', target:{ precip:{ id:'AgCl', min:0.004 } } },
+  { id:'displace_cu', jp:'イオン化傾向で銅を析出させよ', en:'Displace copper metal', hint:'亜鉛/鉄＋硫酸銅＋水（Zn,Fe > Cu）', target:{ precip:{ id:'Cu', min:0.004 } } }
 ];
